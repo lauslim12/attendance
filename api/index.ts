@@ -15,9 +15,8 @@ function handleSignals(server: Server, redis: WrappedNodeRedisClient) {
   process.on('SIGINT', () => {
     console.log('Received SIGINT signal. Shutting down gracefully.');
 
-    server.close(async () => {
-      await redis.quit();
-      process.exit(0);
+    server.close(() => {
+      redis.quit().then(() => process.exit(0));
     });
   });
 
@@ -26,8 +25,7 @@ function handleSignals(server: Server, redis: WrappedNodeRedisClient) {
     console.log('Received signal to quit. Shutting down gracefully.');
 
     server.close(async () => {
-      await redis.quit();
-      process.exit(0);
+      redis.quit().then(() => process.exit(0));
     });
   });
 
@@ -36,8 +34,7 @@ function handleSignals(server: Server, redis: WrappedNodeRedisClient) {
     console.log('Received signal to terminate. Shutting down gracefully.');
 
     server.close(async () => {
-      await redis.quit();
-      process.exit(0);
+      redis.quit().then(() => process.exit(0));
     });
   });
 }
