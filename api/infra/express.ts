@@ -1,4 +1,4 @@
-import express from 'express';
+import express, { NextFunction, Request, Response } from 'express';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
 import type { WrappedNodeRedisClient } from 'handy-redis';
@@ -6,7 +6,9 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import RedisStore from 'rate-limit-redis';
 
+import errorHandler from '../errors';
 import HealthHandler from '../modules/health/handler';
+import AppError from '../util/appError';
 
 /**
  * Loads an Express application.
@@ -59,6 +61,14 @@ function loadExpress(redis: WrappedNodeRedisClient) {
   // Define API routes.
   app.use(throttler, limiter);
   app.use('/api/v1', healthHandler);
+
+  // Catch-all routes for API.
+  app.all('*', (req: Request, _: Response, next: NextFunction) => {
+    next(new AppError(`Cannot find '${req.originalUrl}' on this server!`, 404));
+  });
+
+  // Define error handlers.
+  app.use(errorHandler);
 
   return app;
 }
