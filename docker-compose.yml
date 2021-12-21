@@ -1,0 +1,23 @@
+version: "3.9"
+
+services:
+  mariadb:
+    image: mariadb:10.7.1
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
+    networks:
+      - infra
+
+  redis:
+    image: redis:6.2.5
+    restart: always
+    ports:
+      - 6379:6379
+    networks:
+      - infra
+
+networks:
+  infra:
