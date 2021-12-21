@@ -1,11 +1,13 @@
 import config from './config';
 import loadExpress from './infra/express';
+import loadRedis from './infra/redis';
 
 /**
  * Starts our server.
  */
 function startServer() {
-  const app = loadExpress();
+  const redis = loadRedis();
+  const app = loadExpress(redis);
 
   app.listen(config.PORT, () => {
     console.log(`API has started and is running on port ${config.PORT}!`);
