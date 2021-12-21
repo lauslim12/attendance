@@ -1,4 +1,3 @@
-import type { Request, Response } from 'express';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
 import slowDown from 'express-slow-down';
@@ -6,6 +5,8 @@ import type { WrappedNodeRedisClient } from 'handy-redis';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import RedisStore from 'rate-limit-redis';
+
+import HealthHandler from '../modules/health/handler';
 
 /**
  * Loads an Express application.
@@ -52,15 +53,12 @@ function loadExpress(redis: WrappedNodeRedisClient) {
   //   windowMs: 5 * 60 * 1000,
   // });
 
+  // Define handlers by constructing them with our services.
+  const healthHandler = HealthHandler();
+
   // Define API routes.
-  app.use(throttler);
-  app.use(limiter);
-  app.get('/api/v1', (_: Request, res: Response) => {
-    res.status(200).json({
-      status: 'success',
-      message: 'Welcome to Attendance API!',
-    });
-  });
+  app.use(throttler, limiter);
+  app.use('/api/v1', healthHandler);
 
   return app;
 }
