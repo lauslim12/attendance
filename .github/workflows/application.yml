@@ -1,0 +1,33 @@
+name: Application CI
+
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  express:
+    runs-on: ubuntu-20.04
+
+    defaults:
+      run:
+        working-directory: api
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node
+        uses: actions/setup-node@v2
+        with:
+          node-version: 16
+          cache: "yarn"
+          cache-dependency-path: ./api/yarn.lock
+
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
+
+      - name: Check circular dependencies
+        run: yarn circular-check
+
+      - name: Format, lint, and type-check
+        run: yarn lint
