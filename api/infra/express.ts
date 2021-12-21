@@ -8,7 +8,7 @@ import RedisStore from 'rate-limit-redis';
 
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
-import AppError from '../util/appError';
+import AppError from '../util/app-error';
 
 /**
  * Loads an Express application.

@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
 import config from '../../config';
-import AppError from '../../util/appError';
+import AppError from '../../util/app-error';
 
 /**
  * Send error in the development phase. Will transform a request to conform to 'AppError'.
