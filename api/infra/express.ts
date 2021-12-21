@@ -6,7 +6,7 @@ import helmet from 'helmet';
 import hpp from 'hpp';
 import RedisStore from 'rate-limit-redis';
 
-import errorHandler from '../errors';
+import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
 import AppError from '../util/appError';
 
