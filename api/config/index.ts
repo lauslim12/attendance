@@ -19,10 +19,24 @@ const env = (variable: string) => {
 };
 
 /**
+ * Transforms Base64 strings into ASCII.
+ *
+ * @param value - String value in Base64 format
+ * @returns ASCII encoded string
+ */
+const fromBase64ToASCII = (value: string) =>
+  Buffer.from(value, 'base64').toString('ascii');
+
+/**
  * All configuration values of this application from the environment variables.
  */
 const config = {
+  COOKIE_SECRET: process.env.COOKIE_SECRET || 'attendance-secret-cookie',
   DATABASE: env(process.env.DATABASE_URL),
+  JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'attendance-users',
+  JWT_ISSUER: process.env.JWT_ISSUER || 'attendance-api',
+  JWT_PRIVATE_KEY: fromBase64ToASCII(env(process.env.JWT_PRIVATE_KEY)),
+  JWT_PUBLIC_KEY: fromBase64ToASCII(env(process.env.JWT_PUBLIC_KEY)),
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 8080,
   TOTP_ISSUER: process.env.TOTP_ISSUER || 'Attendance',
