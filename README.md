@@ -42,8 +42,6 @@ cd attendance
 docker-compose up -d
 ```
 
-- The MariaDB Docker instance will be populated with the tables from `scripts/migrate.sql` and it will be reset every time the Docker Compose instance restarts.
-
 - After this, the next steps will be split in two: API Setup and Web Setup.
 
 ### API Setup
@@ -64,6 +62,12 @@ yarn --frozen-lockfile
 
 ```bash
 cp .env.example .env
+```
+
+- Run Prisma migrations, so you can get the database schema.
+
+```bash
+yarn migrate
 ```
 
 - Run the application in development mode.
