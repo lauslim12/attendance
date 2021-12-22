@@ -1,22 +1,25 @@
-import type { WrappedNodeRedisClient } from 'handy-redis';
 import type { Server } from 'http';
 
 import config from './config';
 import loadExpress from './infra/express';
-import loadRedis from './infra/redis';
+import prisma from './infra/prisma';
+import redis from './infra/redis';
 
 /**
  * Handles all signal events to the Node.js server.
  *
  * @param server - Express.js's server
  */
-function handleSignals(server: Server, redis: WrappedNodeRedisClient) {
+function handleSignals(server: Server) {
   // Handle interrupts.
   process.on('SIGINT', () => {
     console.log('Received SIGINT signal. Shutting down gracefully.');
 
     server.close(() => {
-      redis.quit().then(() => process.exit(0));
+      redis
+        .quit()
+        .then(() => prisma.$disconnect())
+        .then(() => process.exit(0));
     });
   });
 
@@ -24,8 +27,11 @@ function handleSignals(server: Server, redis: WrappedNodeRedisClient) {
   process.on('SIGQUIT', () => {
     console.log('Received signal to quit. Shutting down gracefully.');
 
-    server.close(async () => {
-      redis.quit().then(() => process.exit(0));
+    server.close(() => {
+      redis
+        .quit()
+        .then(() => prisma.$disconnect())
+        .then(() => process.exit(0));
     });
   });
 
@@ -33,8 +39,11 @@ function handleSignals(server: Server, redis: WrappedNodeRedisClient) {
   process.on('SIGTERM', () => {
     console.log('Received signal to terminate. Shutting down gracefully.');
 
-    server.close(async () => {
-      redis.quit().then(() => process.exit(0));
+    server.close(() => {
+      redis
+        .quit()
+        .then(() => prisma.$disconnect())
+        .then(() => process.exit(0));
     });
   });
 }
@@ -50,13 +59,20 @@ async function startServer() {
     process.exit(1);
   });
 
-  // Provision all infrastructures and prepare server.
-  const redis = loadRedis();
-  const app = loadExpress(redis);
+  // Provision all infrastructures and test.
+  const redisResp = await redis.ping();
+  await prisma.$connect();
+
+  // Prepare server.
+  const app = loadExpress();
   const server = app.listen(config.PORT, () => {
     console.log(`API has started and is running on port ${config.PORT}!`);
     console.log('API configurations / environment could be seen below:');
     console.log(config);
+    console.log('');
+    console.log('Infrastructures status:');
+    console.log(`Redis: ${redisResp}.`);
+    console.log('Prisma has connected.');
   });
 
   // Handle unhandled rejections, then shut down gracefully.
@@ -67,12 +83,13 @@ async function startServer() {
     // Finish all requests that are still pending, the shutdown gracefully.
     server.close(async () => {
       await redis.quit();
+      await prisma.$disconnect();
       process.exit(1);
     });
   });
 
   // Handle signals.
-  handleSignals(server, redis);
+  handleSignals(server);
 }
 
 /**
