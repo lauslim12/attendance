@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
 import AppError from '../../util/app-error';
+import sendResponse from '../../util/send-response';
 import UserService from './service';
 
 /**
@@ -10,16 +11,20 @@ const UserController = {
   /**
    * Gets all users in the database.
    *
-   * @param _ - Express.js's request object.
+   * @param req - Express.js's request object.
    * @param res - Express.js's response object.
    */
-  getUsers: async (_: Request, res: Response) => {
+  getUsers: async (req: Request, res: Response) => {
     const users = await UserService.getUsers();
 
-    res.status(200).json({
+    sendResponse({
+      req,
+      res,
       status: 'success',
-      message: 'Successfully fetched data of all users!',
+      statusCode: 200,
       data: users,
+      message: 'Successfully fetched data of all users!',
+      type: 'users',
     });
   },
 
@@ -50,10 +55,14 @@ const UserController = {
 
     const user = await UserService.createUser(req.body);
 
-    res.status(200).json({
+    sendResponse({
+      req,
+      res,
       status: 'success',
-      message: 'Successfully created a single user!',
+      statusCode: 201,
       data: user,
+      message: 'Successfully created a single user!',
+      type: 'users',
     });
   },
 
@@ -66,10 +75,14 @@ const UserController = {
   getUser: async (req: Request, res: Response) => {
     const user = await UserService.getUserByID(req.params.id);
 
-    res.status(200).json({
+    sendResponse({
+      req,
+      res,
       status: 'success',
-      message: 'Successfully fetched a single user!',
+      statusCode: 200,
       data: user,
+      message: 'Successfully fetched a single user!',
+      type: 'users',
     });
   },
 
@@ -108,10 +121,14 @@ const UserController = {
 
     const user = await UserService.updateUser(req.params.id, req.body);
 
-    res.status(200).json({
+    sendResponse({
+      req,
+      res,
       status: 'success',
-      message: 'Successfully updated a single user!',
+      statusCode: 200,
       data: user,
+      message: 'Successfully updated a single user!',
+      type: 'users',
     });
   },
 

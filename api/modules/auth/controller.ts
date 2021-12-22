@@ -1,5 +1,5 @@
 import argon2 from 'argon2';
-import type { NextFunction, Request, Response } from 'express';
+import type { CookieOptions, NextFunction, Request, Response } from 'express';
 import * as jose from 'jose';
 import { nanoid } from 'nanoid/async';
 
@@ -8,6 +8,7 @@ import { validateTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import redis from '../../infra/redis';
 import AppError from '../../util/app-error';
+import sendResponse from '../../util/send-response';
 import UserService from '../user/service';
 
 /**
@@ -70,9 +71,14 @@ const AuthController = {
     req.session.userID = user.userID;
 
     // send response
-    res.status(200).json({
+    sendResponse({
+      req,
+      res,
       status: 'success',
-      message: 'Logged in succesfully!',
+      statusCode: 200,
+      data: [],
+      message: 'Logged in successfully!',
+      type: 'auth',
     });
   },
 
@@ -90,9 +96,14 @@ const AuthController = {
         return;
       }
 
-      res.status(200).json({
+      sendResponse({
+        req,
+        res,
         status: 'success',
+        statusCode: 200,
+        data: [],
         message: 'Logged out successfully!',
+        type: 'auth',
       });
     });
   },
@@ -127,10 +138,15 @@ const AuthController = {
     }
 
     // default is authenticator
-    res.status(200).json({
+    sendResponse({
+      req,
+      res,
       status: 'success',
+      statusCode: 200,
+      data: [],
       message:
-        'OTP processed. Please check your chosen media and verify the OTP there.',
+        'OTP has been processed. Please check your chosen media and verify the OTP there.',
+      type: 'auth',
     });
   },
 
@@ -191,19 +207,26 @@ const AuthController = {
     await redis.setex(`otp-sess:${jti}`, 900, user.userID);
 
     // set cookie and response
-    res
-      .cookie('attendance-jws', token, {
-        httpOnly: true,
-        secure: config.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 900000, // 15 minutes
-        signed: true,
-      })
-      .status(200)
-      .json({
-        status: 'success',
-        message: 'OTP has been verified, special session given.',
-      });
+    const options: CookieOptions = {
+      httpOnly: true,
+      secure: config.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 900000, // 15 minutes
+      signed: true,
+    };
+
+    res.cookie('attendance-jws', token, options);
+
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: [],
+      message:
+        'OTP has been verified. Special session has been given to the current user.',
+      type: 'auth',
+    });
   },
 };
 
