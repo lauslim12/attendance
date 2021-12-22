@@ -74,6 +74,14 @@ yarn --frozen-lockfile
 cp .env.example .env
 ```
 
+- For the JWS, you have to generate a public-private key pair by yourself. Do so by using the provided script:
+
+```bash
+yarn genkeys
+```
+
+- You will get the Base64-encoded public-private key pairs for the JWT, and you have to copy it in your `.env` file. Instructions are also provided after that script has finished running in case you forgot.
+
 - Run Prisma migrations, so you can get the database schema.
 
 ```bash
