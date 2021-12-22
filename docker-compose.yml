@@ -8,8 +8,6 @@ services:
       - 3306:3306
     environment:
       - MARIADB_ALLOW_EMPTY_ROOT_PASSWORD=true
-    volumes:
-      - ./scripts/migrate.sql:/docker-entrypoint-initdb.d/1.sql
     networks:
       - infra
 
