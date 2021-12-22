@@ -9,6 +9,16 @@ This research will focus on creating a highly-secure API that conforms to OWASP 
 - `api` as a Node.js (Express) API. API is a JSON API which also acts as the authorization, authentication, and resource server.
 - `web` as a Next.js front-end.
 
+The flow of the API (Request - Response) is as follows:
+
+```bash
+Request -> Handler/Router -> Middleware (if applicable) -> Validations (if applicable) -> Controller -> Service -> Prisma (if applicable) -> Controller -> Response
+```
+
+- Four layer architecture: Validation and Controller, Service, and ORM (Prisma).
+- Error handler will be caught and will be processed if the program finds an error.
+- We still have not yet used Dependency Injection for easier testability.
+
 ## Requirements
 
 For development, you need the following technologies installed on your machine:
@@ -42,8 +52,6 @@ cd attendance
 docker-compose up -d
 ```
 
-- The MariaDB Docker instance will be populated with the tables from `scripts/migrate.sql` and it will be reset every time the Docker Compose instance restarts.
-
 - After this, the next steps will be split in two: API Setup and Web Setup.
 
 ### API Setup
@@ -60,7 +68,17 @@ cd api
 yarn --frozen-lockfile
 ```
 
-- You may use the default environment variables that I have already hardcoded for development purposes, and you have no need to configure it further. If you want, you may change environment variables to your liking using the `export` keyword. Do not use these environment variables in production.
+- Rename `.env.example` to `.env`. You may use the default environment variables that I have already hardcoded for development purposes, and you have no need to configure it further. If you want, you may change environment variables to your liking using the `export` keyword or you may change it at the renamed `.env` file. Do not use these environment variables in production.
+
+```bash
+cp .env.example .env
+```
+
+- Run Prisma migrations, so you can get the database schema.
+
+```bash
+yarn migrate
+```
 
 - Run the application in development mode.
 

@@ -1,4 +1,6 @@
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { NextFunction, Request, Response } from 'express';
+import { ValidationError } from 'express-validation';
 
 import config from '../../config';
 import AppError from '../../util/app-error';
@@ -65,6 +67,25 @@ const handleProductionErrors = (err: AppError): AppError => {
 
   if (err.type === 'entity.too.large') {
     return new AppError('Request too large! Please reduce your payload!', 413);
+  }
+
+  // Handle Prisma errors.
+  if (err instanceof PrismaClientKnownRequestError) {
+    return new AppError(
+      'Your request violates the constraints of the database. Please insert another data!',
+      400
+    );
+  }
+
+  // Handle validation errors.
+  if (err instanceof ValidationError) {
+    if (err.details.params) {
+      return new AppError('Invalid route parameter(s) for this endpoint!', 400);
+    }
+
+    if (err.details.body) {
+      return new AppError(`Field ${err.details.body[0].message}!`, 400);
+    }
   }
 
   // Returns the AppError object.
