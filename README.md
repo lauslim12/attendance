@@ -9,6 +9,16 @@ This research will focus on creating a highly-secure API that conforms to OWASP 
 - `api` as a Node.js (Express) API. API is a JSON API which also acts as the authorization, authentication, and resource server.
 - `web` as a Next.js front-end.
 
+The flow of the API (Request - Response) is as follows:
+
+```bash
+Request -> Handler/Router -> Middleware (if applicable) -> Validations (if applicable) -> Controller -> Service -> Prisma (if applicable) -> Controller -> Response
+```
+
+- Four layer architecture: Validation and Controller, Service, and ORM (Prisma).
+- Error handler will be caught and will be processed if the program finds an error.
+- We still have not yet used Dependency Injection for easier testability.
+
 ## Requirements
 
 For development, you need the following technologies installed on your machine:
