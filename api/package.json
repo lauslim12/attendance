@@ -10,6 +10,7 @@
   "scripts": {
     "build": "tsc",
     "migrate": "yarn prisma migrate dev",
+    "genkeys": "ts-node-dev cli/gen-keys",
     "dev": "ts-node-dev .",
     "start": "NODE_ENV=production node dist/index.js",
     "circular-check": "dpdm --tree --circular --warning ./**/*.ts",
@@ -22,6 +23,7 @@
     "@prisma/client": "3.7.0",
     "argon2": "^0.28.3",
     "connect-redis": "^6.0.0",
+    "cookie-parser": "^1.4.6",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "express-rate-limit": "^5.5.1",
@@ -40,6 +42,7 @@
   },
   "devDependencies": {
     "@types/connect-redis": "^0.0.18",
+    "@types/cookie-parser": "^1.4.2",
     "@types/express": "^4.17.13",
     "@types/express-rate-limit": "^5.1.3",
     "@types/express-session": "^1.17.4",
