@@ -25,6 +25,7 @@
     "express": "^4.17.2",
     "express-rate-limit": "^5.5.1",
     "express-slow-down": "^1.4.0",
+    "express-validation": "^3.0.8",
     "handy-redis": "^2.3.1",
     "helmet": "^4.6.0",
     "hpp": "^0.2.3",
