@@ -11,6 +11,7 @@ CREATE TABLE `User` (
     `updatedAt` DATETIME(3) NOT NULL,
     `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
 
+    UNIQUE INDEX `User_userID_key`(`userID`),
     UNIQUE INDEX `User_username_key`(`username`),
     UNIQUE INDEX `User_email_key`(`email`),
     UNIQUE INDEX `User_phoneNumber_key`(`phoneNumber`),
@@ -31,6 +32,7 @@ CREATE TABLE `Attendance` (
     `remarksLeave` VARCHAR(191) NULL,
     `userPK` INTEGER NOT NULL,
 
+    UNIQUE INDEX `Attendance_attendanceID_key`(`attendanceID`),
     PRIMARY KEY (`attendancePK`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 

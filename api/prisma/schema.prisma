@@ -12,7 +12,7 @@ datasource db {
 
 model User {
   userPK      Int          @id @default(autoincrement())
-  userID      String       @default(uuid())
+  userID      String       @unique @default(uuid())
   username    String       @unique
   email       String       @unique
   phoneNumber String       @unique
@@ -26,7 +26,7 @@ model User {
 
 model Attendance {
   attendancePK   Int       @id @default(autoincrement())
-  attendanceID   String    @default(uuid())
+  attendanceID   String    @unique @default(uuid())
   timeEnter      DateTime
   ipAddressEnter String
   deviceEnter    String
