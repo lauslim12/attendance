@@ -39,6 +39,15 @@ const UserService = {
     Prisma.user.findUnique({ where: { userID: id } }),
 
   /**
+   * Fetches a single user data from the database by their username, a complete data.
+   *
+   * @param username - A user's username.
+   * @returns A single user's complete data from the database.
+   */
+  getUserCompleteDataByUsername: async (username: string) =>
+    Prisma.user.findUnique({ where: { username } }),
+
+  /**
    * Fetches a single user data by using their UUID.
    *
    * @param id - A user's UUID.
