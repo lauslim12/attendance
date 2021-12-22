@@ -25,6 +25,7 @@ const config = {
   DATABASE: env(process.env.DATABASE_URL),
   NODE_ENV: process.env.NODE_ENV || 'development',
   PORT: process.env.PORT || 8080,
+  TOTP_ISSUER: process.env.TOTP_ISSUER || 'Attendance',
 };
 
 export default Object.freeze(config);

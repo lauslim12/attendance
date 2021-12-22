@@ -4,6 +4,7 @@ declare global {
       DATABASE_URL: string;
       NODE_ENV?: 'production' | 'development';
       PORT?: number;
+      TOTP_ISSUER?: string;
     }
   }
 }
