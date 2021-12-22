@@ -8,6 +8,7 @@ import RedisStore from 'rate-limit-redis';
 
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
+import UserHandler from '../modules/user/handler';
 import AppError from '../util/app-error';
 
 /**
@@ -57,10 +58,12 @@ function loadExpress(redis: WrappedNodeRedisClient) {
 
   // Define handlers by constructing them with our services.
   const healthHandler = HealthHandler();
+  const userHandler = UserHandler();
 
   // Define API routes.
   app.use(throttler, limiter);
   app.use('/api/v1', healthHandler);
+  app.use('/api/v1/users', userHandler);
 
   // Catch-all routes for API.
   app.all('*', (req: Request, _: Response, next: NextFunction) => {
