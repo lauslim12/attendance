@@ -60,7 +60,11 @@ cd api
 yarn --frozen-lockfile
 ```
 
-- You may use the default environment variables that I have already hardcoded for development purposes, and you have no need to configure it further. If you want, you may change environment variables to your liking using the `export` keyword. Do not use these environment variables in production.
+- Rename `.env.example` to `.env`. You may use the default environment variables that I have already hardcoded for development purposes, and you have no need to configure it further. If you want, you may change environment variables to your liking using the `export` keyword or you may change it at the renamed `.env` file. Do not use these environment variables in production.
+
+```bash
+cp .env.example .env
+```
 
 - Run the application in development mode.
 
