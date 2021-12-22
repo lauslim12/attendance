@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  userPK      Int          @id @default(autoincrement())
+  userID      String       @default(uuid())
+  username    String       @unique
+  email       String       @unique
+  phoneNumber String       @unique
+  password    String
+  totpSecret  String
+  fullName    String
+  updatedAt   DateTime     @updatedAt
+  createdAt   DateTime     @default(now())
+  Attendance  Attendance[]
+}
+
+model Attendance {
+  attendancePK   Int       @id @default(autoincrement())
+  attendanceID   String    @default(uuid())
+  timeEnter      DateTime
+  ipAddressEnter String
+  deviceEnter    String
+  remarksEnter   String
+  timeLeave      DateTime?
+  ipAddressLeave String?
+  deviceLeave    String?
+  remarksLeave   String?
+  userPK         Int
+  user           User      @relation(fields: [userPK], references: [userPK])
+}
