@@ -4,7 +4,6 @@ import { nanoid } from 'nanoid/async';
 
 import config from '../../config';
 import { generateTOTP } from '../../core/rfc6238';
-import { b32FromBuf } from '../../core/util/base32';
 import prisma from '../../infra/prisma';
 
 /**
@@ -137,7 +136,7 @@ const UserService = {
     const u = { ...user };
 
     // Create TOTP secrets with a CSPRNG, and hash passwords with Argon2.
-    u.totpSecret = b32FromBuf(Buffer.from(await nanoid()));
+    u.totpSecret = await nanoid();
     u.password = await argon2.hash(u.password, {
       timeCost: 300,
       hashLength: 50,
