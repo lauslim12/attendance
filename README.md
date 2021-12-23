@@ -16,7 +16,7 @@ Request -> Handler/Router -> Middleware (if applicable) -> Validations (if appli
 ```
 
 - Four layer architecture: Validation and Controller, Service, and ORM (Prisma).
-- Error handler will be caught and will be processed if the program finds an error.
+- Global error handler exist in the application. Every error(s) will be thrown to the global error handler to be 'handled'.
 - We still have not yet used Dependency Injection for easier testability.
 
 ## Requirements
@@ -74,7 +74,7 @@ yarn --frozen-lockfile
 cp .env.example .env
 ```
 
-- For the JWS, you have to generate a public-private key pair by yourself. Do so by using the provided script:
+- For the JWS, you have to generate a public-private key pair by yourself for the first time. Do so by using the provided script:
 
 ```bash
 yarn genkeys
@@ -93,6 +93,8 @@ yarn migrate
 ```bash
 yarn dev
 ```
+
+- There are three modes available: `development`, `mock-production`, and `production`. The difference is that `development` shows the full error stack trace, `mock-production` shows the proper error messages for production usage, and `production` also sets the cookie property to be `secure`. You may change the environment by using `export` keyword or by changing it in `.env`.
 
 ## License
 
