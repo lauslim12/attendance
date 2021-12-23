@@ -4,6 +4,7 @@ import config from './config';
 import loadExpress from './infra/express';
 import prisma from './infra/prisma';
 import redis from './infra/redis';
+import CacheService from './modules/cache/service';
 
 /**
  * Handles all signal events to the Node.js server.
@@ -19,7 +20,7 @@ function handleSignals(server: Server) {
       redis
         .quit()
         .then(() => prisma.$disconnect())
-        .then(() => process.exit(0));
+        .finally(() => process.exit(0));
     });
   });
 
@@ -31,7 +32,7 @@ function handleSignals(server: Server) {
       redis
         .quit()
         .then(() => prisma.$disconnect())
-        .then(() => process.exit(0));
+        .finally(() => process.exit(0));
     });
   });
 
@@ -43,7 +44,7 @@ function handleSignals(server: Server) {
       redis
         .quit()
         .then(() => prisma.$disconnect())
-        .then(() => process.exit(0));
+        .finally(() => process.exit(0));
     });
   });
 }
@@ -60,19 +61,18 @@ async function startServer() {
   });
 
   // Provision all infrastructures and test.
-  const redisResp = await redis.ping();
+  const pong = await CacheService.ping();
   await prisma.$connect();
 
   // Prepare server.
   const app = loadExpress();
   const server = app.listen(config.PORT, () => {
     console.log(`API has started and is running on port ${config.PORT}!`);
+    console.log('Infrastructures status:');
+    console.log(`Redis: ${pong}.`);
+    console.log('Prisma has connected.');
     console.log('API configurations / environment could be seen below:');
     console.log(config);
-    console.log('');
-    console.log('Infrastructures status:');
-    console.log(`Redis: ${redisResp}.`);
-    console.log('Prisma has connected.');
   });
 
   // Handle unhandled rejections, then shut down gracefully.
