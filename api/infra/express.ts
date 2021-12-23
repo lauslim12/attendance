@@ -25,6 +25,11 @@ function loadExpress() {
   // Create Express copy.
   const app = express();
 
+  // Allow proxies on our nginx server in production.
+  if (config.NODE_ENV === 'production') {
+    app.enable('trust proxy');
+  }
+
   // Load middlewares.
   app.use(express.json({ type: 'application/json', limit: '512b' }));
   app.use(helmet());
