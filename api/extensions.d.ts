@@ -7,7 +7,7 @@ declare global {
       JWT_ISSUER?: string;
       JWT_PRIVATE_KEY: string;
       JWT_PUBLIC_KEY: string;
-      NODE_ENV?: 'production' | 'development';
+      NODE_ENV?: 'production' | 'development' | 'mock-production';
       PORT?: number;
       TOTP_ISSUER?: string;
     }

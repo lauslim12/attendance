@@ -116,7 +116,10 @@ const errorHandler = (
     sendErrorDevelopment(error, req, res);
   }
 
-  if (config.NODE_ENV === 'production') {
+  if (
+    config.NODE_ENV === 'production' ||
+    config.NODE_ENV === 'mock-production'
+  ) {
     sendErrorProduction(handleProductionErrors(error), req, res);
   }
 
