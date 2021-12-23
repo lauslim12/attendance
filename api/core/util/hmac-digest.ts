@@ -20,4 +20,4 @@ const hmacDigest = (
   return hmac.digest().buffer;
 };
 
-export { hmacDigest };
+export default hmacDigest;
