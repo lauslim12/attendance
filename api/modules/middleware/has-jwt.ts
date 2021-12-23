@@ -2,8 +2,8 @@ import type { NextFunction, Request, Response } from 'express';
 import * as jose from 'jose';
 
 import config from '../../config';
-import redis from '../../infra/redis';
 import AppError from '../../util/app-error';
+import CacheService from '../cache/service';
 import UserService from '../user/service';
 
 /**
@@ -83,8 +83,8 @@ const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  // TODO: move this into its own service (SessionService) or (RedisService)
-  const userID = await redis.get(`otp-sess:${decoded.payload.jti}`);
+  // check if JTI exists in redis
+  const userID = await CacheService.getOTPSession(decoded.payload.jti);
   if (!userID) {
     res.set('WWW-Authenticate', 'Bearer realm="OTP"');
     next(new AppError('This token does not exist in the database.', 401));

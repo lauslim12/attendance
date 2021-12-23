@@ -6,9 +6,9 @@ import { nanoid } from 'nanoid/async';
 import config from '../../config';
 import { validateTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
-import redis from '../../infra/redis';
 import AppError from '../../util/app-error';
 import sendResponse from '../../util/send-response';
+import CacheService from '../cache/service';
 import UserService from '../user/service';
 
 /**
@@ -204,7 +204,7 @@ const AuthController = {
     // generate JWS here
     const jti = await nanoid();
     const token = await signJWS(jti, user.userID);
-    await redis.setex(`otp-sess:${jti}`, 900, user.userID);
+    await CacheService.setOTPSession(jti, user.userID);
 
     // set cookie and response
     const options: CookieOptions = {
