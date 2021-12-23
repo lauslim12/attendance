@@ -67,6 +67,9 @@ const AuthController = {
       return;
     }
 
+    // filter sensitive data
+    const filteredUser = await UserService.getUserByID(user.userID);
+
     // set signed, secure session cookie
     req.session.userID = user.userID;
     req.session.userRole = user.role;
@@ -77,14 +80,14 @@ const AuthController = {
       res,
       status: 'success',
       statusCode: 200,
-      data: [],
+      data: filteredUser,
       message: 'Logged in successfully!',
       type: 'auth',
     });
   },
 
   /**
-   * Logs out a single user from the webservice.
+   * Logs out a single user from the webservice. Removes all related cookies.
    *
    * @param req - Express.js's request object.
    * @param res - Express.js's response object.
@@ -96,6 +99,12 @@ const AuthController = {
         next(new AppError('Failed to log out. Please try again later.', 500));
         return;
       }
+
+      res.cookie('attendance-jws', 'loggedOut', {
+        httpOnly: true,
+        secure: config.NODE_ENV === 'production',
+        maxAge: 0,
+      });
 
       sendResponse({
         req,
@@ -265,7 +274,9 @@ const AuthController = {
       res,
       status: 'success',
       statusCode: 200,
-      data: [],
+      data: {
+        token,
+      },
       message:
         'OTP has been verified. Special session has been given to the current user.',
       type: 'auth',
