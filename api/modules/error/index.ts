@@ -88,6 +88,23 @@ const handleProductionErrors = (err: AppError): AppError => {
     }
   }
 
+  // Handle JWT errors.
+  if (err.name === 'JWTClaimValidationFailed') {
+    return new AppError('Failed to verify the integrity of the token.', 401);
+  }
+
+  if (err.name === 'JWSInvalid') {
+    return new AppError('Failed to verify the headers of the token.', 401);
+  }
+
+  if (err.name === 'JWSSignatureVerificationFailed') {
+    return new AppError('Failed to verify the signature of the token.', 401);
+  }
+
+  if (err.name === 'JWTExpired') {
+    return new AppError('MFA session expired. Please log in again!', 401);
+  }
+
   // Returns the AppError object.
   return {
     ...err,
