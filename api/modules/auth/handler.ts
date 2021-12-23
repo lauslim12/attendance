@@ -24,7 +24,11 @@ const AuthHandler = () => {
 
   handler.put('/otp', hasSession, asyncHandler(AuthController.verifyOTP));
 
-  handler.post('/register');
+  handler.post(
+    '/register',
+    validate(AuthValidation.register),
+    asyncHandler(AuthController.register)
+  );
 
   handler.post(
     '/otp/:media',
