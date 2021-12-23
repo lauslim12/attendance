@@ -23,6 +23,7 @@ declare module 'express' {
 declare module 'express-session' {
   interface Session {
     userID?: string;
+    userRole?: string;
   }
 }
 
