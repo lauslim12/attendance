@@ -27,7 +27,6 @@ model User {
   updatedAt   DateTime     @updatedAt
   createdAt   DateTime     @default(now())
   role        Roles        @default(user)
-  rolePK      Int
   Attendance  Attendance[]
 }
 
