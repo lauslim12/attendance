@@ -7,6 +7,7 @@ import session from 'express-session';
 import slowDown from 'express-slow-down';
 import helmet from 'helmet';
 import hpp from 'hpp';
+import morgan from 'morgan';
 import RedisStore from 'rate-limit-redis';
 
 import config from '../config';
@@ -28,6 +29,13 @@ function loadExpress() {
   app.use(express.json({ type: 'application/json', limit: '512b' }));
   app.use(helmet());
   app.use(hpp());
+
+  // Use logging on application.
+  if (config.NODE_ENV === 'production') {
+    app.use(morgan('combined'));
+  } else {
+    app.use(morgan('dev'));
+  }
 
   // Prepare to parse signed cookies (for our JWS).
   app.use(cookieParser(config.COOKIE_SECRET));
