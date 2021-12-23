@@ -37,10 +37,7 @@ function loadExpress() {
   app.use(hpp());
 
   // Use logging on application.
-  if (
-    config.NODE_ENV === 'production' ||
-    config.NODE_ENV === 'mock-production'
-  ) {
+  if (config.NODE_ENV === 'production') {
     app.use(morgan('combined'));
   } else {
     app.use(morgan('dev'));
