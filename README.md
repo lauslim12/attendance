@@ -82,11 +82,19 @@ yarn genkeys
 
 - You will get the Base64-encoded public-private key pairs for the JWT, and you have to copy it in your `.env` file. Instructions are also provided after that script has finished running in case you forgot.
 
-- Run Prisma migrations, so you can get the database schema.
+- Run Prisma migrations, so you can get the database schema. You have to do this every time you turn on the Docker instance, as all data are reset.
 
 ```bash
 yarn migrate
 ```
+
+- You may seed the database with data samples located at `api/cli/seed-data.ts`. As above, you also have to do this every time you turn on the Docker instance.
+
+```bash
+yarn seed
+```
+
+- Transform all of the TOTP strings as QR codes, then scan it in your authenticator application for easy access towards double-protected routes (optional). You may use [QR Code Generator](https://www.qr-code-generator.com/) as an external webservice.
 
 - Run the application in development mode.
 
