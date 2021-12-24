@@ -10,6 +10,11 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Roles {
+  admin
+  user
+}
+
 model User {
   userPK      Int          @id @default(autoincrement())
   userID      String       @unique @default(uuid())
@@ -21,6 +26,8 @@ model User {
   fullName    String
   updatedAt   DateTime     @updatedAt
   createdAt   DateTime     @default(now())
+  role        Roles        @default(user)
+  rolePK      Int
   Attendance  Attendance[]
 }
 

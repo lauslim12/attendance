@@ -69,6 +69,7 @@ const AuthController = {
 
     // set signed, secure session cookie
     req.session.userID = user.userID;
+    req.session.userRole = user.role;
 
     // send response
     sendResponse({
@@ -167,12 +168,14 @@ const AuthController = {
    * @param next - Express.js's next function.
    */
   verifyOTP: async (req: Request, res: Response, next: NextFunction) => {
+    // check headers
     if (!req.headers.authorization) {
       res.set('WWW-Authenticate', 'Basic realm="OTP"');
       next(new AppError('Missing authorization header!', 400));
       return;
     }
 
+    // check whether authentication scheme is correct
     const { username, password } = parseBasicAuth(req.headers.authorization);
     if (!username || !password) {
       res.set('WWW-Authenticate', 'Basic realm="OTP"');
@@ -180,6 +183,7 @@ const AuthController = {
       return;
     }
 
+    // check whether username exists
     const user = await UserService.getUserCompleteDataByUsername(username);
     if (!user) {
       res.set('WWW-Authenticate', 'Basic realm="OTP"');
@@ -187,6 +191,7 @@ const AuthController = {
       return;
     }
 
+    // validate otp
     const validTOTP = validateTOTP(password, {
       issuer: config.TOTP_ISSUER,
       label: user.username,
@@ -206,7 +211,7 @@ const AuthController = {
     const token = await signJWS(jti, user.userID);
     await CacheService.setOTPSession(jti, user.userID);
 
-    // set cookie and response
+    // set cookie
     const options: CookieOptions = {
       httpOnly: true,
       secure: config.NODE_ENV === 'production',
@@ -214,9 +219,9 @@ const AuthController = {
       maxAge: 900000, // 15 minutes
       signed: true,
     };
-
     res.cookie('attendance-jws', token, options);
 
+    // send response
     sendResponse({
       req,
       res,
