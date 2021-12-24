@@ -18,7 +18,7 @@ import UserValidation from './validation';
 const UserHandler = () => {
   const handler = express.Router();
 
-  handler.route('/me/status').get(asyncHandler(getStatus));
+  handler.route('/me/status').get(getStatus);
 
   // restrict below endpoints for people who have logged in
   handler.use(hasSession);

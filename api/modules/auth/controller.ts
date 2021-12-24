@@ -1,43 +1,15 @@
 import argon2 from 'argon2';
 import type { CookieOptions, NextFunction, Request, Response } from 'express';
-import * as jose from 'jose';
 import { nanoid } from 'nanoid/async';
 
 import config from '../../config';
 import { validateTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
+import { signJWS } from '../../util/header-and-jwt';
 import sendResponse from '../../util/send-response';
 import CacheService from '../cache/service';
 import UserService from '../user/service';
-
-/**
- * Signs a JWT token with EdDSA algorithm, will transform the JWT into JWS.
- *
- * @param jti - Random JSON Token Identifier.
- * @param userID - A user ID.
- * @returns Signed JWS.
- */
-const signJWS = async (jti: string, userID: string) => {
-  const privateKey = await jose.importPKCS8(config.JWT_PRIVATE_KEY, 'EdDSA');
-
-  const payload: jose.JWTPayload = {
-    aud: config.JWT_AUDIENCE,
-    exp: Math.floor(Date.now() / 1000) + 900, // 15 minutes
-    iat: Math.floor(Date.now() / 1000),
-    iss: config.JWT_ISSUER,
-    jti,
-    nbf: Math.floor(Date.now() / 1000),
-    sub: userID,
-  };
-
-  const headers: jose.JWTHeaderParameters = {
-    alg: 'EdDSA',
-    typ: 'JWT',
-  };
-
-  return new jose.SignJWT(payload).setProtectedHeader(headers).sign(privateKey);
-};
 
 /**
  * Authentication controller, forwarded from 'handler'.
