@@ -1,48 +1,10 @@
-// TODO: 'beautify' code here
+// TODO: 'beautify' and make code more structured here
 import type { Request, Response } from 'express';
-import * as jose from 'jose';
 
-import config from '../../config';
+import { extractToken, verifyToken } from '../../util/header-and-jwt';
 import sendResponse from '../../util/send-response';
 import CacheService from '../cache/service';
 import UserService from '../user/service';
-
-/**
- * This function is used to verify the current token from user's cookie.
- * We will also check the supposed 'audience' and 'issuer'.
- *
- * @param token - JWT token
- * @returns A promise object that contains our JWT.
- */
-const verifyToken = async (token: string) => {
-  const publicKey = await jose.importSPKI(config.JWT_PUBLIC_KEY, 'EdDSA');
-
-  const options: jose.JWTVerifyOptions = {
-    audience: config.JWT_AUDIENCE,
-    issuer: config.JWT_ISSUER,
-  };
-
-  return jose.jwtVerify(token, publicKey, options);
-};
-
-/**
- * Extracts a token from either Authorization header or signed cookie.
- * Prioritize token from Authorization header.
- *
- * @param header - Authorization header value
- * @param signedCookie - Signed cookie if applicable
- * @returns Extracted JWT token
- */
-const extractToken = (
-  header: string | undefined,
-  signedCookie: string | undefined
-) => {
-  if (header && header.startsWith('Bearer ')) {
-    return header.split(' ')[1];
-  }
-
-  return signedCookie;
-};
 
 /**
  * Gets the user's status (is normally authenticated and is MFA authenticated).
@@ -51,14 +13,19 @@ const extractToken = (
  * @param res - Express.js's response object.
  */
 const getStatus = async (req: Request, res: Response) => {
-  let isAuthenticated = true;
-  let isMFA = true;
+  // Initial state of a current user.
+  const status = {
+    isAuthenticated: false,
+    isMFA: false,
+  };
 
   try {
     if (!req.session.userID) {
-      isAuthenticated = false;
       throw '';
     }
+
+    // flag is authenticated
+    status.isAuthenticated = true;
 
     // extract token and validate
     const token = extractToken(
@@ -66,7 +33,6 @@ const getStatus = async (req: Request, res: Response) => {
       req.signedCookies['attendance-jws']
     );
     if (!token) {
-      isMFA = false;
       throw '';
     }
 
@@ -75,40 +41,51 @@ const getStatus = async (req: Request, res: Response) => {
     try {
       decoded = await verifyToken(token);
     } catch {
-      isMFA = false;
       throw '';
     }
 
     // verify JTI
     if (!decoded.payload.jti) {
-      isMFA = false;
       throw '';
     }
 
     // check if JTI exists in redis
     const userID = await CacheService.getOTPSession(decoded.payload.jti);
     if (!userID) {
-      isMFA = false;
       throw '';
     }
 
     // check if user still exists in the database
     const user = await UserService.getUserByID(userID);
     if (!user) {
-      isMFA = false;
       throw '';
     }
-  } catch {
-    throw '';
-  } finally {
+
+    // flag is MFA
+    status.isMFA = true;
+
+    // send response here as well
     sendResponse({
       req,
       res,
       status: 'success',
       statusCode: 200,
       data: {
-        isAuthenticated,
-        isMFA,
+        isAuthenticated: status.isAuthenticated,
+        isMFA: status.isMFA,
+      },
+      message: "Successfully fetched the user's status!",
+      type: 'users',
+    });
+  } catch {
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: {
+        isAuthenticated: status.isAuthenticated,
+        isMFA: status.isMFA,
       },
       message: "Successfully fetched the user's status!",
       type: 'users',
