@@ -84,6 +84,10 @@ const handleProductionErrors = (err: AppError): AppError => {
       return new AppError('Invalid route parameter(s) for this endpoint!', 400);
     }
 
+    if (err.details.query) {
+      return new AppError(`Field ${err.details.query[0].message}!`, 400);
+    }
+
     if (err.details.body) {
       return new AppError(`Field ${err.details.body[0].message}!`, 400);
     }
