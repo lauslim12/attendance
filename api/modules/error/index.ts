@@ -1,6 +1,7 @@
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 import type { NextFunction, Request, Response } from 'express';
 import { ValidationError } from 'express-validation';
+import { errors as jose } from 'jose';
 
 import config from '../../config';
 import AppError from '../../util/app-error';
@@ -89,19 +90,19 @@ const handleProductionErrors = (err: AppError): AppError => {
   }
 
   // Handle JWT errors.
-  if (err.name === 'JWTClaimValidationFailed') {
+  if (err instanceof jose.JWTClaimValidationFailed) {
     return new AppError('Failed to verify the integrity of the token.', 401);
   }
 
-  if (err.name === 'JWSInvalid') {
+  if (err instanceof jose.JWSInvalid) {
     return new AppError('Failed to verify the headers of the token.', 401);
   }
 
-  if (err.name === 'JWSSignatureVerificationFailed') {
+  if (err instanceof jose.JWSSignatureVerificationFailed) {
     return new AppError('Failed to verify the signature of the token.', 401);
   }
 
-  if (err.name === 'JWTExpired') {
+  if (err instanceof jose.JWTExpired) {
     return new AppError('MFA session expired. Please log in again!', 401);
   }
 
