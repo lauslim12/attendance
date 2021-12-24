@@ -3,6 +3,7 @@ import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import rateLimit from 'express-rate-limit';
+import type { CookieOptions } from 'express-session';
 import session from 'express-session';
 import slowDown from 'express-slow-down';
 import helmet from 'helmet';
@@ -36,10 +37,7 @@ function loadExpress() {
   app.use(hpp());
 
   // Use logging on application.
-  if (
-    config.NODE_ENV === 'production' ||
-    config.NODE_ENV === 'mock-production'
-  ) {
+  if (config.NODE_ENV === 'production') {
     app.use(morgan('combined'));
   } else {
     app.use(morgan('dev'));
@@ -47,6 +45,21 @@ function loadExpress() {
 
   // Prepare to parse signed cookies (for our JWS).
   app.use(cookieParser(config.COOKIE_SECRET));
+
+  // Prepare cookie options.
+  const sessOptions: CookieOptions = {
+    httpOnly: true,
+    sameSite: 'strict',
+    maxAge: 86400 * 100, // 1 day
+  };
+
+  // Inject 'secure' attributes on production environment.
+  app.use((req: Request, _: Response, next: NextFunction) => {
+    sessOptions.secure =
+      req.secure || req.headers['x-forwarded-proto'] === 'https';
+
+    next();
+  });
 
   // Prepare to use Express Sessions.
   const RedisSessionStore = connectRedis(session);
@@ -57,12 +70,7 @@ function loadExpress() {
       saveUninitialized: false,
       resave: false,
       secret: config.COOKIE_SECRET,
-      cookie: {
-        httpOnly: true,
-        secure: config.NODE_ENV === 'production',
-        sameSite: 'strict',
-        maxAge: 86400 * 100, // 1 day
-      },
+      cookie: sessOptions,
     })
   );
 

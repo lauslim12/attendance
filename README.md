@@ -102,7 +102,7 @@ yarn seed
 yarn dev
 ```
 
-- There are three modes available: `development`, `mock-production`, and `production`. The difference is that `development` shows the full error stack trace, `mock-production` shows the proper error messages for production usage, and `production` also sets the cookie property to be `secure`. You may change the environment by using `export` keyword or by changing it in `.env`.
+- There are two modes available: `development`, and `production`. The difference is that `development` shows the full error stack trace when the app throws an error, and `production` shows the proper, appropriate error messages.
 
 ## License
 

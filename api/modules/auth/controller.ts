@@ -100,11 +100,7 @@ const AuthController = {
         return;
       }
 
-      res.cookie('attendance-jws', 'loggedOut', {
-        httpOnly: true,
-        secure: config.NODE_ENV === 'production',
-        maxAge: 0,
-      });
+      res.cookie('attendance-jws', 'loggedOut', { maxAge: 10 });
 
       sendResponse({
         req,
@@ -261,7 +257,7 @@ const AuthController = {
     // set cookie
     const options: CookieOptions = {
       httpOnly: true,
-      secure: config.NODE_ENV === 'production',
+      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
       sameSite: 'strict',
       maxAge: 900000, // 15 minutes
       signed: true,
