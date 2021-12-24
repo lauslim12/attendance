@@ -6,7 +6,7 @@
  * @param str - Base32-encoded string.
  * @returns ArrayBuffer consists of the 'bytes' version of the parameter.
  */
-const b32ToBuf = (str: string) => {
+export const b32ToBuf = (str: string) => {
   // Canonicalize to all upper case and remove padding if it exists.
   str = str.toUpperCase().replace(/=+$/, '');
 
@@ -47,7 +47,7 @@ const b32ToBuf = (str: string) => {
  * @param buf - ArrayBuffer representation of a string.
  * @returns Base32 string.
  */
-const b32FromBuf = (buf: ArrayBuffer) => {
+export const b32FromBuf = (buf: ArrayBuffer) => {
   const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
   const arr = new Uint8Array(buf);
 
@@ -79,5 +79,3 @@ const b32FromBuf = (buf: ArrayBuffer) => {
 
   return str;
 };
-
-export { b32FromBuf, b32ToBuf };

@@ -10,7 +10,7 @@
  * @param num - Number to be transformed into bytes.
  * @returns ArrayBuffer consists of numbers.
  */
-const toBuf = (num: number) => {
+const numberToBuf = (num: number) => {
   const buf = new ArrayBuffer(8);
   const arr = new Uint8Array(buf);
   let acc = num;
@@ -22,13 +22,12 @@ const toBuf = (num: number) => {
     // We take the last 8 bits of the integer (we want it to be unsigned so it can fill the 'Uint8Array').
     // This is the same as force-casting in other languages: (byte) someInteger...
     // Divide by '256' to reduce the number (1 byte = 256).
-    // It should never fallback to 0, as `acc -= arr[i]` is never undefined.
     arr[i] = acc & 255;
-    acc -= arr[i] || 0;
+    acc -= arr[i];
     acc /= 256;
   }
 
   return buf;
 };
 
-export { toBuf };
+export default numberToBuf;
