@@ -158,11 +158,11 @@ const AuthController = {
     }
 
     // guaranteed to be 'email', 'sms', or 'authenticator' due to the validation layer
-    if (req.params.media === 'email') {
+    if (req.query.media === 'email') {
       // TODO: send email
     }
 
-    if (req.params.media === 'sms') {
+    if (req.query.media === 'sms') {
       // TODO: send sms
     }
 

@@ -22,19 +22,19 @@ const AuthHandler = () => {
 
   handler.post('/logout', asyncHandler(AuthController.logout));
 
-  handler.put('/otp', hasSession, asyncHandler(AuthController.verifyOTP));
+  handler
+    .route('/otp')
+    .post(
+      hasSession,
+      validate(AuthValidation.sendOTP),
+      asyncHandler(AuthController.sendOTP)
+    )
+    .put(hasSession, asyncHandler(AuthController.verifyOTP));
 
   handler.post(
     '/register',
     validate(AuthValidation.register),
     asyncHandler(AuthController.register)
-  );
-
-  handler.post(
-    '/otp/:media',
-    hasSession,
-    validate(AuthValidation.sendOTP),
-    asyncHandler(AuthController.sendOTP)
   );
 
   return handler;
