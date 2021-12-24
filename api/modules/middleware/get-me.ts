@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 import AppError from '../../util/app-error';
 
@@ -6,7 +6,7 @@ import AppError from '../../util/app-error';
  * Moves a user's ID to the 'params' object.
  *
  * @param req - Express.js's request object.
- * @param res - Express.js's response object.
+ * @param _ - Express.js's response object.
  * @param next - Express.js's next function.
  */
 const getMe = (req: Request, _: Response, next: NextFunction) => {

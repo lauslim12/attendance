@@ -12,7 +12,7 @@ import AppError from '../../util/app-error';
  */
 const hasSession = (req: Request, _: Response, next: NextFunction) => {
   if (!req.session.userID) {
-    next(new AppError('You are not logged in! Please log in again!', 401));
+    next(new AppError('You are not logged in yet! Please log in first!', 401));
     return;
   }
 
