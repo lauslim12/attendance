@@ -34,8 +34,8 @@ const sendResponse = <T>({
     data,
     type,
     meta: {
-      copyright: `© ${new Date().getFullYear()} — Nicholas Dwiarto Wirasbawa`,
-      authors: ['Nicholas Dwiarto Wirasbawa'],
+      copyright: `© ${new Date().getFullYear()} — Nicholas`,
+      authors: ['Nicholas'],
     },
     jsonapi: {
       version: 'v1',
