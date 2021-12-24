@@ -105,8 +105,8 @@ function loadExpress() {
       client: redis.nodeRedis,
       prefix: 'sd-common',
     }),
+    delayAfter: 25, // start to delay by 'delayMs' after 25 requests has been made in 'windowMs' minutes
     windowMs: 15 * 60 * 1000, // 15 minutes
-    delayAfter: 25,
     delayMs: 200,
   });
 
@@ -116,7 +116,7 @@ function loadExpress() {
       client: redis.nodeRedis,
       prefix: 'rl-common',
     }),
-    max: 50,
+    max: 50, // max 50 requests in 'windowMs' minutes
     windowMs: 15 * 60 * 1000, // 15 minutes
     handler(_: Request, __: Response, next: NextFunction) {
       next(new AppError('Too many requests! Please try again later!', 429));
@@ -129,7 +129,7 @@ function loadExpress() {
       client: redis.nodeRedis,
       prefix: 'rl-sensitive',
     }),
-    max: 10,
+    max: 10, // max 10 requests in 'windowMs' minutes
     windowMs: 5 * 60 * 1000, // 5 minutes
     handler(_: Request, __: Response, next: NextFunction) {
       next(
@@ -147,7 +147,7 @@ function loadExpress() {
   const userHandler = UserHandler();
 
   // Define API routes.
-  app.use(throttler);
+  app.use('/api', throttler);
   app.use('/api/v1', healthHandler);
   app.use('/api/v1/auth', strictLimiter, authHandler);
   app.use('/api/v1/users', limiter, userHandler);
