@@ -2,6 +2,7 @@ import express from 'express';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
+import getMe from '../middleware/get-me';
 import hasJWT from '../middleware/has-jwt';
 import hasRole from '../middleware/has-role';
 import hasSession from '../middleware/has-session';
@@ -16,7 +17,16 @@ import UserValidation from './validation';
 const UserHandler = () => {
   const handler = express.Router();
 
-  handler.use(hasSession, hasRole('admin'), asyncHandler(hasJWT));
+  // restrict below endpoints for people who have logged in
+  handler.use(hasSession);
+
+  handler
+    .route('/me')
+    .get(getMe, UserController.getUser)
+    .patch(getMe, UserController.updateUser);
+
+  // restrict below endpoints for administrators who are logged in and authenticated with MFA
+  handler.use(hasRole('admin'), asyncHandler(hasJWT));
 
   handler
     .route('/')
