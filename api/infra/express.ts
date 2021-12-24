@@ -75,7 +75,7 @@ function loadExpress() {
   const sessOptions: CookieOptions = {
     httpOnly: true,
     sameSite: 'strict',
-    maxAge: 86400 * 100, // 1 day
+    maxAge: 86400 * 1000, // 1 day
   };
 
   // Inject 'secure' attributes on production environment.
