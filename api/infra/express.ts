@@ -23,7 +23,7 @@ import redis from './redis';
  * Loads an Express application.
  */
 function loadExpress() {
-  // Create Express copy.
+  // Create Express application.
   const app = express();
 
   // Allow proxies on our nginx server in production.
@@ -31,9 +31,14 @@ function loadExpress() {
     app.enable('trust proxy');
   }
 
-  // Load middlewares.
-  app.use(express.json({ type: 'application/json', limit: '512b' }));
+  // Security headers.
   app.use(helmet());
+
+  // Load JSON parser and signed cookie parser.
+  app.use(express.json({ type: 'application/json', limit: '512b' }));
+  app.use(cookieParser(config.COOKIE_SECRET));
+
+  // Prevent parameter pollution.
   app.use(hpp());
 
   // Use logging on application.
@@ -43,8 +48,28 @@ function loadExpress() {
     app.use(morgan('dev'));
   }
 
-  // Prepare to parse signed cookies (for our JWS).
-  app.use(cookieParser(config.COOKIE_SECRET));
+  // Only allow the following methods: [OPTIONS, HEAD, CONNECT, GET, POST, PATCH, PUT, DELETE].
+  app.use((req: Request, _: Response, next: NextFunction) => {
+    const allowedMethods = [
+      'OPTIONS',
+      'HEAD',
+      'CONNECT',
+      'GET',
+      'POST',
+      'PATCH',
+      'PUT',
+      'DELETE',
+    ];
+
+    if (!allowedMethods.includes(req.method)) {
+      next(
+        new AppError(`Method ${req.method} is not allowed in this API!`, 405)
+      );
+      return;
+    }
+
+    next();
+  });
 
   // Prepare cookie options.
   const sessOptions: CookieOptions = {
