@@ -205,6 +205,7 @@ const AuthController = {
    * 7. Send back response.
    *
    * Token gained from this function will act as a signed cookie that can be used to authenticate oneself.
+   * Username is the user's ID. The password is the user's TOTP token.
    *
    * @param req - Express.js's request object.
    * @param res - Express.js's response object.
@@ -227,7 +228,7 @@ const AuthController = {
     }
 
     // check whether username exists
-    const user = await UserService.getUserCompleteDataByUsername(username);
+    const user = await UserService.getUserCompleteDataByID(username);
     if (!user) {
       res.set('WWW-Authenticate', 'Basic realm="OTP"');
       next(new AppError('User with that identifier is not found.', 401));
