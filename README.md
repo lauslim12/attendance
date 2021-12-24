@@ -19,6 +19,10 @@ Request -> Handler/Router -> Middleware (if applicable) -> Validations (if appli
 - Global error handler exist in the application. Every error(s) will be thrown to the global error handler to be 'handled'.
 - We still have not yet used Dependency Injection for easier testability.
 
+## Documentation
+
+API documentation is available at Postman, and it is under construction for now.
+
 ## Requirements
 
 For development, you need the following technologies installed on your machine:
@@ -82,15 +86,10 @@ yarn genkeys
 
 - You will get the Base64-encoded public-private key pairs for the JWT, and you have to copy it in your `.env` file. Instructions are also provided after that script has finished running in case you forgot.
 
-- Run Prisma migrations, so you can get the database schema. You have to do this every time you turn on the Docker instance, as all data are reset.
+- Run Prisma migrations and seeders so you can get the database schema that is already populated with the sample data (sample data is at `api/cli/seed-data.ts`). You have to do this every time you turn on the Docker instance, as all data are reset.
 
 ```bash
 yarn migrate
-```
-
-- You may seed the database with data samples located at `api/cli/seed-data.ts`. As above, you also have to do this every time you turn on the Docker instance.
-
-```bash
 yarn seed
 ```
 
