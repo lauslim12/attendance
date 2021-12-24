@@ -110,6 +110,44 @@ const AuthController = {
   },
 
   /**
+   * Registers a user into the webservice. Exactly the same as 'createUser' in 'User' entity.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  register: async (req: Request, res: Response, next: NextFunction) => {
+    if (await UserService.getUserByUsername(req.body.username)) {
+      next(new AppError('This username has existed already!', 400));
+      return;
+    }
+
+    if (await UserService.getUserByEmail(req.body.email)) {
+      next(new AppError('This email has been used by another user!', 400));
+      return;
+    }
+
+    if (await UserService.getUserByPhoneNumber(req.body.phoneNumber)) {
+      next(
+        new AppError('This phone number has been used by another user!', 400)
+      );
+      return;
+    }
+
+    const user = await UserService.createUser(req.body);
+
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 201,
+      data: user,
+      message: 'Successfully registered to the webservice!',
+      type: 'auth',
+    });
+  },
+
+  /**
    * SendOTP sends an OTP to a user with this algorithm:
    * 1. Get user data from session.
    * 2. Choose from query string: phone, email, or authenticator. Default is authenticator.
@@ -129,13 +167,13 @@ const AuthController = {
       return;
     }
 
-    // guaranteed to exist and be 'email', 'sms', 'media' due to validation layer
+    // guaranteed to be 'email', 'sms', or 'authenticator' due to the validation layer
     if (req.params.media === 'email') {
-      // send email
+      // TODO: send email
     }
 
     if (req.params.media === 'sms') {
-      // send sms
+      // TODO: send sms
     }
 
     // default is authenticator
