@@ -155,11 +155,13 @@ const AuthController = {
   /**
    * SendOTP sends an OTP to a user with this algorithm:
    * 1. Get user data from session.
-   * 2. Choose from query string: phone, email, or authenticator. Default is authenticator.
-   * 3. Generate TOTP using RFC 6238 algorithm with user-specific properties.
-   * 4. If using authenticators, tell user to verify TOTP as soon as possible.
-   * 5. Send TOTP to that media if applicable.
-   * 6. Wait for user to provide TOTP in 'verify' part of the endpoint.
+   * 2. If user has asked for OTP beforehand, do not allow until the related KVS is expired.
+   * 3. Choose from query string: phone, email, or authenticator. Default is authenticator.
+   * 4. Generate TOTP using RFC 6238 algorithm with user-specific properties.
+   * 5. If using authenticators, tell user to verify TOTP as soon as possible.
+   * 6. Send TOTP to that media if applicable.
+   * 7. Set 'hasAskedOTP' in cache to true.
+   * 8. Wait for user to provide TOTP in 'verify' part of the endpoint.
    *
    * @param req - Express.js's request object.
    * @param res - Express.js's response object.
@@ -172,6 +174,17 @@ const AuthController = {
       return;
     }
 
+    // if not yet expired, means that the user has asked in 'successive' order and it is a potential to spam
+    if (await CacheService.getHasAskedOTP(uid)) {
+      next(
+        new AppError(
+          'You have recently asked for an OTP. Please wait 30 seconds before we process your request again.',
+          429
+        )
+      );
+      return;
+    }
+
     // guaranteed to be 'email', 'sms', or 'authenticator' due to the validation layer
     if (req.params.media === 'email') {
       // TODO: send email
@@ -181,7 +194,10 @@ const AuthController = {
       // TODO: send sms
     }
 
-    // default is authenticator
+    // if using authenticator, do nothing as its already there, increment redis instead
+    await CacheService.setHasAskedOTP(uid);
+
+    // send back response
     sendResponse({
       req,
       res,
@@ -196,11 +212,11 @@ const AuthController = {
 
   /**
    * VerifyOTP verifies if a TOTP is valid or not valid. The algorithm:
-   * 1. Parse 'Basic' authentication.
+   * 1. Parse 'Basic' authentication. Also check if the user is blocked or not (failed to input correct TOTP many times in successive order).
    * 2. Get user data from 'username' column of the authentication string.
    * 3. Pull the user's secret key from the database.
    * 4. Validate the user's TOTP. The input OTP will be fetched from the 'password' column of the authentication string.
-   * 5. If the TOTP is valid, give back JWS token. This is the user's second session.
+   * 5. If the TOTP is valid, give back JWS token. This is the user's second session. If not valid, increment the 'TOTPAttempts' in cache.
    * 6. Take note of the JTI, store it inside Redis cache for statefulness.
    * 7. Send back response.
    *
@@ -235,6 +251,19 @@ const AuthController = {
       return;
     }
 
+    // if user has reached 3 times, then block attempt
+    // TODO: should send email/sms/push notification to the relevant user
+    const attempts = await CacheService.getOTPAttempts(user.userID);
+    if (attempts && Number.parseInt(attempts, 10) === 3) {
+      next(
+        new AppError(
+          'You have exceeded the times allowed for a secured session. Please try again in the next day.',
+          429
+        )
+      );
+      return;
+    }
+
     // validate otp
     const validTOTP = validateTOTP(password, {
       issuer: config.TOTP_ISSUER,
@@ -245,14 +274,18 @@ const AuthController = {
       secret: user.totpSecret,
     });
     if (!validTOTP) {
+      await CacheService.setOTPAttempts(user.userID);
+
       res.set('WWW-Authenticate', 'Basic realm="OTP"');
       next(new AppError('Invalid authentication, wrong OTP code!', 401));
       return;
     }
 
-    // generate JWS here
+    // generate JWS as the authorization ticket
     const jti = await nanoid();
     const token = await signJWS(jti, user.userID);
+
+    // set otp session by JTI
     await CacheService.setOTPSession(jti, user.userID);
 
     // set cookie
