@@ -1,4 +1,5 @@
-import * as jose from 'jose';
+import type { JWTHeaderParameters, JWTPayload, JWTVerifyOptions } from 'jose';
+import { importPKCS8, importSPKI, jwtVerify, SignJWT } from 'jose';
 
 import config from '../config';
 
@@ -10,9 +11,9 @@ import config from '../config';
  * @returns Signed JWS.
  */
 export const signJWS = async (jti: string, userID: string) => {
-  const privateKey = await jose.importPKCS8(config.JWT_PRIVATE_KEY, 'EdDSA');
+  const privateKey = await importPKCS8(config.JWT_PRIVATE_KEY, 'EdDSA');
 
-  const payload: jose.JWTPayload = {
+  const payload: JWTPayload = {
     aud: config.JWT_AUDIENCE,
     exp: Math.floor(Date.now() / 1000) + 900, // 15 minutes
     iat: Math.floor(Date.now() / 1000),
@@ -22,12 +23,12 @@ export const signJWS = async (jti: string, userID: string) => {
     sub: userID,
   };
 
-  const headers: jose.JWTHeaderParameters = {
+  const headers: JWTHeaderParameters = {
     alg: 'EdDSA',
     typ: 'JWT',
   };
 
-  return new jose.SignJWT(payload).setProtectedHeader(headers).sign(privateKey);
+  return new SignJWT(payload).setProtectedHeader(headers).sign(privateKey);
 };
 
 /**
@@ -38,14 +39,14 @@ export const signJWS = async (jti: string, userID: string) => {
  * @returns A promise object that contains our JWT.
  */
 export const verifyToken = async (token: string) => {
-  const publicKey = await jose.importSPKI(config.JWT_PUBLIC_KEY, 'EdDSA');
+  const publicKey = await importSPKI(config.JWT_PUBLIC_KEY, 'EdDSA');
 
-  const options: jose.JWTVerifyOptions = {
+  const options: JWTVerifyOptions = {
     audience: config.JWT_AUDIENCE,
     issuer: config.JWT_ISSUER,
   };
 
-  return jose.jwtVerify(token, publicKey, options);
+  return jwtVerify(token, publicKey, options);
 };
 
 /**
