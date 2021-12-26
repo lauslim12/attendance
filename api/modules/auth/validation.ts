@@ -23,9 +23,9 @@ const AuthValidation = {
     }),
   },
 
-  // POST /api/v1/otp/:media
+  // POST /api/v1/otp?media=...
   sendOTP: {
-    params: joi.object().keys({
+    query: joi.object().keys({
       media: joi.string().valid('email', 'sms', 'authenticator').required(),
     }),
   },
