@@ -9,8 +9,7 @@
   "private": true,
   "scripts": {
     "build": "tsc",
-    "migrate": "yarn prisma migrate dev",
-    "seed": "ts-node-dev cli/seed-data",
+    "migrate": "yarn prisma migrate dev && yarn ts-node-dev cli/seed-data",
     "genkeys": "ts-node-dev cli/gen-keys",
     "dev": "ts-node-dev .",
     "start": "NODE_ENV=production node dist/index.js",

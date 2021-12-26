@@ -90,7 +90,6 @@ yarn genkeys
 
 ```bash
 yarn migrate
-yarn seed
 ```
 
 - Transform all of the TOTP strings as QR codes, then scan it in your authenticator application for easy access towards double-protected routes (optional). You may use [QR Code Generator](https://www.qr-code-generator.com/) as an external webservice.
