@@ -1,9 +1,8 @@
 import argon2 from 'argon2';
-import type { CookieOptions, NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 import { nanoid } from 'nanoid/async';
 
-import config from '../../config';
-import { validateTOTP } from '../../core/rfc6238';
+import { validateDefaultTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
 import { signJWS } from '../../util/header-and-jwt';
@@ -237,14 +236,7 @@ const AuthController = {
     }
 
     // validate otp
-    const validTOTP = validateTOTP(password, {
-      issuer: config.TOTP_ISSUER,
-      label: user.username,
-      algorithm: 'SHA1',
-      digits: 6,
-      period: 30,
-      secret: user.totpSecret,
-    });
+    const validTOTP = validateDefaultTOTP(password, user.totpSecret);
     if (!validTOTP) {
       await CacheService.setOTPAttempts(user.userID);
 
@@ -261,14 +253,13 @@ const AuthController = {
     await CacheService.setOTPSession(jti, user.userID);
 
     // set cookie
-    const options: CookieOptions = {
+    res.cookie('attendance-jws', token, {
       httpOnly: true,
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
       sameSite: 'strict',
       maxAge: 900000, // 15 minutes
       signed: true,
-    };
-    res.cookie('attendance-jws', token, options);
+    });
 
     // send response
     sendResponse({

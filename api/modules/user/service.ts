@@ -2,8 +2,7 @@ import type { User } from '@prisma/client';
 import argon2 from 'argon2';
 import { nanoid } from 'nanoid/async';
 
-import config from '../../config';
-import { generateTOTP } from '../../core/rfc6238';
+import { generateDefaultTOTP } from '../../core/rfc6238';
 import prisma from '../../infra/prisma';
 
 /**
@@ -142,7 +141,7 @@ const UserService = {
 
     // Create TOTP secrets with a CSPRNG, and hash passwords with Argon2.
     u.totpSecret = await nanoid();
-    u.password = await argon2.hash(u.password, {
+    u.password = await argon2.hash(u.password.normalize(), {
       timeCost: 300,
       hashLength: 50,
     });
@@ -162,15 +161,8 @@ const UserService = {
       },
     });
 
-    // Generates a TOTP based on that user, but do not expose them yet.
-    const { uri } = generateTOTP({
-      issuer: config.TOTP_ISSUER,
-      label: newUser.username,
-      algorithm: 'SHA1',
-      digits: 6,
-      period: 30,
-      secret: u.totpSecret,
-    });
+    // Generates a TOTP based on that user, but do not expose them yet. Only fetch the URI.
+    const { uri } = generateDefaultTOTP(u.username, u.totpSecret);
 
     // Return all objects.
     return { ...newUser, uri };
@@ -185,8 +177,10 @@ const UserService = {
    */
   updateUser: async (id: string, user: Partial<User>) => {
     const u = { ...user };
+
+    // Re-hash password if a user changes their own.
     if (u.password) {
-      u.password = await argon2.hash(u.password, {
+      u.password = await argon2.hash(u.password.normalize(), {
         timeCost: 300,
         hashLength: 50,
       });
@@ -212,7 +206,7 @@ const UserService = {
    * Deletes a single user.
    *
    * @param id - A user's UUID.
-   * @returns Nothing.
+   * @returns An updated 'User' object.
    */
   deleteUser: async (id: string) =>
     prisma.user.delete({ where: { userID: id } }),
