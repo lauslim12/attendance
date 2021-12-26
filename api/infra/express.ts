@@ -12,6 +12,7 @@ import morgan from 'morgan';
 import RedisStore from 'rate-limit-redis';
 
 import config from '../config';
+import AttendanceHandler from '../modules/attendance/handler';
 import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
@@ -142,6 +143,7 @@ function loadExpress() {
   });
 
   // Define handlers.
+  const attendanceHandler = AttendanceHandler();
   const authHandler = AuthHandler();
   const healthHandler = HealthHandler();
   const userHandler = UserHandler();
@@ -149,6 +151,7 @@ function loadExpress() {
   // Define API routes.
   app.use('/api', throttler);
   app.use('/api/v1', healthHandler);
+  app.use('/api/v1/attendance', strictLimiter, attendanceHandler);
   app.use('/api/v1/auth', strictLimiter, authHandler);
   app.use('/api/v1/users', limiter, userHandler);
 

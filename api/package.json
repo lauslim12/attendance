@@ -25,6 +25,7 @@
     "argon2": "^0.28.3",
     "connect-redis": "^6.0.0",
     "cookie-parser": "^1.4.6",
+    "device-detector-js": "^3.0.0",
     "dotenv": "^10.0.0",
     "express": "^4.17.2",
     "express-rate-limit": "^5.5.1",
@@ -40,7 +41,8 @@
     "nanoid": "^3.1.30",
     "otpauth": "^7.0.8",
     "rate-limit-redis": "^2.1.0",
-    "redis": "3.1.2"
+    "redis": "3.1.2",
+    "request-ip": "^2.1.3"
   },
   "devDependencies": {
     "@types/connect-redis": "^0.0.18",
@@ -53,6 +55,7 @@
     "@types/morgan": "^1.9.3",
     "@types/node": "^17.0.2",
     "@types/rate-limit-redis": "^1.7.3",
+    "@types/request-ip": "^0.0.37",
     "@typescript-eslint/eslint-plugin": "^5.8.0",
     "@typescript-eslint/parser": "^5.8.0",
     "dpdm": "^3.8.0",

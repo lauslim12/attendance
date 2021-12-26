@@ -36,7 +36,7 @@ model Attendance {
   timeEnter      DateTime
   ipAddressEnter String
   deviceEnter    String
-  remarksEnter   String
+  remarksEnter   String?
   timeLeave      DateTime?
   ipAddressLeave String?
   deviceLeave    String?
