@@ -54,6 +54,7 @@ const AttendanceController = {
       timeEnter: today,
       ipAddressEnter: requestIp.getClientIp(req) || 'Unknown IP',
       deviceEnter: userDevice,
+      remarksEnter: req.body.remarksEnter,
       user: { connect: { userPK: user.userPK } },
     });
 
