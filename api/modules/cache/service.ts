@@ -8,6 +8,7 @@ const CacheService = {
    * Gets whether the user has asked OTP or not.
    *
    * @param userID - A user's ID
+   * @returns A value, or null.
    */
   getHasAskedOTP: async (userID: string) =>
     CacheRepository.getHasAskedOTP(userID),
@@ -16,6 +17,7 @@ const CacheService = {
    * Gets the number of OTP attempts that is done by a user.
    *
    * @param userID - ID of the user.
+   * @returns A value, or null.
    */
   getOTPAttempts: async (userID: string) =>
     CacheRepository.getOTPAttempts(userID),
@@ -39,6 +41,7 @@ const CacheService = {
    * Sets in the cache whether the user has asked for OTP or not.
    *
    * @param userID - ID of the user.
+   * @returns Asychronous 'OK'.
    */
   setHasAskedOTP: async (userID: string) =>
     CacheRepository.setHasAskedOTP(userID),
@@ -47,6 +50,7 @@ const CacheService = {
    * Sets the number of OTP 'wrong' attempts of a single user.
    *
    * @param userID - ID of the user.
+   * @returns Asynchronous 'OK'.
    */
   setOTPAttempts: async (userID: string) =>
     CacheRepository.setOTPAttempts(userID),
@@ -56,6 +60,7 @@ const CacheService = {
    *
    * @param jti - JSON Web Identifier, to be used as the 'key'.
    * @param value - Value of the 'key-value' pair.
+   * @returns Asynchronous 'OK'.
    */
   setOTPSession: async (jti: string, value: string) =>
     CacheRepository.setOTPSession(jti, value),
