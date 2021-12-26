@@ -3,6 +3,7 @@ import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
 import getMe from '../middleware/get-me';
+import getStatus from '../middleware/get-status';
 import hasJWT from '../middleware/has-jwt';
 import hasRole from '../middleware/has-role';
 import hasSession from '../middleware/has-session';
@@ -16,6 +17,8 @@ import UserValidation from './validation';
  */
 const UserHandler = () => {
   const handler = express.Router();
+
+  handler.route('/me/status').get(getStatus);
 
   // restrict below endpoints for people who have logged in
   handler.use(hasSession);
