@@ -17,10 +17,10 @@ function handleSignals(server: Server) {
     console.log('Received SIGINT signal. Shutting down gracefully.');
 
     server.close(() => {
-      redis
-        .quit()
-        .then(() => prisma.$disconnect())
-        .finally(() => process.exit(0));
+      Promise.all([redis.quit(), prisma.$disconnect]).finally(() => {
+        console.log('Server has closed due to SIGINT signal.');
+        process.exit(0);
+      });
     });
   });
 
@@ -29,10 +29,10 @@ function handleSignals(server: Server) {
     console.log('Received signal to quit. Shutting down gracefully.');
 
     server.close(() => {
-      redis
-        .quit()
-        .then(() => prisma.$disconnect())
-        .finally(() => process.exit(0));
+      Promise.all([redis.quit(), prisma.$disconnect]).finally(() => {
+        console.log('Server has closed due to SIGQUIT signal.');
+        process.exit(0);
+      });
     });
   });
 
@@ -41,10 +41,10 @@ function handleSignals(server: Server) {
     console.log('Received signal to terminate. Shutting down gracefully.');
 
     server.close(() => {
-      redis
-        .quit()
-        .then(() => prisma.$disconnect())
-        .finally(() => process.exit(0));
+      Promise.all([redis.quit(), prisma.$disconnect]).finally(() => {
+        console.log('Server has closed due to SIGTERM signal.');
+        process.exit(0);
+      });
     });
   });
 }
@@ -60,17 +60,17 @@ async function startServer() {
     process.exit(1);
   });
 
-  // Provision all infrastructures and test.
-  const pong = await CacheService.ping();
-  await prisma.$connect();
+  // Provision all infrastructures and test connectivity.
+  const status = await Promise.all([
+    CacheService.ping(),
+    prisma.$queryRaw`SELECT 1`,
+  ]);
+  console.log(`Status of infrastructures: ${JSON.stringify(status)}.`);
 
   // Prepare server.
   const app = loadExpress();
   const server = app.listen(config.PORT, () => {
     console.log(`API has started and is running on port ${config.PORT}!`);
-    console.log('Infrastructures status:');
-    console.log(`Redis: ${pong}.`);
-    console.log('Prisma has connected.');
     console.log('API configurations / environment could be seen below:');
     console.log(config);
   });
@@ -82,9 +82,15 @@ async function startServer() {
 
     // Finish all requests that are still pending, the shutdown gracefully.
     server.close(async () => {
-      await redis.quit();
-      await prisma.$disconnect();
-      process.exit(1);
+      try {
+        await redis.quit();
+        await prisma.$disconnect();
+      } catch (err) {
+        console.error(err);
+      } finally {
+        console.log('Server has closed due to unhandled rejection.');
+        process.exit(1);
+      }
     });
   });
 
@@ -95,4 +101,4 @@ async function startServer() {
 /**
  * Starts our whole codebase.
  */
-startServer().then(() => console.log('Express server has been loaded!'));
+startServer();
