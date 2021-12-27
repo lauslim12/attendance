@@ -1,4 +1,4 @@
-import type { User } from '@prisma/client';
+import type { Prisma } from '@prisma/client';
 import argon2 from 'argon2';
 import { nanoid } from 'nanoid/async';
 
@@ -133,10 +133,10 @@ const UserService = {
   /**
    * Creates a single user data, and generates their own QR code URI for Google Authenticator.
    *
-   * @param user - A user's complete data
+   * @param user - A user's complete required data
    * @returns A created 'User' object, with sensitive data removed.
    */
-  createUser: async (user: User) => {
+  createUser: async (user: Prisma.UserCreateInput) => {
     const u = { ...user };
 
     // Create TOTP secrets with a CSPRNG, and hash passwords with Argon2.
@@ -175,11 +175,11 @@ const UserService = {
    * @param user - A partial object to update the user. Already validated in validation layer.
    * @returns An updated 'User' object, with sensitive data removed.
    */
-  updateUser: async (id: string, user: Partial<User>) => {
+  updateUser: async (id: string, user: Prisma.UserUpdateInput) => {
     const u = { ...user };
 
     // Re-hash password if a user changes their own.
-    if (u.password) {
+    if (typeof u.password === 'string' && u.password) {
       u.password = await argon2.hash(u.password.normalize(), {
         timeCost: 300,
         hashLength: 50,

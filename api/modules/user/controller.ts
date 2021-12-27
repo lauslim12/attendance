@@ -53,7 +53,14 @@ const UserController = {
       return;
     }
 
-    const user = await UserService.createUser(req.body);
+    const user = await UserService.createUser({
+      username: req.body.username,
+      email: req.body.email,
+      phoneNumber: req.body.phoneNumber,
+      password: req.body.password,
+      totpSecret: '', // kept blank to ensure that this gets filled in the service layer
+      fullName: req.body.fullName,
+    });
 
     sendResponse({
       req,
@@ -119,6 +126,7 @@ const UserController = {
       }
     }
 
+    // everything is optional and sanitized according to the previous validation layer
     const user = await UserService.updateUser(req.params.id, req.body);
 
     sendResponse({
