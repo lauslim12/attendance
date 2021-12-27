@@ -2,6 +2,7 @@ import express from 'express';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
+import AttendanceHandler from '../attendance/handler';
 import getMe from '../middleware/get-me';
 import getStatus from '../middleware/get-status';
 import hasJWT from '../middleware/has-jwt';
@@ -17,6 +18,9 @@ import UserValidation from './validation';
  */
 const UserHandler = () => {
   const handler = express.Router();
+
+  // route to attendance based on the current user for better REST-ful
+  handler.use('/:id/attendance', AttendanceHandler());
 
   handler.route('/me/status').get(getStatus);
 

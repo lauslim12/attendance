@@ -31,6 +31,13 @@ const AttendanceHandler = () => {
     asyncHandler(AttendanceController.out)
   );
 
+  handler.get(
+    '/',
+    asyncHandler(hasSession),
+    validate(AttendanceValidation.getAttendances),
+    asyncHandler(AttendanceController.getAttendances)
+  );
+
   return handler;
 };
 
