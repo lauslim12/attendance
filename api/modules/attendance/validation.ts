@@ -10,6 +10,13 @@ const AttendanceValidation = {
       remarksEnter: joi.string().trim(),
     }),
   },
+
+  // PATCH /api/v1/attendance/out
+  out: {
+    body: joi.object().keys({
+      remarksLeave: joi.string().trim(),
+    }),
+  },
 };
 
 export default AttendanceValidation;
