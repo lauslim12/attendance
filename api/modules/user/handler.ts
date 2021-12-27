@@ -21,7 +21,7 @@ const UserHandler = () => {
   handler.route('/me/status').get(getStatus);
 
   // restrict below endpoints for people who have logged in
-  handler.use(hasSession);
+  handler.use(asyncHandler(hasSession));
 
   handler
     .route('/me')

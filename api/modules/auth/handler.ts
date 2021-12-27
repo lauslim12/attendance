@@ -25,11 +25,11 @@ const AuthHandler = () => {
   handler
     .route('/otp')
     .post(
-      hasSession,
+      asyncHandler(hasSession),
       validate(AuthValidation.sendOTP),
       asyncHandler(AuthController.sendOTP)
     )
-    .put(hasSession, asyncHandler(AuthController.verifyOTP));
+    .put(asyncHandler(hasSession), asyncHandler(AuthController.verifyOTP));
 
   handler.post(
     '/register',
