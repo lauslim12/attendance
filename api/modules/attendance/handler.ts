@@ -13,7 +13,7 @@ import AttendanceValidation from './validation';
  * @returns Express router
  */
 const AttendanceHandler = () => {
-  const handler = express.Router();
+  const handler = express.Router({ mergeParams: true });
 
   handler.post(
     '/in',
@@ -23,7 +23,20 @@ const AttendanceHandler = () => {
     asyncHandler(AttendanceController.in)
   );
 
-  handler.post('/out');
+  handler.patch(
+    '/out',
+    asyncHandler(hasSession),
+    asyncHandler(hasJWT),
+    validate(AttendanceValidation.out),
+    asyncHandler(AttendanceController.out)
+  );
+
+  handler.get(
+    '/',
+    asyncHandler(hasSession),
+    validate(AttendanceValidation.getAttendances),
+    asyncHandler(AttendanceController.getAttendances)
+  );
 
   return handler;
 };

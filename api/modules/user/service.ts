@@ -1,9 +1,23 @@
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 import argon2 from 'argon2';
 import { nanoid } from 'nanoid/async';
 
 import { generateDefaultTOTP } from '../../core/rfc6238';
 import prisma from '../../infra/prisma';
+
+/**
+ * Almost all user operations return these attributes (usually exposed to the user as response).
+ */
+const userSelect = Prisma.validator<Prisma.UserSelect>()({
+  userID: true,
+  username: true,
+  email: true,
+  phoneNumber: true,
+  fullName: true,
+  role: true,
+  createdAt: true,
+  updatedAt: true,
+});
 
 /**
  * Business logic and repositories for 'Users' entity.
@@ -55,16 +69,7 @@ const UserService = {
   getUserByID: async (id: string) =>
     prisma.user.findUnique({
       where: { userID: id },
-      select: {
-        userID: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-        fullName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     }),
 
   /**
@@ -76,16 +81,7 @@ const UserService = {
   getUserByUsername: async (username: string) =>
     prisma.user.findUnique({
       where: { username },
-      select: {
-        userID: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-        fullName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     }),
 
   /**
@@ -97,16 +93,7 @@ const UserService = {
   getUserByPhoneNumber: async (phoneNumber: string) =>
     prisma.user.findUnique({
       where: { phoneNumber },
-      select: {
-        userID: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-        fullName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     }),
 
   /**
@@ -118,16 +105,7 @@ const UserService = {
   getUserByEmail: async (email: string) =>
     prisma.user.findUnique({
       where: { email },
-      select: {
-        userID: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-        fullName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     }),
 
   /**
@@ -149,16 +127,7 @@ const UserService = {
     // Create a new user.
     const newUser = await prisma.user.create({
       data: u,
-      select: {
-        userID: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-        fullName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     });
 
     // Generates a TOTP based on that user, but do not expose them yet. Only fetch the URI.
@@ -189,16 +158,7 @@ const UserService = {
     return prisma.user.update({
       where: { userID: id },
       data: user,
-      select: {
-        userID: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-        fullName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
+      select: userSelect,
     });
   },
 
