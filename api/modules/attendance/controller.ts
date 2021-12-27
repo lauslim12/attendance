@@ -1,8 +1,7 @@
-import DeviceDetector from 'device-detector-js';
 import { NextFunction, Request, Response } from 'express';
-import requestIp from 'request-ip';
 
 import AppError from '../../util/app-error';
+import getDeviceID from '../../util/device-id';
 import sendResponse from '../../util/send-response';
 import UserService from '../user/service';
 import AttendanceService from './service';
@@ -91,16 +90,11 @@ const AttendanceController = {
       return;
     }
 
-    // Parse headers.
-    const agent = req.headers['user-agent'] ? req.headers['user-agent'] : '';
-    const detected = new DeviceDetector().parse(agent);
-    const userDevice = `${detected.client?.name} ${detected.client?.version} on ${detected.os?.name}`;
-
     // Shape request body to follow the 'attendance' data structure.
     const attendance = await AttendanceService.createAttendance({
       timeEnter: today,
-      ipAddressEnter: requestIp.getClientIp(req) || 'Unknown IP',
-      deviceEnter: userDevice,
+      ipAddressEnter: getDeviceID(req).ip,
+      deviceEnter: getDeviceID(req).device,
       remarksEnter: req.body.remarksEnter,
       user: { connect: { userPK: user.userPK } },
     });
@@ -159,18 +153,13 @@ const AttendanceController = {
       return;
     }
 
-    // Parse headers.
-    const agent = req.headers['user-agent'] ? req.headers['user-agent'] : '';
-    const detected = new DeviceDetector().parse(agent);
-    const userDevice = `${detected.client?.name} ${detected.client?.version} on ${detected.os?.name}`;
-
     // Shape request body to follow the 'attendance' data structure.
     const attendance = await AttendanceService.updateAttendance(
       checked.attendanceID,
       {
         timeLeave: today,
-        ipAddressLeave: requestIp.getClientIp(req) || 'Unknown IP',
-        deviceLeave: userDevice,
+        ipAddressLeave: getDeviceID(req).ip,
+        deviceLeave: getDeviceID(req).device,
         remarksLeave: req.body.remarksLeave,
       }
     );
