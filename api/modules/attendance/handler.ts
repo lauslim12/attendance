@@ -1,6 +1,7 @@
 import express from 'express';
 import { validate } from 'express-validation';
 
+import asyncHandler from '../../util/async-handler';
 import hasJWT from '../middleware/has-jwt';
 import hasSession from '../middleware/has-session';
 import AttendanceController from './controller';
@@ -16,10 +17,10 @@ const AttendanceHandler = () => {
 
   handler.post(
     '/in',
-    hasSession,
-    hasJWT,
+    asyncHandler(hasSession),
+    asyncHandler(hasJWT),
     validate(AttendanceValidation.in),
-    AttendanceController.in
+    asyncHandler(AttendanceController.in)
   );
 
   handler.post('/out');
