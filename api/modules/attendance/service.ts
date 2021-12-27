@@ -1,6 +1,27 @@
-import type { Prisma } from '@prisma/client';
+import { Prisma } from '@prisma/client';
 
 import prisma from '../../infra/prisma';
+
+/**
+ * All of the return types will return these attributes.
+ */
+const attendanceSelect = Prisma.validator<Prisma.AttendanceSelect>()({
+  attendanceID: true,
+  timeEnter: true,
+  ipAddressEnter: true,
+  deviceEnter: true,
+  remarksEnter: true,
+  timeLeave: true,
+  ipAddressLeave: true,
+  deviceLeave: true,
+  remarksLeave: true,
+  user: {
+    select: {
+      userID: true,
+      fullName: true,
+    },
+  },
+});
 
 /**
  * Business logic and repositories for 'Attendance' entity.
@@ -15,23 +36,7 @@ const AttendanceService = {
   createAttendance: async (attendance: Prisma.AttendanceCreateInput) =>
     prisma.attendance.create({
       data: attendance,
-      select: {
-        attendanceID: true,
-        timeEnter: true,
-        ipAddressEnter: true,
-        deviceEnter: true,
-        remarksEnter: true,
-        timeLeave: true,
-        ipAddressLeave: true,
-        deviceLeave: true,
-        remarksLeave: true,
-        user: {
-          select: {
-            userID: true,
-            fullName: true,
-          },
-        },
-      },
+      select: attendanceSelect,
     }),
 
   /**
@@ -101,47 +106,13 @@ const AttendanceService = {
   getAttendances: async (userPK?: number) => {
     if (typeof userPK === 'undefined') {
       return prisma.attendance.findMany({
-        select: {
-          attendanceID: true,
-          timeEnter: true,
-          ipAddressEnter: true,
-          deviceEnter: true,
-          remarksEnter: true,
-          timeLeave: true,
-          ipAddressLeave: true,
-          deviceLeave: true,
-          remarksLeave: true,
-          user: {
-            select: {
-              userID: true,
-              fullName: true,
-            },
-          },
-        },
+        select: attendanceSelect,
       });
     }
 
     return prisma.attendance.findMany({
-      where: {
-        userPK,
-      },
-      select: {
-        attendanceID: true,
-        timeEnter: true,
-        ipAddressEnter: true,
-        deviceEnter: true,
-        remarksEnter: true,
-        timeLeave: true,
-        ipAddressLeave: true,
-        deviceLeave: true,
-        remarksLeave: true,
-        user: {
-          select: {
-            userID: true,
-            fullName: true,
-          },
-        },
-      },
+      where: { userPK },
+      select: attendanceSelect,
     });
   },
 
@@ -159,23 +130,7 @@ const AttendanceService = {
     prisma.attendance.update({
       where: { attendanceID: id },
       data: attendance,
-      select: {
-        attendanceID: true,
-        timeEnter: true,
-        ipAddressEnter: true,
-        deviceEnter: true,
-        remarksEnter: true,
-        timeLeave: true,
-        ipAddressLeave: true,
-        deviceLeave: true,
-        remarksLeave: true,
-        user: {
-          select: {
-            userID: true,
-            fullName: true,
-          },
-        },
-      },
+      select: attendanceSelect,
     }),
 };
 
