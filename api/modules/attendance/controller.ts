@@ -12,6 +12,53 @@ import AttendanceService from './service';
  */
 const AttendanceController = {
   /**
+   * Gets all attendances.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  getAttendances: async (req: Request, res: Response, next: NextFunction) => {
+    if (!req.session.userID) {
+      next(new AppError('No session detected. Please log in again!', 401));
+      return;
+    }
+
+    const withUser = !!req.params.id;
+    if (withUser) {
+      const user = await UserService.getUserCompleteDataByID(req.params.id);
+      if (!user) {
+        next(new AppError('No user found with that ID.', 404));
+        return;
+      }
+
+      const attendances = await AttendanceService.getAttendances(user.userPK);
+
+      sendResponse({
+        req,
+        res,
+        status: 'success',
+        statusCode: 200,
+        data: attendances,
+        message: 'Successfully fetched all attendances data for a single user.',
+        type: 'attendance',
+      });
+      return;
+    }
+
+    const attendances = await AttendanceService.getAttendances();
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: attendances,
+      message: 'Successfully fetched all attendances data!',
+      type: 'attendance',
+    });
+  },
+
+  /**
    * Checks in a user inside the webservice. Algorithm:
    * - Ensure that the request is made within time (optional).
    * - Fetches the current user to get their identifier.

@@ -93,6 +93,59 @@ const AttendanceService = {
   },
 
   /**
+   * Gets all attendances data, either global, or all attendances data of a single user.
+   *
+   * @param userPK - User's primary key (optional).
+   * @returns All attendance data.
+   */
+  getAttendances: async (userPK?: number) => {
+    if (typeof userPK === 'undefined') {
+      return prisma.attendance.findMany({
+        select: {
+          attendanceID: true,
+          timeEnter: true,
+          ipAddressEnter: true,
+          deviceEnter: true,
+          remarksEnter: true,
+          timeLeave: true,
+          ipAddressLeave: true,
+          deviceLeave: true,
+          remarksLeave: true,
+          user: {
+            select: {
+              userID: true,
+              fullName: true,
+            },
+          },
+        },
+      });
+    }
+
+    return prisma.attendance.findMany({
+      where: {
+        userPK,
+      },
+      select: {
+        attendanceID: true,
+        timeEnter: true,
+        ipAddressEnter: true,
+        deviceEnter: true,
+        remarksEnter: true,
+        timeLeave: true,
+        ipAddressLeave: true,
+        deviceLeave: true,
+        remarksLeave: true,
+        user: {
+          select: {
+            userID: true,
+            fullName: true,
+          },
+        },
+      },
+    });
+  },
+
+  /**
    * Updates a single attendance based on ID.
    *
    * @param id - An attendance ID.
