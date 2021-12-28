@@ -2,12 +2,13 @@ import argon2 from 'argon2';
 import type { NextFunction, Request, Response } from 'express';
 import { nanoid } from 'nanoid/async';
 
-import { validateDefaultTOTP } from '../../core/rfc6238';
+import { generateDefaultTOTP, validateDefaultTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
 import { signJWS } from '../../util/header-and-jwt';
 import sendResponse from '../../util/send-response';
 import CacheService from '../cache/service';
+import Email from '../email';
 import UserService from '../user/service';
 
 /**
@@ -142,14 +143,20 @@ const AuthController = {
    * @param next - Express.js's next function.
    */
   sendOTP: async (req: Request, res: Response, next: NextFunction) => {
-    const uid = req.session.userID;
-    if (!uid) {
+    if (!req.session.userID) {
       next(new AppError('No session detected. Please log in again.', 401));
       return;
     }
 
+    // check the availability of the user
+    const user = await UserService.getUserCompleteDataByID(req.session.userID);
+    if (!user) {
+      next(new AppError('User with this ID does not exist!', 400));
+      return;
+    }
+
     // if not yet expired, means that the user has asked in 'successive' order and it is a potential to spam
-    if (await CacheService.getHasAskedOTP(uid)) {
+    if (await CacheService.getHasAskedOTP(req.session.userID)) {
       next(
         new AppError(
           'You have recently asked for an OTP. Please wait 30 seconds before we process your request again.',
@@ -160,8 +167,10 @@ const AuthController = {
     }
 
     // guaranteed to be 'email', 'sms', or 'authenticator' due to the validation layer
+    const totp = generateDefaultTOTP(user.username, user.totpSecret);
     if (req.query.media === 'email') {
-      // TODO: send email
+      // sends an email to the user
+      await new Email(user.email, user.fullName).sendOTP(totp.token);
     }
 
     if (req.query.media === 'sms') {
@@ -169,7 +178,7 @@ const AuthController = {
     }
 
     // if using authenticator, do nothing as its already there, increment redis instead
-    await CacheService.setHasAskedOTP(uid);
+    await CacheService.setHasAskedOTP(req.session.userID);
 
     // send back response
     sendResponse({
@@ -229,6 +238,8 @@ const AuthController = {
     // TODO: should send email/sms/push notification to the relevant user
     const attempts = await CacheService.getOTPAttempts(user.userID);
     if (attempts && Number.parseInt(attempts, 10) === 3) {
+      await new Email(user.email, user.fullName).sendNotification();
+
       next(
         new AppError(
           'You have exceeded the times allowed for a secured session. Please try again in the next day.',
