@@ -51,6 +51,7 @@ const config = {
   EMAIL_PORT: process.env.EMAIL_PORT || 465,
 
   JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'attendance-users',
+  JWT_COOKIE_NAME: process.env.JWT_COOKIE_NAME || 'attendance-jws',
   JWT_ISSUER: process.env.JWT_ISSUER || 'attendance-api',
   JWT_PRIVATE_KEY: fromBase64ToASCII(env(process.env.JWT_PRIVATE_KEY)),
   JWT_PUBLIC_KEY: fromBase64ToASCII(env(process.env.JWT_PUBLIC_KEY)),
@@ -62,6 +63,8 @@ const config = {
   NODE_ENV: process.env.NODE_ENV || 'development',
 
   PORT: process.env.PORT || 8080,
+
+  SESSION_COOKIE: process.env.SESSION_COOKIE || 'attendance-sid',
 
   TOTP_ISSUER: process.env.TOTP_ISSUER || 'Attendance',
 };

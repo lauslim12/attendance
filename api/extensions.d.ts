@@ -9,6 +9,7 @@ declare global {
       EMAIL_PASSWORD: string;
       EMAIL_PORT?: number;
       JWT_AUDIENCE?: string;
+      JWT_COOKIE_NAME?: string;
       JWT_ISSUER?: string;
       JWT_PRIVATE_KEY: string;
       JWT_PUBLIC_KEY: string;
@@ -17,6 +18,7 @@ declare global {
       MAILTRAP_PASSWORD: string;
       NODE_ENV?: 'production' | 'development';
       PORT?: number;
+      SESSION_COOKIE?: string;
       TOTP_ISSUER?: string;
     }
   }

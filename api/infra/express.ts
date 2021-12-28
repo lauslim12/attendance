@@ -92,7 +92,7 @@ function loadExpress() {
   app.use(
     session({
       store: new RedisSessionStore({ client: redis.nodeRedis }),
-      name: 'attendance-sid',
+      name: config.SESSION_COOKIE,
       saveUninitialized: false,
       resave: false,
       secret: config.COOKIE_SECRET,

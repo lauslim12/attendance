@@ -2,6 +2,7 @@ import argon2 from 'argon2';
 import type { NextFunction, Request, Response } from 'express';
 import { nanoid } from 'nanoid/async';
 
+import config from '../../config';
 import { generateDefaultTOTP, validateDefaultTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
@@ -47,7 +48,7 @@ const AuthController = {
     req.session.userRole = user.role;
 
     // remove MFA session cookie if it exists
-    res.cookie('attendance-jws', 'loggedOut', { maxAge: 10 });
+    res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
 
     // send response
     sendResponse({
@@ -75,7 +76,7 @@ const AuthController = {
         return;
       }
 
-      res.cookie('attendance-jws', 'loggedOut', { maxAge: 10 });
+      res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
 
       sendResponse({
         req,
@@ -267,7 +268,7 @@ const AuthController = {
     await CacheService.setOTPSession(jti, user.userID);
 
     // set cookie
-    res.cookie('attendance-jws', token, {
+    res.cookie(config.JWT_COOKIE_NAME, token, {
       httpOnly: true,
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
       sameSite: 'strict',
