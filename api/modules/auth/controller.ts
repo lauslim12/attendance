@@ -45,6 +45,9 @@ const AuthController = {
     req.session.userID = user.userID;
     req.session.userRole = user.role;
 
+    // remove MFA session cookie if it exists
+    res.cookie('attendance-jws', 'loggedOut', { maxAge: 10 });
+
     // send response
     sendResponse({
       req,
