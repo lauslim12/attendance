@@ -28,19 +28,7 @@ const UserService = {
    *
    * @returns All users from the database, sensitive columns removed.
    */
-  getUsers: async () =>
-    prisma.user.findMany({
-      select: {
-        userID: true,
-        username: true,
-        email: true,
-        phoneNumber: true,
-        fullName: true,
-        role: true,
-        createdAt: true,
-        updatedAt: true,
-      },
-    }),
+  getUsers: async () => prisma.user.findMany({ select: userSelect }),
 
   /**
    * Fetches a single user data from the database, their complete data.
