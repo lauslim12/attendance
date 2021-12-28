@@ -30,7 +30,8 @@ For development, you need the following technologies installed on your machine:
 - [Docker](https://www.docker.com/)
 - [Node.js 16+](https://nodejs.org/)
 - [Yarn 1.22+](https://yarnpkg.com/)
-- [Postman Desktop Agent](https://www.postman.com/downloads/)
+- [Postman Desktop Agent](https://www.postman.com/downloads/) to test things locally
+- [Mailtrap](https://mailtrap.io/) to test emails in development environment
 - Unix-based systems or MacOS
 - Authenticators, such as Google Authenticator, Microsoft Authenticator, etc.
 
@@ -93,6 +94,8 @@ yarn migrate
 ```
 
 - Transform all of the TOTP strings as QR codes, then scan it in your authenticator application for easy access towards double-protected routes (optional). You may use [QR Code Generator](https://www.qr-code-generator.com/) as an external webservice.
+
+- For the first time, you also have to configure [Mailtrap](https://mailtrap.io/) to send emails in development environment. You can register an account there, then create a new inbox, and then import the credentials required (`MAILTRAP_USERNAME`, `MAILTRAP_PASSWORD`, and `MAILTRAP_HOST`) in the `.env` file.
 
 - Run the application in development mode.
 
