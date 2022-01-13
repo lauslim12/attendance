@@ -14,7 +14,7 @@ import UserService from '../user/service';
  * @param next - Express.js's next function.
  */
 const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
-  // extract token and validate
+  // Extract token and validate.
   const token = extractToken(
     req.headers.authorization,
     req.signedCookies['attendance-jws']
@@ -30,10 +30,10 @@ const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  // verify token
+  // Verify the token.
   const decoded = await verifyToken(token);
 
-  // verify JTI
+  // Verify the token's JTI.
   if (!decoded.payload.jti) {
     res.set('WWW-Authenticate', 'Bearer realm="OTP"');
     next(
@@ -45,7 +45,7 @@ const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  // check if JTI exists in redis
+  // Check if JTI exists in Redis.
   const userID = await CacheService.getOTPSession(decoded.payload.jti);
   if (!userID) {
     res.set('WWW-Authenticate', 'Bearer realm="OTP"');
@@ -53,15 +53,15 @@ const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  // check if user still exists in the database
-  const user = await UserService.getUserByID(userID);
+  // Check if the user still exists in the database.
+  const user = await UserService.getUser({ userID });
   if (!user) {
     res.set('WWW-Authenticate', 'Bearer realm="OTP"');
     next(new AppError('User belonging to this token does not exist.', 401));
     return;
   }
 
-  // grant user access to an endpoint, go to next middleware
+  // Grant user access to an endpoint, go to next middleware.
   req.userID = userID;
   next();
 };
