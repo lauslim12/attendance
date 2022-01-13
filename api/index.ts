@@ -81,16 +81,11 @@ async function startServer() {
     console.log(err.name, err.message);
 
     // Finish all requests that are still pending, the shutdown gracefully.
-    server.close(async () => {
-      try {
-        await redis.quit();
-        await prisma.$disconnect();
-      } catch (err) {
-        console.error(err);
-      } finally {
+    server.close(() => {
+      Promise.all([redis.quit(), prisma.$disconnect]).finally(() => {
         console.log('Server has closed due to unhandled rejection.');
         process.exit(1);
-      }
+      });
     });
   });
 
