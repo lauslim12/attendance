@@ -26,6 +26,16 @@ const select = Prisma.validator<Prisma.AttendanceSelect>()({
 });
 
 /**
+ * Formats a date into 'YYYY/MM/DD' format with the time being 00:00. This little
+ * hack is required for Prisma's 'BETWEEN' queries. We do not use 'toISOString()' to
+ * prevent timezone clashing (sometimes it can go back a single day).
+ *
+ * @param date - Date to be formatted.
+ * @returns Date in 'YYYY/MM/DD' (00:00) as a Date object.
+ */
+const formatDate = (date: Date) => new Date(date.toLocaleDateString('en-ZA'));
+
+/**
  * Business logic and repositories for 'Attendance' entity.
  */
 const AttendanceService = {
@@ -47,12 +57,18 @@ const AttendanceService = {
 
     if (type === 'in') {
       return prisma.attendance.findFirst({
-        where: { user: { userID }, timeEnter: { gte: date, lt: tomorrow } },
+        where: {
+          user: { userID },
+          timeEnter: { gte: formatDate(date), lt: formatDate(tomorrow) },
+        },
       });
     }
 
     return prisma.attendance.findFirst({
-      where: { user: { userID }, timeLeave: { gte: date, lt: tomorrow } },
+      where: {
+        user: { userID },
+        timeLeave: { gte: formatDate(date), lt: formatDate(tomorrow) },
+      },
     });
   },
 
