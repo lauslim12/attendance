@@ -3,9 +3,11 @@ import { Prisma } from '@prisma/client';
 import prisma from '../../infra/prisma';
 
 /**
- * All of the return types will return these attributes.
+ * All of the return types will return these attributes. This is the default
+ * for filtered queries, as we have no need to return sensitive attributes such
+ * as secrets and/or passwords.
  */
-const attendanceSelect = Prisma.validator<Prisma.AttendanceSelect>()({
+const select = Prisma.validator<Prisma.AttendanceSelect>()({
   attendanceID: true,
   timeEnter: true,
   ipAddressEnter: true,
@@ -28,110 +30,66 @@ const attendanceSelect = Prisma.validator<Prisma.AttendanceSelect>()({
  */
 const AttendanceService = {
   /**
+   * Fetches a single attendance based on 'timeLeave' or 'timeEnter' and the associated user identifier.
+   * Algorithm:
+   * - Find tomorrow's date.
+   * - Parse dates to be in 'YYYY-MM-DD' format for both dates (tomorrow and today).
+   * - Find first occurence of an attendance based on user id and whose 'timeEnter' (or 'timeLeave')
+   * is between today and tomorrow (based on arguments).
+   *
+   * @param date - Current date as a 'Date' object.
+   * @param userID - A user's ID.
+   * @param type - A type to check the attendance, based on 'timeEnter' or 'timeLeave'.
+   * @returns A single attendance object.
+   */
+  checked: async (date: Date, userID: string, type: 'in' | 'out') => {
+    const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
+
+    if (type === 'in') {
+      return prisma.attendance.findFirst({
+        where: { user: { userID }, timeEnter: { gte: date, lt: tomorrow } },
+      });
+    }
+
+    return prisma.attendance.findFirst({
+      where: { user: { userID }, timeLeave: { gte: date, lt: tomorrow } },
+    });
+  },
+
+  /**
    * Creates a new attendance entry at the system.
    *
-   * @param attendance - Attendance data.
+   * @param data - Attendance data.
    * @returns The created attendance data.
    */
-  createAttendance: async (attendance: Prisma.AttendanceCreateInput) =>
-    prisma.attendance.create({
-      data: attendance,
-      select: attendanceSelect,
-    }),
-
-  /**
-   * Fetches a single attendance based on 'timeLeave' and the associated user identifier.
-   *
-   * @param currentDate - Current date as a data object.
-   * @param userID - A current user's ID.
-   * @returns Attendance object.
-   */
-  checkedIn: async (currentDate: Date, userID: string) => {
-    // find tomorrow's date
-    const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
-
-    // fetch attendance of a user between today and tomorrow with a certain user ID.
-    // time has to be in 'YYYY-MM-DD' format, hence the 'toISOString()' function.
-    const attendance = await prisma.attendance.findFirst({
-      where: {
-        user: {
-          userID,
-        },
-        timeEnter: {
-          gte: new Date(currentDate.toISOString().split('T')[0]),
-          lt: new Date(tomorrow.toISOString().split('T')[0]),
-        },
-      },
-    });
-
-    // return attendance object
-    return attendance;
-  },
-
-  /**
-   * Fetches a single attendance based on 'timeLeave' and the associated user identifier.
-   *
-   * @param currentDate - Current date as a data object.
-   * @param userID - A current user's ID.
-   * @returns Attendance object.
-   */
-  checkedOut: async (currentDate: Date, userID: string) => {
-    // find tomorrow's date
-    const tomorrow = new Date(new Date().setDate(new Date().getDate() + 1));
-
-    // fetch attendance of a user between today and tomorrow with a certain user ID.
-    // time has to be in 'YYYY-MM-DD' format, hence the 'toISOString()' function.
-    const attendance = await prisma.attendance.findFirst({
-      where: {
-        user: {
-          userID,
-        },
-        timeLeave: {
-          gte: new Date(currentDate.toISOString().split('T')[0]),
-          lt: new Date(tomorrow.toISOString().split('T')[0]),
-        },
-      },
-    });
-
-    // return attendance object
-    return attendance;
-  },
+  createAttendance: async (data: Prisma.AttendanceCreateInput) =>
+    prisma.attendance.create({ data, select }),
 
   /**
    * Gets all attendances data, either global, or all attendances data of a single user.
    *
-   * @param userPK - User's primary key (optional).
+   * @param where - Prisma's 'Where' object, accepts unique and/or non unique attributes.
    * @returns All attendance data.
    */
-  getAttendances: async (userPK?: number) => {
-    if (typeof userPK === 'undefined') {
-      return prisma.attendance.findMany({
-        select: attendanceSelect,
-      });
+  getAttendances: async (where?: Prisma.AttendanceWhereInput) => {
+    if (typeof where === 'undefined') {
+      return prisma.attendance.findMany({ select });
     }
 
-    return prisma.attendance.findMany({
-      where: { userPK },
-      select: attendanceSelect,
-    });
+    return prisma.attendance.findMany({ where, select });
   },
 
   /**
    * Updates a single attendance based on ID.
    *
-   * @param id - An attendance ID.
-   * @param attendance - The new, updated data.
+   * @param where - Prisma's 'Where' object, only accepts unique identifiers.
+   * @param data - The new, updated data.
    * @returns Updated attendance data.
    */
   updateAttendance: async (
-    id: string,
-    attendance: Prisma.AttendanceUpdateInput
-  ) =>
-    prisma.attendance.update({
-      where: { attendanceID: id },
-      data: attendance,
-      select: attendanceSelect,
-    }),
+    where: Prisma.AttendanceWhereUniqueInput,
+    data: Prisma.AttendanceUpdateInput
+  ) => prisma.attendance.update({ where, data, select }),
 };
 
 export default AttendanceService;
