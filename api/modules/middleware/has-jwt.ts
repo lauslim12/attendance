@@ -6,6 +6,18 @@ import CacheService from '../cache/service';
 import UserService from '../user/service';
 
 /**
+ * Sets the 'WWW-Authenticate' header properly with the right 'Realm'.
+ *
+ * @param msg - Error message to be passed to the user.
+ * @param res - Express.js's response object.
+ * @param next - Express.js's next function.
+ */
+const invalidBearerAuth = (msg: string, res: Response, next: NextFunction) => {
+  res.set('WWW-Authenticate', 'Bearer realm="OTP-JWS"');
+  next(new AppError(msg, 401));
+};
+
+/**
  * Validates whether a user is authorized/authenticated or not (via JWT).
  * Checks whether the user's session ID exists in Redis.
  *
@@ -14,54 +26,52 @@ import UserService from '../user/service';
  * @param next - Express.js's next function.
  */
 const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
-  // extract token and validate
+  // Extract token and validate.
   const token = extractToken(
     req.headers.authorization,
     req.signedCookies['attendance-jws']
   );
   if (!token) {
-    res.set('WWW-Authenticate', 'Bearer realm="OTP"');
-    next(
-      new AppError(
-        'You do not possess an OTP session. Please verify your OTP by MFA.',
-        401
-      )
+    invalidBearerAuth(
+      'You do not possess an OTP session. Please verify your OTP by MFA.',
+      res,
+      next
     );
     return;
   }
 
-  // verify token
+  // Verify the token.
   const decoded = await verifyToken(token);
 
-  // verify JTI
+  // Verify the token's JTI.
   if (!decoded.payload.jti) {
-    res.set('WWW-Authenticate', 'Bearer realm="OTP"');
-    next(
-      new AppError(
-        'The JTI of the token is wrong or does not exist. Please verify OTP again.',
-        401
-      )
+    invalidBearerAuth(
+      'The JTI of the token is wrong or does not exist. Please verify your session again.',
+      res,
+      next
     );
     return;
   }
 
-  // check if JTI exists in redis
+  // Check if JTI exists in Redis.
   const userID = await CacheService.getOTPSession(decoded.payload.jti);
   if (!userID) {
-    res.set('WWW-Authenticate', 'Bearer realm="OTP"');
-    next(new AppError('This token does not exist in the database.', 401));
+    invalidBearerAuth('This token does not exist in the database.', res, next);
     return;
   }
 
-  // check if user still exists in the database
-  const user = await UserService.getUserByID(userID);
+  // Check if the user still exists in the database.
+  const user = await UserService.getUser({ userID });
   if (!user) {
-    res.set('WWW-Authenticate', 'Bearer realm="OTP"');
-    next(new AppError('User belonging to this token does not exist.', 401));
+    invalidBearerAuth(
+      'User belonging to this token does not exist.',
+      res,
+      next
+    );
     return;
   }
 
-  // grant user access to an endpoint, go to next middleware
+  // Grant user access to an endpoint, go to next middleware.
   req.userID = userID;
   next();
 };

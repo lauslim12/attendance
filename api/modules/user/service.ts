@@ -6,9 +6,10 @@ import { generateDefaultTOTP } from '../../core/rfc6238';
 import prisma from '../../infra/prisma';
 
 /**
- * Almost all user operations return these attributes (usually exposed to the user as response).
+ * Almost all user operations return these attributes (usually exposed to the user as response),
+ * this is intentional as we do not want sensitive values to be fetched and exposed to the end user.
  */
-const userSelect = Prisma.validator<Prisma.UserSelect>()({
+const select = Prisma.validator<Prisma.UserSelect>()({
   userID: true,
   username: true,
   email: true,
@@ -28,82 +29,34 @@ const UserService = {
    *
    * @returns All users from the database, sensitive columns removed.
    */
-  getUsers: async () => prisma.user.findMany({ select: userSelect }),
+  getUsers: async () => prisma.user.findMany({ select }),
 
   /**
-   * Fetches a single user data from the database, their complete data.
+   * Fetches a single user's complete data with no filters.
    *
-   * @param id - A user's UUID.
-   * @returns A single user's complete data from the database.
+   * @param where - Prisma's 'Where' object that accepts unique attributes only.
+   * @returns A single user's complete data (with sensitive values).
    */
-  getUserCompleteDataByID: async (id: string) =>
-    prisma.user.findUnique({ where: { userID: id } }),
+  getUserComplete: async (where: Prisma.UserWhereUniqueInput) =>
+    prisma.user.findUnique({ where }),
 
   /**
-   * Fetches a single user data from the database by their username, a complete data.
+   * Fetches a single user with their sensitive data removed.
    *
-   * @param username - A user's username.
-   * @returns A single user's complete data from the database.
+   * @param where - Prisma's 'Where' object that accepts unique attributes only.
+   * @returns A single user data, filtered (no sensitive values).
    */
-  getUserCompleteDataByUsername: async (username: string) =>
-    prisma.user.findUnique({ where: { username } }),
-
-  /**
-   * Fetches a single user data by using their UUID.
-   *
-   * @param id - A user's UUID.
-   * @returns A single user data, sensitive columns removed.
-   */
-  getUserByID: async (id: string) =>
-    prisma.user.findUnique({
-      where: { userID: id },
-      select: userSelect,
-    }),
-
-  /**
-   * Fetches a single user data by using their username.
-   *
-   * @param username - A user's username.
-   * @returns A single user data, sensitive columns removed.
-   */
-  getUserByUsername: async (username: string) =>
-    prisma.user.findUnique({
-      where: { username },
-      select: userSelect,
-    }),
-
-  /**
-   * Fetches a single user data using their phone number.
-   *
-   * @param phoneNumber - A user's phone number.
-   * @returns A single user data, sensitive columns removed.
-   */
-  getUserByPhoneNumber: async (phoneNumber: string) =>
-    prisma.user.findUnique({
-      where: { phoneNumber },
-      select: userSelect,
-    }),
-
-  /**
-   * Fetches a single user data using their email.
-   *
-   * @param email - A user's email.
-   * @returns A single user data, sensitive columns removed.
-   */
-  getUserByEmail: async (email: string) =>
-    prisma.user.findUnique({
-      where: { email },
-      select: userSelect,
-    }),
+  getUser: async (where: Prisma.UserWhereUniqueInput) =>
+    prisma.user.findUnique({ where, select }),
 
   /**
    * Creates a single user data, and generates their own QR code URI for Google Authenticator.
    *
-   * @param user - A user's complete required data
+   * @param data - All of a user's required data.
    * @returns A created 'User' object, with sensitive data removed.
    */
-  createUser: async (user: Prisma.UserCreateInput) => {
-    const u = { ...user };
+  createUser: async (data: Prisma.UserCreateInput) => {
+    const u = { ...data };
 
     // Create TOTP secrets with a CSPRNG, and hash passwords with Argon2.
     u.totpSecret = await nanoid();
@@ -113,10 +66,7 @@ const UserService = {
     });
 
     // Create a new user.
-    const newUser = await prisma.user.create({
-      data: u,
-      select: userSelect,
-    });
+    const newUser = await prisma.user.create({ data: u, select });
 
     // Generates a TOTP based on that user, but do not expose them yet. Only fetch the URI.
     const { uri } = generateDefaultTOTP(u.username, u.totpSecret);
@@ -128,14 +78,17 @@ const UserService = {
   /**
    * Updates a single user data.
    *
-   * @param id - A user's UUID
-   * @param user - A partial object to update the user. Already validated in validation layer.
+   * @param where - Prisma's 'Where' object. Only accepts unique attributes.
+   * @param data - A partial object to update the user. Already validated in validation layer.
    * @returns An updated 'User' object, with sensitive data removed.
    */
-  updateUser: async (id: string, user: Prisma.UserUpdateInput) => {
-    const u = { ...user };
+  updateUser: async (
+    where: Prisma.UserWhereUniqueInput,
+    data: Prisma.UserUpdateInput
+  ) => {
+    const u = { ...data };
 
-    // Re-hash password if a user changes their own.
+    // Re-hash password if a user changes their own password.
     if (typeof u.password === 'string' && u.password) {
       u.password = await argon2.hash(u.password.normalize(), {
         timeCost: 300,
@@ -143,21 +96,17 @@ const UserService = {
       });
     }
 
-    return prisma.user.update({
-      where: { userID: id },
-      data: user,
-      select: userSelect,
-    });
+    return prisma.user.update({ where, data: u, select });
   },
 
   /**
    * Deletes a single user.
    *
-   * @param id - A user's UUID.
+   * @param where - Prisma's 'where' object to decide what to delete.
    * @returns An updated 'User' object.
    */
-  deleteUser: async (id: string) =>
-    prisma.user.delete({ where: { userID: id } }),
+  deleteUser: async (where: Prisma.UserWhereUniqueInput) =>
+    prisma.user.delete({ where }),
 };
 
 export default UserService;

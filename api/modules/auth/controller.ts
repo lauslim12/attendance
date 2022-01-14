@@ -13,6 +13,18 @@ import Email from '../email';
 import UserService from '../user/service';
 
 /**
+ * Utility function to set 'WWW-Authenticate' header with the proper 'Realm'.
+ *
+ * @param msg - Error message to be passed to the user.
+ * @param res - Express.js's response object.
+ * @param next - Express.js's next function.
+ */
+const invalidBasicAuth = (msg: string, res: Response, next: NextFunction) => {
+  res.set('WWW-Authenticate', 'Basic realm="OTP-Session"');
+  next(new AppError(msg, 401));
+};
+
+/**
  * Authentication controller, forwarded from 'handler'.
  */
 const AuthController = {
@@ -27,7 +39,7 @@ const AuthController = {
     const { username, password } = req.body;
 
     // compare usernames
-    const user = await UserService.getUserCompleteDataByUsername(username);
+    const user = await UserService.getUserComplete({ username });
     if (!user) {
       next(new AppError('Invalid username and/or password!', 401));
       return;
@@ -41,7 +53,7 @@ const AuthController = {
     }
 
     // filter sensitive data
-    const filteredUser = await UserService.getUserByID(user.userID);
+    const filteredUser = await UserService.getUser({ userID: user.userID });
 
     // set signed, secure session cookie
     req.session.userID = user.userID;
@@ -91,31 +103,41 @@ const AuthController = {
   },
 
   /**
-   * Registers a user into the webservice. Exactly the same as 'createUser' in 'User' entity.
+   * Registers a user into the webservice. Exactly the same as 'createUser' in 'User' entity,
+   * with same validations as in 'createUser'.
    *
    * @param req - Express.js's request object.
    * @param res - Express.js's response object.
    * @param next - Express.js's next function.
    */
   register: async (req: Request, res: Response, next: NextFunction) => {
-    if (await UserService.getUserByUsername(req.body.username)) {
+    const { username, email, phoneNumber, password, fullName } = req.body;
+
+    if (await UserService.getUser({ username })) {
       next(new AppError('This username has existed already!', 400));
       return;
     }
 
-    if (await UserService.getUserByEmail(req.body.email)) {
+    if (await UserService.getUser({ email })) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (await UserService.getUserByPhoneNumber(req.body.phoneNumber)) {
+    if (await UserService.getUser({ phoneNumber })) {
       next(
         new AppError('This phone number has been used by another user!', 400)
       );
       return;
     }
 
-    const user = await UserService.createUser(req.body);
+    const user = await UserService.createUser({
+      username,
+      email,
+      phoneNumber,
+      password,
+      totpSecret: '', // kept blank to ensure that this gets filled in the service layer
+      fullName,
+    });
 
     sendResponse({
       req,
@@ -130,34 +152,36 @@ const AuthController = {
 
   /**
    * SendOTP sends an OTP to a user with this algorithm:
-   * 1. Get user data from session.
-   * 2. If user has asked for OTP beforehand, do not allow until the related KVS is expired.
-   * 3. Choose from query string: phone, email, or authenticator. Default is authenticator.
-   * 4. Generate TOTP using RFC 6238 algorithm with user-specific properties.
-   * 5. If using authenticators, tell user to verify TOTP as soon as possible.
-   * 6. Send TOTP to that media if applicable.
-   * 7. Set 'hasAskedOTP' in cache to true.
-   * 8. Wait for user to provide TOTP in 'verify' part of the endpoint.
+   * - Get user data from session.
+   * - If user has asked for OTP beforehand, do not allow until the related KVS is expired.
+   * - Choose from query string: phone, email, or authenticator. Default is authenticator.
+   * - Generate TOTP using RFC 6238 algorithm with user-specific properties.
+   * - If using authenticators, tell user to verify TOTP as soon as possible.
+   * - Send TOTP to that media if applicable.
+   * - Set 'hasAskedOTP' in cache to true.
+   * - Wait for user to provide TOTP in 'verify' part of the endpoint.
    *
    * @param req - Express.js's request object.
    * @param res - Express.js's response object.
    * @param next - Express.js's next function.
    */
   sendOTP: async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session.userID) {
+    const { userID } = req.session;
+
+    if (!userID) {
       next(new AppError('No session detected. Please log in again.', 401));
       return;
     }
 
     // check the availability of the user
-    const user = await UserService.getUserCompleteDataByID(req.session.userID);
+    const user = await UserService.getUserComplete({ userID });
     if (!user) {
       next(new AppError('User with this ID does not exist!', 400));
       return;
     }
 
     // if not yet expired, means that the user has asked in 'successive' order and it is a potential to spam
-    if (await CacheService.getHasAskedOTP(req.session.userID)) {
+    if (await CacheService.getHasAskedOTP(userID)) {
       next(
         new AppError(
           'You have recently asked for an OTP. Please wait 30 seconds before we process your request again.',
@@ -179,7 +203,7 @@ const AuthController = {
     }
 
     // if using authenticator, do nothing as its already there, increment redis instead
-    await CacheService.setHasAskedOTP(req.session.userID);
+    await CacheService.setHasAskedOTP(userID);
 
     // send back response
     sendResponse({
@@ -196,13 +220,14 @@ const AuthController = {
 
   /**
    * VerifyOTP verifies if a TOTP is valid or not valid. The algorithm:
-   * 1. Parse 'Basic' authentication. Also check if the user is blocked or not (failed to input correct TOTP many times in successive order).
-   * 2. Get user data from 'username' column of the authentication string.
-   * 3. Pull the user's secret key from the database.
-   * 4. Validate the user's TOTP. The input OTP will be fetched from the 'password' column of the authentication string.
-   * 5. If the TOTP is valid, give back JWS token. This is the user's second session. If not valid, increment the 'TOTPAttempts' in cache.
-   * 6. Take note of the JTI, store it inside Redis cache for statefulness.
-   * 7. Send back response.
+   * - Parse 'Basic' authentication. Also check if the user is blocked or not (failed to input correct TOTP many times in successive order).
+   * - If the user is blocked, send email / notification to the user.
+   * - Get user data from 'username' column of the authentication string.
+   * - Pull the user's secret key from the database.
+   * - Validate the user's TOTP. The input OTP will be fetched from the 'password' column of the authentication string.
+   * - If the TOTP is valid, give back JWS token. This is the user's second session. If not valid, increment the 'TOTPAttempts' in cache.
+   * - Take note of the JTI, store it inside Redis cache for statefulness.
+   * - Send back response.
    *
    * Token gained from this function will act as a signed cookie that can be used to authenticate oneself.
    * Username is the user's ID. The password is the user's TOTP token.
@@ -214,24 +239,21 @@ const AuthController = {
   verifyOTP: async (req: Request, res: Response, next: NextFunction) => {
     // check headers
     if (!req.headers.authorization) {
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('Missing authorization header!', 400));
+      invalidBasicAuth('Missing authorization header!', res, next);
       return;
     }
 
     // check whether authentication scheme is correct
     const { username, password } = parseBasicAuth(req.headers.authorization);
     if (!username || !password) {
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('Invalid authentication scheme!', 401));
+      invalidBasicAuth('Invalid authentication scheme!', res, next);
       return;
     }
 
     // check whether username exists
-    const user = await UserService.getUserCompleteDataByID(username);
+    const user = await UserService.getUserComplete({ userID: username });
     if (!user) {
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('User with that identifier is not found.', 401));
+      invalidBasicAuth('User with that identifier is not found.', res, next);
       return;
     }
 
@@ -243,7 +265,7 @@ const AuthController = {
 
       next(
         new AppError(
-          'You have exceeded the times allowed for a secured session. Please try again in the next day.',
+          'You have exceeded the number of times allowed for a secured session. Please try again in the next day.',
           429
         )
       );
@@ -254,9 +276,7 @@ const AuthController = {
     const validTOTP = validateDefaultTOTP(password, user.totpSecret);
     if (!validTOTP) {
       await CacheService.setOTPAttempts(user.userID);
-
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('Invalid authentication, wrong OTP code!', 401));
+      invalidBasicAuth('Invalid authentication, wrong OTP code.', res, next);
       return;
     }
 

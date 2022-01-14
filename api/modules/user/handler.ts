@@ -22,6 +22,7 @@ const UserHandler = () => {
   // route to attendance based on the current user for better REST-ful
   handler.use('/:id/attendance', AttendanceHandler());
 
+  // status does not need 'asyncHandler' as it is already handled manually in 'middleware/get-status.ts'.
   handler.route('/me/status').get(getStatus);
 
   // restrict below endpoints for people who have logged in

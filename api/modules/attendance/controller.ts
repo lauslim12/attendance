@@ -11,27 +11,35 @@ import AttendanceService from './service';
  */
 const AttendanceController = {
   /**
-   * Gets all attendances.
+   * Gets all attendances, either (depends on the path parameter):
+   * - Attendances of a single user.
+   * - All attendances that have been logged into the system.
    *
    * @param req - Express.js's request object.
    * @param res - Express.js's response object.
    * @param next - Express.js's next function.
    */
   getAttendances: async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session.userID) {
+    const { userID } = req.session;
+    const { id } = req.params;
+
+    if (!userID) {
       next(new AppError('No session detected. Please log in again!', 401));
       return;
     }
 
-    const withUser = !!req.params.id;
-    if (withUser) {
-      const user = await UserService.getUserCompleteDataByID(req.params.id);
+    // If 'req.params' is not null, it means that we're trying to get the attendance
+    // data of a single user instead of getting all attendance data.
+    if (id) {
+      const user = await UserService.getUserComplete({ userID: id });
       if (!user) {
         next(new AppError('No user found with that ID.', 404));
         return;
       }
 
-      const attendances = await AttendanceService.getAttendances(user.userPK);
+      const attendances = await AttendanceService.getAttendances({
+        userPK: user.userPK,
+      });
 
       sendResponse({
         req,
@@ -70,13 +78,16 @@ const AttendanceController = {
    * @param next - Express.js's next function.
    */
   in: async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session.userID) {
+    const { remarksEnter } = req.body;
+    const { userID } = req.session;
+
+    if (!userID) {
       next(new AppError('No session detected. Please log in again!', 401));
       return;
     }
 
     // Gets complete user.
-    const user = await UserService.getUserCompleteDataByID(req.session.userID);
+    const user = await UserService.getUserComplete({ userID });
     if (!user) {
       next(new AppError('User does not exist in the database!', 400));
       return;
@@ -84,7 +95,7 @@ const AttendanceController = {
 
     // Checks whether a user has clocked in for today, time is on UTC.
     const today = new Date();
-    const checked = await AttendanceService.checkedIn(today, user.userID);
+    const checked = await AttendanceService.checked(today, user.userID, 'in');
     if (checked) {
       next(new AppError('You have already checked in for today!', 400));
       return;
@@ -95,7 +106,7 @@ const AttendanceController = {
       timeEnter: today,
       ipAddressEnter: getDeviceID(req).ip,
       deviceEnter: getDeviceID(req).device,
-      remarksEnter: req.body.remarksEnter,
+      remarksEnter,
       user: { connect: { userPK: user.userPK } },
     });
 
@@ -126,13 +137,16 @@ const AttendanceController = {
    * @param next - Express.js's next function.
    */
   out: async (req: Request, res: Response, next: NextFunction) => {
-    if (!req.session.userID) {
+    const { userID } = req.session;
+    const { remarksLeave } = req.body;
+
+    if (!userID) {
       next(new AppError('No session detected. Please log in again!', 401));
       return;
     }
 
     // Gets complete user.
-    const user = await UserService.getUserCompleteDataByID(req.session.userID);
+    const user = await UserService.getUserComplete({ userID });
     if (!user) {
       next(new AppError('User does not exist in the database!', 400));
       return;
@@ -140,14 +154,14 @@ const AttendanceController = {
 
     // Checks whether the user has already checked out for today.
     const today = new Date();
-    const out = await AttendanceService.checkedOut(today, user.userID);
+    const out = await AttendanceService.checked(today, user.userID, 'out');
     if (out) {
       next(new AppError('You have checked out for today!', 400));
       return;
     }
 
     // Checks whether the user has clocked in for today. Time is on UTC.
-    const checked = await AttendanceService.checkedIn(today, user.userID);
+    const checked = await AttendanceService.checked(today, user.userID, 'in');
     if (!checked) {
       next(new AppError('You have not yet checked in for today!', 400));
       return;
@@ -155,12 +169,12 @@ const AttendanceController = {
 
     // Shape request body to follow the 'attendance' data structure.
     const attendance = await AttendanceService.updateAttendance(
-      checked.attendanceID,
+      { attendanceID: checked.attendanceID },
       {
         timeLeave: today,
         ipAddressLeave: getDeviceID(req).ip,
         deviceLeave: getDeviceID(req).device,
-        remarksLeave: req.body.remarksLeave,
+        remarksLeave,
       }
     );
 
