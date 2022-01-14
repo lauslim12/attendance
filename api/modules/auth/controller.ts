@@ -13,6 +13,18 @@ import Email from '../email';
 import UserService from '../user/service';
 
 /**
+ * Utility function to set 'WWW-Authenticate' header with the proper 'Realm'.
+ *
+ * @param msg - Error message to be passed to the user.
+ * @param res - Express.js's response object.
+ * @param next - Express.js's next function.
+ */
+const invalidBasicAuth = (msg: string, res: Response, next: NextFunction) => {
+  res.set('WWW-Authenticate', 'Basic realm="OTP-Session"');
+  next(new AppError(msg, 401));
+};
+
+/**
  * Authentication controller, forwarded from 'handler'.
  */
 const AuthController = {
@@ -227,24 +239,21 @@ const AuthController = {
   verifyOTP: async (req: Request, res: Response, next: NextFunction) => {
     // check headers
     if (!req.headers.authorization) {
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('Missing authorization header!', 400));
+      invalidBasicAuth('Missing authorization header!', res, next);
       return;
     }
 
     // check whether authentication scheme is correct
     const { username, password } = parseBasicAuth(req.headers.authorization);
     if (!username || !password) {
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('Invalid authentication scheme!', 401));
+      invalidBasicAuth('Invalid authentication scheme!', res, next);
       return;
     }
 
     // check whether username exists
     const user = await UserService.getUserComplete({ userID: username });
     if (!user) {
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('User with that identifier is not found.', 401));
+      invalidBasicAuth('User with that identifier is not found.', res, next);
       return;
     }
 
@@ -256,7 +265,7 @@ const AuthController = {
 
       next(
         new AppError(
-          'You have exceeded the times allowed for a secured session. Please try again in the next day.',
+          'You have exceeded the number of times allowed for a secured session. Please try again in the next day.',
           429
         )
       );
@@ -267,9 +276,7 @@ const AuthController = {
     const validTOTP = validateDefaultTOTP(password, user.totpSecret);
     if (!validTOTP) {
       await CacheService.setOTPAttempts(user.userID);
-
-      res.set('WWW-Authenticate', 'Basic realm="OTP"');
-      next(new AppError('Invalid authentication, wrong OTP code!', 401));
+      invalidBasicAuth('Invalid authentication, wrong OTP code.', res, next);
       return;
     }
 
