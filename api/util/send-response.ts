@@ -10,7 +10,7 @@ interface Params<T> {
   statusCode: number;
   data: T;
   message: string;
-  type: 'general' | 'users' | 'attendance' | 'auth';
+  type: 'general' | 'users' | 'attendance' | 'auth' | 'sessions';
 }
 
 /**
