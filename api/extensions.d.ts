@@ -31,9 +31,13 @@ declare module 'express' {
 }
 
 declare module 'express-session' {
-  interface Session {
+  interface SessionData {
     userID?: string;
     userRole?: string;
+    sessionInfo?: {
+      device?: string;
+      ip?: string;
+    };
   }
 }
 
