@@ -16,6 +16,7 @@ import AttendanceHandler from '../modules/attendance/handler';
 import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
+import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
 import AppError from '../util/app-error';
 import redis from './redis';
@@ -77,6 +78,7 @@ function loadExpress() {
     httpOnly: true,
     sameSite: 'strict',
     maxAge: 86400 * 1000, // 1 day
+    // maxAge: 60000, // 60 seconds
   };
 
   // Inject 'secure' attributes on production environment.
@@ -146,6 +148,7 @@ function loadExpress() {
   const attendanceHandler = AttendanceHandler();
   const authHandler = AuthHandler();
   const healthHandler = HealthHandler();
+  const sessionHandler = SessionHandler();
   const userHandler = UserHandler();
 
   // Define API routes.
@@ -153,6 +156,7 @@ function loadExpress() {
   app.use('/api/v1', healthHandler);
   app.use('/api/v1/attendance', strictLimiter, attendanceHandler);
   app.use('/api/v1/auth', strictLimiter, authHandler);
+  app.use('/api/v1/sessions', strictLimiter, sessionHandler);
   app.use('/api/v1/users', limiter, userHandler);
 
   // Catch-all routes for API.
