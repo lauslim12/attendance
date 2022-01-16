@@ -6,6 +6,7 @@ import config from '../../config';
 import { generateDefaultTOTP, validateDefaultTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
+import getDeviceID from '../../util/device-id';
 import { signJWS } from '../../util/header-and-jwt';
 import sendResponse from '../../util/send-response';
 import CacheService from '../cache/service';
@@ -55,22 +56,29 @@ const AuthController = {
     // filter sensitive data
     const filteredUser = await UserService.getUser({ userID: user.userID });
 
-    // set signed, secure session cookie
-    req.session.userID = user.userID;
-    req.session.userRole = user.role;
+    // set signed, secure session cookie, re-generate session to prevent multiple users sharing one session ID
+    req.session.regenerate((err) => {
+      if (err) {
+        next(new AppError('Failed to initialize a secure session.', 500));
+      }
 
-    // remove MFA session cookie if it exists
-    res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
+      req.session.userID = user.userID;
+      req.session.userRole = user.role;
+      req.session.sessionInfo = getDeviceID(req);
 
-    // send response
-    sendResponse({
-      req,
-      res,
-      status: 'success',
-      statusCode: 200,
-      data: filteredUser,
-      message: 'Logged in successfully!',
-      type: 'auth',
+      // remove MFA session cookie if it exists
+      res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
+
+      // send response
+      sendResponse({
+        req,
+        res,
+        status: 'success',
+        statusCode: 200,
+        data: filteredUser,
+        message: 'Logged in successfully!',
+        type: 'auth',
+      });
     });
   },
 
@@ -81,7 +89,7 @@ const AuthController = {
    * @param res - Express.js's response object.
    * @param next - Express.js's next function.
    */
-  logout: async (req: Request, res: Response, next: NextFunction) => {
+  logout: (req: Request, res: Response, next: NextFunction) => {
     req.session.destroy((err) => {
       if (err) {
         next(new AppError('Failed to log out. Please try again later.', 500));
@@ -200,6 +208,13 @@ const AuthController = {
 
     if (req.query.media === 'sms') {
       // TODO: send sms
+      next(
+        new AppError(
+          'Media is not yet implemented. Please use another media.',
+          501
+        )
+      );
+      return;
     }
 
     // if using authenticator, do nothing as its already there, increment redis instead
