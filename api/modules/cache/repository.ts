@@ -37,22 +37,23 @@ const scanAll = async (key: string) => {
  * @returns All sessions in the Redis database.
  */
 const allSessions = async () => {
-  const sessions: Session[] = [];
-
   // Seek and fetch all active sessions.
   const activeSessions = await scanAll('sess:*');
 
   // Fetch all session data from available session IDs. The 'JSON.parse'
   // is required as Redis stores all data in its stringified form. Also
-  // pass the session ID for easier deletion on the front-end.
-  for (const activeSession of activeSessions) {
-    const session = await redis.get(activeSession);
-    const sid = activeSession.split(':')[1];
+  // pass the session ID for easier deletion on the front-end. Perform parallel
+  // processing with 'await Promise.all' to save time.
+  const sessions: Session[] = await Promise.all(
+    activeSessions.map(async (sess) => {
+      const data = await redis.get(sess);
+      const sid = sess.split(':')[1];
 
-    if (session) {
-      sessions.push({ ...JSON.parse(session), sid });
-    }
-  }
+      if (data) {
+        return { ...JSON.parse(data), sid };
+      }
+    })
+  );
 
   return sessions;
 };
