@@ -146,7 +146,7 @@ function loadExpress() {
 
   // Define handlers.
   const attendanceHandler = AttendanceHandler();
-  const authHandler = AuthHandler();
+  const authHandler = AuthHandler(strictLimiter);
   const healthHandler = HealthHandler();
   const sessionHandler = SessionHandler();
   const userHandler = UserHandler();
@@ -155,7 +155,7 @@ function loadExpress() {
   app.use('/api', throttler);
   app.use('/api/v1', healthHandler);
   app.use('/api/v1/attendance', strictLimiter, attendanceHandler);
-  app.use('/api/v1/auth', strictLimiter, authHandler);
+  app.use('/api/v1/auth', authHandler);
   app.use('/api/v1/sessions', strictLimiter, sessionHandler);
   app.use('/api/v1/users', limiter, userHandler);
 
