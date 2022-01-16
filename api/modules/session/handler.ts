@@ -10,19 +10,21 @@ import SessionValidation from './validation';
 
 /**
  * Handle all session-related endpoints.
+ *
+ * @returns Express router.
  */
 const SessionHandler = () => {
   const handler = express.Router();
 
-  // only allow logged in users
+  // Only allow below handlers for authenticated users.
   handler.use(asyncHandler(hasSession));
 
-  // check my sessions
+  // Check personal sessions.
   handler
     .route('/me')
     .get(getMe, asyncHandler(SessionController.getUserSessions));
 
-  // allow self session invalidation
+  // Allow self session invalidation.
   handler
     .route('/me/:id')
     .delete(
@@ -30,12 +32,13 @@ const SessionHandler = () => {
       asyncHandler(SessionController.deleteMySession)
     );
 
-  // only allow administrators
+  // Only allow administrators.
   handler.use(hasRole('admin'));
 
-  // only allow session checking and session invalidation
+  // Only allow session checking and session invalidation (admins).
   handler.route('/').get(asyncHandler(SessionController.getAllSessions));
 
+  // Allow session invalidation.
   handler
     .route('/:id')
     .delete(

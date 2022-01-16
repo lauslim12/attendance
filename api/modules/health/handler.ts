@@ -5,6 +5,8 @@ import sendResponse from '../../util/send-response';
 
 /**
  * Handler to check the health of the service.
+ *
+ * @returns Express router.
  */
 const HealthHandler = () => {
   const router = express();

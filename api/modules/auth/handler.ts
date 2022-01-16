@@ -17,19 +17,23 @@ import AuthValidation from './validation';
 const AuthHandler = (rateLimit: RateLimit) => {
   const handler = express.Router();
 
+  // General endpoint, (almost) no rate limit.
   handler.get('/status', AuthController.getStatus);
 
   // Use specific rate limiter for the remaining of the endpoints.
   handler.use(rateLimit);
 
+  // Logs in a single user.
   handler.post(
     '/login',
     validate(AuthValidation.login),
     asyncHandler(AuthController.login)
   );
 
+  // Logs out a single user.
   handler.post('/logout', AuthController.logout);
 
+  // Sends and verifies OTP.
   handler
     .route('/otp')
     .post(
@@ -39,6 +43,7 @@ const AuthHandler = (rateLimit: RateLimit) => {
     )
     .put(asyncHandler(hasSession), asyncHandler(AuthController.verifyOTP));
 
+  // Registers a single user.
   handler.post(
     '/register',
     validate(AuthValidation.register),
