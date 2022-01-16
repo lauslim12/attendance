@@ -5,6 +5,15 @@ import CacheRepository from './repository';
  */
 const CacheService = {
   /**
+   * Deletes a single session from the cache.
+   *
+   * @param sessionID - Session ID.
+   * @returns Asynchronous number from Redis.
+   */
+  deleteSession: async (sessionID: string) =>
+    CacheRepository.deleteSession(sessionID),
+
+  /**
    * Gets whether the user has asked OTP or not.
    *
    * @param userID - A user's ID
@@ -29,6 +38,22 @@ const CacheService = {
    * @returns Value of the OTP Session (usually the user identifier).
    */
   getOTPSession: async (jti: string) => CacheRepository.getOTPSession(jti),
+
+  /**
+   * Gets all sessions from the cache.
+   *
+   * @returns All sessions in the cache.
+   */
+  getSessions: async () => CacheRepository.getSessions(),
+
+  /**
+   * Gets all sessions specific for a single user.
+   *
+   * @param userID - User ID.
+   * @returns All sessions specific for a single user.
+   */
+  getUserSessions: async (userID: string) =>
+    CacheRepository.getUserSessions(userID),
 
   /**
    * Pings the cache.
