@@ -25,11 +25,13 @@ Below is the list of main features that this system have:
 
 - Users can check the health of the API.
 - Users can log in and register.
-- (**A**) Users can see their own profile, modify it, get their own authentication status, and see their sessions.
+- (**A**) Users can see their own profile, modify it, and get their own authentication status.
+- (**A**) Users can get all of their own sessions and can invalidate them if necessary.
 - (**A**) Users can get their own attendance data.
 - (**A**) Users can request OTP from the API via Email, SMS, or Authenticator apps.
 - (**A**) Users can receive a special MFA authorization by verifying the OTP.
 - (**A C**) Users can check in and check out their attendance.
+- (**A B**) Admins can see all sessions and can invalidate them manually.
 - (**A B C**) Admins can perform CRUD operations on the `User` entity.
 
 Legend:
@@ -44,7 +46,7 @@ As this research focuses on creating a secure API, below are the considerations 
 
 - Users are divided into two roles: `admin` and `user`.
 - A special kind of authorized session: `OTPSession`, using JSON Web Tokens. Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes).
-- Sessions are signed cookies, implemented with a high-entropy session key, and served with secure attributes (`secure`, `sameSite`, `httpOnly`).
+- Sessions are signed cookies, implemented with a high-entropy session secret, and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security.
 - Passwords are hashed with `Argon2` algorithm.
 - The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator), and it is different for every other users in the system.
 - OTP is time-based and it is generated with RFC 6238 algorithm with `SHA-1` hash function and a high-entropy secret (above). OTP is verified with the `userID` via RFC 7617 algorithm.
@@ -57,7 +59,7 @@ As this research focuses on creating a secure API, below are the considerations 
 
 ## Documentation
 
-API documentation is available at Postman, and it is under construction for now.
+API documentation is available at Postman, and it is under construction for now. All of the codebase in the API is completely documented with TypeScript and JSDoc.
 
 ## Requirements
 
@@ -151,8 +153,8 @@ Application is licensed under MIT License. The research itself will follow the p
 
 Upcoming features to be implemented:
 
-- PNPM Integration.
 - Ability for admins to block accounts (`isActive` attribute in Prisma).
+- Special endpoint for credential resets (password change, etc.).
 - Implement front-end with Next.js.
 - SMS implementation.
 - Hosting, webservers, and mailservers.
@@ -160,7 +162,5 @@ Upcoming features to be implemented:
 
 I have been thinking of adding these features as well:
 
-- Session features, one can check their own sessions and in what machine (similar to GitHub, Google, and many other providers).
-- Session invalidation for administrators (`GET /api/v1/sessions`?).
-- `GET /api/v1/sessions/me` to display all sessions for a single user. The middleware protecting this one will only be `has-session.ts`.
+- PNPM Integration.
 - More ESLint (`security`, `requiring-type-checking`, `unicorn`, `sonarjs`) for better practices and cleaner style.
