@@ -1,4 +1,5 @@
 import express from 'express';
+import type { RateLimit } from 'express-rate-limit';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
@@ -7,21 +8,32 @@ import AuthController from './controller';
 import AuthValidation from './validation';
 
 /**
- * Handler to take care of 'Authentication' entity.
+ * Handler to take care of 'Authentication' entity. All handlers are specific
+ * routes, there are no general routes ('/' or '/:id').
  *
- * @returns Express router
+ * @param rateLimit - Special rate limiter for authentication purposes.
+ * @returns Express router.
  */
-const AuthHandler = () => {
+const AuthHandler = (rateLimit: RateLimit) => {
   const handler = express.Router();
 
+  // General endpoint, (almost) no rate limit.
+  handler.get('/status', AuthController.getStatus);
+
+  // Use specific rate limiter for the remaining of the endpoints.
+  handler.use(rateLimit);
+
+  // Logs in a single user.
   handler.post(
     '/login',
     validate(AuthValidation.login),
     asyncHandler(AuthController.login)
   );
 
-  handler.post('/logout', asyncHandler(AuthController.logout));
+  // Logs out a single user.
+  handler.post('/logout', AuthController.logout);
 
+  // Sends and verifies OTP.
   handler
     .route('/otp')
     .post(
@@ -31,6 +43,7 @@ const AuthHandler = () => {
     )
     .put(asyncHandler(hasSession), asyncHandler(AuthController.verifyOTP));
 
+  // Registers a single user.
   handler.post(
     '/register',
     validate(AuthValidation.register),

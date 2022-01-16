@@ -4,7 +4,6 @@ import { validate } from 'express-validation';
 import asyncHandler from '../../util/async-handler';
 import AttendanceHandler from '../attendance/handler';
 import getMe from '../middleware/get-me';
-import getStatus from '../middleware/get-status';
 import hasJWT from '../middleware/has-jwt';
 import hasRole from '../middleware/has-role';
 import hasSession from '../middleware/has-session';
@@ -19,23 +18,22 @@ import UserValidation from './validation';
 const UserHandler = () => {
   const handler = express.Router();
 
-  // route to attendance based on the current user for better REST-ful
+  // Route to 'Attendance' entity based on the current user for better REST-ful experience.
   handler.use('/:id/attendance', AttendanceHandler());
 
-  // status does not need 'asyncHandler' as it is already handled manually in 'middleware/get-status.ts'.
-  handler.route('/me/status').get(getStatus);
-
-  // restrict below endpoints for people who have logged in
+  // Below endpoints are allowed for only authenticated users.
   handler.use(asyncHandler(hasSession));
 
+  // Allow user to get their own data and update their own data as well.
   handler
     .route('/me')
     .get(getMe, asyncHandler(UserController.getUser))
     .patch(getMe, asyncHandler(UserController.updateUser));
 
-  // restrict below endpoints for administrators who are logged in and authenticated with MFA
+  // Restrict endpoints for admins who are logged in and authenticated with MFA.
   handler.use(hasRole('admin'), asyncHandler(hasJWT));
 
+  // Perform get and create operations on the general entity.
   handler
     .route('/')
     .get(asyncHandler(UserController.getUsers))
@@ -44,6 +42,7 @@ const UserHandler = () => {
       asyncHandler(UserController.createUser)
     );
 
+  // Perform get, update, and delete operations on a specific entity.
   handler
     .route('/:id')
     .get(validate(UserValidation.getUser), asyncHandler(UserController.getUser))

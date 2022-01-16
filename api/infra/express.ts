@@ -16,6 +16,7 @@ import AttendanceHandler from '../modules/attendance/handler';
 import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
+import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
 import AppError from '../util/app-error';
 import redis from './redis';
@@ -77,6 +78,7 @@ function loadExpress() {
     httpOnly: true,
     sameSite: 'strict',
     maxAge: 86400 * 1000, // 1 day
+    // maxAge: 60000, // 60 seconds
   };
 
   // Inject 'secure' attributes on production environment.
@@ -106,7 +108,7 @@ function loadExpress() {
       client: redis.nodeRedis,
       prefix: 'sd-common',
     }),
-    delayAfter: 25, // start to delay by 'delayMs' after 25 requests has been made in 'windowMs' minutes
+    delayAfter: 50, // start to delay by 'delayMs' after 'delayAfter' requests has been made in 'windowMs'
     windowMs: 15 * 60 * 1000, // 15 minutes
     delayMs: 200,
   });
@@ -117,7 +119,7 @@ function loadExpress() {
       client: redis.nodeRedis,
       prefix: 'rl-common',
     }),
-    max: 50, // max 50 requests in 'windowMs' minutes
+    max: 75, // max requests in 'windowMs'
     windowMs: 15 * 60 * 1000, // 15 minutes
     handler(_: Request, __: Response, next: NextFunction) {
       next(new AppError('Too many requests! Please try again later!', 429));
@@ -130,7 +132,7 @@ function loadExpress() {
       client: redis.nodeRedis,
       prefix: 'rl-sensitive',
     }),
-    max: 10, // max 10 requests in 'windowMs' minutes
+    max: 20, // max requests in 'windowMs'
     windowMs: 5 * 60 * 1000, // 5 minutes
     handler(_: Request, __: Response, next: NextFunction) {
       next(
@@ -144,15 +146,17 @@ function loadExpress() {
 
   // Define handlers.
   const attendanceHandler = AttendanceHandler();
-  const authHandler = AuthHandler();
+  const authHandler = AuthHandler(strictLimiter);
   const healthHandler = HealthHandler();
+  const sessionHandler = SessionHandler();
   const userHandler = UserHandler();
 
   // Define API routes.
   app.use('/api', throttler);
   app.use('/api/v1', healthHandler);
   app.use('/api/v1/attendance', strictLimiter, attendanceHandler);
-  app.use('/api/v1/auth', strictLimiter, authHandler);
+  app.use('/api/v1/auth', authHandler);
+  app.use('/api/v1/sessions', strictLimiter, sessionHandler);
   app.use('/api/v1/users', limiter, userHandler);
 
   // Catch-all routes for API.

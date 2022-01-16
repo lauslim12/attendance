@@ -10,30 +10,33 @@ import AttendanceValidation from './validation';
 /**
  * Handler to take care of 'Attendance' entity.
  *
- * @returns Express router
+ * @returns Express router.
  */
 const AttendanceHandler = () => {
   const handler = express.Router({ mergeParams: true });
 
+  // Endpoints are only for authenticated users.
+  handler.use(asyncHandler(hasSession));
+
+  // Check in for today.
   handler.post(
     '/in',
-    asyncHandler(hasSession),
     asyncHandler(hasJWT),
     validate(AttendanceValidation.in),
     asyncHandler(AttendanceController.in)
   );
 
+  // Check out for today.
   handler.patch(
     '/out',
-    asyncHandler(hasSession),
     asyncHandler(hasJWT),
     validate(AttendanceValidation.out),
     asyncHandler(AttendanceController.out)
   );
 
+  // Gets all attendances data.
   handler.get(
     '/',
-    asyncHandler(hasSession),
     validate(AttendanceValidation.getAttendances),
     asyncHandler(AttendanceController.getAttendances)
   );

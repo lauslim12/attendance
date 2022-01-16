@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
 import AppError from '../../util/app-error';
+import getDeviceID from '../../util/device-id';
 import UserService from '../user/service';
 
 /**
@@ -14,6 +15,7 @@ import UserService from '../user/service';
 const hasSession = async (req: Request, _: Response, next: NextFunction) => {
   const { userID } = req.session;
 
+  // Validates whether the session exists or not.
   if (!userID) {
     next(new AppError('You are not logged in yet! Please log in first!', 401));
     return;
@@ -26,6 +28,10 @@ const hasSession = async (req: Request, _: Response, next: NextFunction) => {
     return;
   }
 
+  // Refresh session data to contain the new session information.
+  req.session.sessionInfo = getDeviceID(req);
+
+  // Go to the next middleware.
   next();
 };
 
