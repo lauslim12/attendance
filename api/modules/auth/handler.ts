@@ -20,7 +20,7 @@ const AuthHandler = () => {
     asyncHandler(AuthController.login)
   );
 
-  handler.post('/logout', asyncHandler(AuthController.logout));
+  handler.post('/logout', AuthController.logout);
 
   handler
     .route('/otp')
