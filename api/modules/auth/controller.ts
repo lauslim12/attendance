@@ -163,6 +163,7 @@ const AuthController = {
       req.session.userRole = user.role;
       req.session.lastActive = Date.now().toString();
       req.session.sessionInfo = getDeviceID(req);
+      req.session.signedIn = Date.now().toString();
 
       // Remove MFA session cookie if it exists.
       res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });

@@ -39,6 +39,7 @@ declare module 'express-session' {
       device?: string;
       ip?: string;
     };
+    signedIn?: string;
   }
 }
 
