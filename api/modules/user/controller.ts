@@ -22,24 +22,24 @@ const UserController = {
 
     // Validates whether the username or email or phone is already used or not. Use
     // parallel processing for speed.
-    const users = await Promise.all([
+    const [userByUsername, userByEmail, userByPhone] = await Promise.all([
       UserService.getUser({ username }),
       UserService.getUser({ email }),
       UserService.getUser({ phoneNumber }),
     ]);
 
     // Perform checks and validations.
-    if (users[0]) {
+    if (userByUsername) {
       next(new AppError('This username has existed already!', 400));
       return;
     }
 
-    if (users[1]) {
+    if (userByEmail) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (users[2]) {
+    if (userByPhone) {
       next(
         new AppError('This phone number has been used by another user!', 400)
       );
