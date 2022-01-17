@@ -28,6 +28,12 @@ const hasSession = async (req: Request, _: Response, next: NextFunction) => {
     return;
   }
 
+  // Verifies if the user is not banned (isActive is true).
+  if (!user.isActive) {
+    next(new AppError('User is not active. Please contact the admin.', 403));
+    return;
+  }
+
   // Refresh session data to contain the new session information.
   req.session.sessionInfo = getDeviceID(req);
 
