@@ -16,9 +16,19 @@ const select = Prisma.validator<Prisma.UserSelect>()({
   phoneNumber: true,
   fullName: true,
   role: true,
+  isActive: true,
   createdAt: true,
   updatedAt: true,
 });
+
+/**
+ * Asynchronously hashes a user's password with Argon2 algorithm.
+ *
+ * @param password - User's password.
+ * @returns Argon2 hashed password.
+ */
+const hashPassword = (password: string) =>
+  argon2.hash(password.normalize(), { timeCost: 300, hashLength: 50 });
 
 /**
  * Business logic and repositories for 'Users' entity.
@@ -60,10 +70,7 @@ const UserService = {
 
     // Create TOTP secrets with a CSPRNG, and hash passwords with Argon2.
     u.totpSecret = await nanoid();
-    u.password = await argon2.hash(u.password.normalize(), {
-      timeCost: 300,
-      hashLength: 50,
-    });
+    u.password = await hashPassword(u.password);
 
     // Create a new user.
     const newUser = await prisma.user.create({ data: u, select });
@@ -90,10 +97,7 @@ const UserService = {
 
     // Re-hash password if a user changes their own password.
     if (typeof u.password === 'string' && u.password) {
-      u.password = await argon2.hash(u.password.normalize(), {
-        timeCost: 300,
-        hashLength: 50,
-      });
+      u.password = await hashPassword(u.password);
     }
 
     return prisma.user.update({ where, data: u, select });
