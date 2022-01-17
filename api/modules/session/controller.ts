@@ -33,9 +33,22 @@ const SessionController = {
       return;
     }
 
-    await CacheService.deleteSession(id);
+    // Delete individual session if it is not the current session.
+    if (req.sessionID !== id) {
+      await CacheService.deleteSession(id);
+      res.status(204).send();
+      return;
+    }
 
-    res.status(204).send();
+    // If the session in question is the current session, delete it by destroying it.
+    req.session.destroy((err) => {
+      if (err) {
+        next(new AppError('Failed to log out. Please try again.', 500));
+        return;
+      }
+
+      res.status(204).send();
+    });
   },
 
   /**
@@ -46,13 +59,27 @@ const SessionController = {
    *
    * @param req - Express.js's request object.
    * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
    */
-  deleteSession: async (req: Request, res: Response) => {
+  deleteSession: async (req: Request, res: Response, next: NextFunction) => {
     const { id } = req.params;
 
-    await CacheService.deleteSession(id);
+    // Delete individual session if it is not the current session.
+    if (req.sessionID !== id) {
+      await CacheService.deleteSession(id);
+      res.status(204).send();
+      return;
+    }
 
-    res.status(204).send();
+    // If the session in question is the current session, destroy it.
+    req.session.destroy((err) => {
+      if (err) {
+        next(new AppError('Failed to log out. Please try again.', 500));
+        return;
+      }
+
+      res.status(204).send();
+    });
   },
 
   /**
