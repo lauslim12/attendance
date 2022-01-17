@@ -1,9 +1,9 @@
 import { Prisma } from '@prisma/client';
-import argon2 from 'argon2';
 import { nanoid } from 'nanoid/async';
 
 import { generateDefaultTOTP } from '../../core/rfc6238';
 import prisma from '../../infra/prisma';
+import { hashPassword } from '../../util/passwords';
 
 /**
  * Almost all user operations return these attributes (usually exposed to the user as response),
@@ -20,15 +20,6 @@ const select = Prisma.validator<Prisma.UserSelect>()({
   createdAt: true,
   updatedAt: true,
 });
-
-/**
- * Asynchronously hashes a user's password with Argon2 algorithm.
- *
- * @param password - User's password.
- * @returns Argon2 hashed password.
- */
-const hashPassword = (password: string) =>
-  argon2.hash(password.normalize(), { timeCost: 300, hashLength: 50 });
 
 /**
  * Business logic and repositories for 'Users' entity.

@@ -15,6 +15,16 @@ const UserValidation = {
     }),
   },
 
+  // DELETE /api/v1/users/:id
+  deleteUser: {
+    params: joi.object().keys({
+      id: joi
+        .string()
+        .guid({ version: ['uuidv4'] })
+        .required(),
+    }),
+  },
+
   // GET /api/v1/users/:id
   getUser: {
     params: joi.object().keys({
@@ -25,7 +35,16 @@ const UserValidation = {
     }),
   },
 
-  // PUT /api/v1/users/:id
+  // PATCH /api/v1/users/me
+  updateMe: {
+    body: joi.object().keys({
+      email: joi.string().trim().email(),
+      phoneNumber: joi.string().trim(),
+      fullName: joi.string().trim(),
+    }),
+  },
+
+  // PATCH /api/v1/users/:id
   updateUser: {
     body: joi.object().keys({
       email: joi.string().trim().email(),
@@ -34,16 +53,6 @@ const UserValidation = {
       fullName: joi.string().trim(),
       isActive: joi.boolean(),
     }),
-    params: joi.object().keys({
-      id: joi
-        .string()
-        .guid({ version: ['uuidv4'] })
-        .required(),
-    }),
-  },
-
-  // DELETE /api/v1/users/:id
-  deleteUser: {
     params: joi.object().keys({
       id: joi
         .string()

@@ -9,26 +9,6 @@ import UserService from './service';
  */
 const UserController = {
   /**
-   * Gets all users in the database.
-   *
-   * @param req - Express.js's request object.
-   * @param res - Express.js's response object.
-   */
-  getUsers: async (req: Request, res: Response) => {
-    const users = await UserService.getUsers();
-
-    sendResponse({
-      req,
-      res,
-      status: 'success',
-      statusCode: 200,
-      data: users,
-      message: 'Successfully fetched data of all users!',
-      type: 'users',
-    });
-  },
-
-  /**
    * Creates a single user. Has several validations to ensure that the username,
    * email, and phone number are all unique and have not yet been used by another user.
    *
@@ -77,6 +57,46 @@ const UserController = {
   },
 
   /**
+   * Deactivates / ban a single user.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  deactivateUser: async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    if (!(await UserService.getUser({ userID: id }))) {
+      next(new AppError('The user with this ID does not exist!', 404));
+      return;
+    }
+
+    await UserService.updateUser({ userID: id }, { isActive: false });
+
+    res.status(204).send();
+  },
+
+  /**
+   * Deletes a single user.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  deleteUser: async (req: Request, res: Response, next: NextFunction) => {
+    const { id } = req.params;
+
+    if (!(await UserService.getUser({ userID: id }))) {
+      next(new AppError('The user with this ID does not exist!', 404));
+      return;
+    }
+
+    await UserService.deleteUser({ userID: id });
+
+    res.status(204).send();
+  },
+
+  /**
    * Gets a single user.
    *
    * @param req - Express.js's request object.
@@ -92,6 +112,26 @@ const UserController = {
       statusCode: 200,
       data: user,
       message: 'Successfully fetched a single user!',
+      type: 'users',
+    });
+  },
+
+  /**
+   * Gets all users in the database.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   */
+  getUsers: async (req: Request, res: Response) => {
+    const users = await UserService.getUsers();
+
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: users,
+      message: 'Successfully fetched data of all users!',
       type: 'users',
     });
   },
@@ -149,26 +189,6 @@ const UserController = {
       message: 'Successfully updated a single user!',
       type: 'users',
     });
-  },
-
-  /**
-   * Deletes a single user.
-   *
-   * @param req - Express.js's request object.
-   * @param res - Express.js's response object.
-   * @param next - Express.js's next function.
-   */
-  deleteUser: async (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.params;
-
-    if (!(await UserService.getUser({ userID: id }))) {
-      next(new AppError('The user with this ID does not exist!', 404));
-      return;
-    }
-
-    await UserService.deleteUser({ userID: id });
-
-    res.status(204).send();
   },
 };
 
