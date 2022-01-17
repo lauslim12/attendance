@@ -14,6 +14,15 @@ const CacheService = {
     CacheRepository.deleteSession(sessionID),
 
   /**
+   * Deletes all sessions related to a User ID.
+   *
+   * @param userID - User ID.
+   * @returns Asynchronous numbers from Redis.
+   */
+  deleteUserSessions: async (userID: string) =>
+    CacheRepository.deleteUserSessions(userID),
+
+  /**
    * Gets whether the user has asked OTP or not.
    *
    * @param userID - A user's ID
