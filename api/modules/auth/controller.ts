@@ -124,37 +124,48 @@ const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
 
-    // compare usernames
+    // Safe compare usernames.
     const user = await UserService.getUserComplete({ username });
     if (!user) {
       next(new AppError('Invalid username and/or password!', 401));
       return;
     }
 
-    // compare passwords
+    // Safe compare passwords.
     const passwordMatch = await argon2.verify(user.password, password);
     if (!passwordMatch) {
       next(new AppError('Invalid username and/or password!', 401));
       return;
     }
 
-    // filter sensitive data
-    const filteredUser = await UserService.getUser({ userID: user.userID });
+    // Ensure the user is not blocked.
+    if (!user.isActive) {
+      next(new AppError('User is not active. Please contact the admin.', 403));
+      return;
+    }
 
-    // set signed, secure session cookie, re-generate session to prevent multiple users sharing one session ID
+    // Clone object and delete sensitive data, prevent leaking confidential information. Do
+    // not perform DB calls here - it is unnecessary overhead.
+    const filteredUser = { ...user } as Partial<typeof user>;
+    delete filteredUser.totpSecret;
+    delete filteredUser.password;
+    delete filteredUser.userPK;
+
+    // Re-generate session to prevent multiple users sharing one session ID.
     req.session.regenerate((err) => {
       if (err) {
         next(new AppError('Failed to initialize a secure session.', 500));
       }
 
+      // Set signed cookies with session information.
       req.session.userID = user.userID;
       req.session.userRole = user.role;
       req.session.sessionInfo = getDeviceID(req);
 
-      // remove MFA session cookie if it exists
+      // Remove MFA session cookie if it exists.
       res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
 
-      // send response
+      // Send response.
       sendResponse({
         req,
         res,
