@@ -50,6 +50,14 @@ const AuthHandler = (rateLimit: RateLimit) => {
     asyncHandler(AuthController.register)
   );
 
+  // Change password for a logged in user.
+  handler.patch(
+    '/update-password',
+    asyncHandler(hasSession),
+    validate(AuthValidation.updatePassword),
+    asyncHandler(AuthController.updatePassword)
+  );
+
   return handler;
 };
 
