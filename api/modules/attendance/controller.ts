@@ -1,4 +1,4 @@
-import { NextFunction, Request, Response } from 'express';
+import type { NextFunction, Request, Response } from 'express';
 
 import AppError from '../../util/app-error';
 import getDeviceID from '../../util/device-id';
