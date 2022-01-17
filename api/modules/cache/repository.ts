@@ -71,6 +71,18 @@ const CacheRepository = {
   deleteSession: async (sessionID: string) => redis.del(`sess:${sessionID}`),
 
   /**
+   * Deletes all sessions related to this user.
+   *
+   * @param userID - User ID.
+   * @returns Asynchronous numbers, which are the responses returned from Redis.
+   */
+  deleteUserSessions: async (userID: string) => {
+    const sessions = (await allSessions()).filter((s) => s.userID === userID);
+
+    return Promise.all(sessions.map(async (s) => redis.del(`sess:${s.sid}`)));
+  },
+
+  /**
    * Gets whether the user has asked OTP or not.
    *
    * @param userID - A user's ID

@@ -1,4 +1,3 @@
-import argon2 from 'argon2';
 import type { NextFunction, Request, Response } from 'express';
 import { nanoid } from 'nanoid/async';
 
@@ -8,6 +7,8 @@ import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
 import getDeviceID from '../../util/device-id';
 import { extractToken, signJWS, verifyToken } from '../../util/header-and-jwt';
+import { verifyPassword } from '../../util/passwords';
+import safeCompare from '../../util/safe-compare';
 import sendResponse from '../../util/send-response';
 import CacheService from '../cache/service';
 import Email from '../email';
@@ -132,7 +133,7 @@ const AuthController = {
     }
 
     // Safe compare passwords.
-    const passwordMatch = await argon2.verify(user.password, password);
+    const passwordMatch = await verifyPassword(user.password, password);
     if (!passwordMatch) {
       next(new AppError('Invalid username and/or password!', 401));
       return;
@@ -218,17 +219,26 @@ const AuthController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
     const { username, email, phoneNumber, password, fullName } = req.body;
 
-    if (await UserService.getUser({ username })) {
+    // Validates whether the username or email or phone is already used or not. Use
+    // parallel processing for speed.
+    const users = await Promise.all([
+      UserService.getUser({ username }),
+      UserService.getUser({ email }),
+      UserService.getUser({ phoneNumber }),
+    ]);
+
+    // Perform checks and validations.
+    if (users[0]) {
       next(new AppError('This username has existed already!', 400));
       return;
     }
 
-    if (await UserService.getUser({ email })) {
+    if (users[1]) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (await UserService.getUser({ phoneNumber })) {
+    if (users[2]) {
       next(
         new AppError('This phone number has been used by another user!', 400)
       );
@@ -327,6 +337,71 @@ const AuthController = {
       message:
         'OTP has been processed. Please check your chosen media and verify the OTP there.',
       type: 'auth',
+    });
+  },
+
+  /**
+   * Updates a password for the currently logged in user.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  updatePassword: async (req: Request, res: Response, next: NextFunction) => {
+    const { currentPassword, newPassword, confirmPassword } = req.body;
+    const { userID } = req.session;
+
+    if (!userID) {
+      next(new AppError('No session detected. Please log in again.', 401));
+      return;
+    }
+
+    // Fetch old data.
+    const user = await UserService.getUserComplete({ userID });
+    if (!user) {
+      next(new AppError('There is no user with that ID.', 404));
+      return;
+    }
+
+    // Compare old passwords.
+    const passwordsMatch = await verifyPassword(user.password, currentPassword);
+    if (passwordsMatch) {
+      next(new AppError('Your previous password is wrong!', 401));
+      return;
+    }
+
+    // Confirm passwords. We have no need to use safe-compare in this one.
+    if (!safeCompare(newPassword, confirmPassword)) {
+      next(new AppError('Your new passwords do not match.', 401));
+      return;
+    }
+
+    // Update new password.
+    await UserService.updateUser({ userID }, { password: newPassword });
+
+    // Destroy all sessons for this current user.
+    req.session.destroy(async (err) => {
+      if (err) {
+        next(
+          new AppError('Failed to destroy session. Please contact admin.', 500)
+        );
+        return;
+      }
+
+      // Delete all of the sessions. We use 'user.userID' as 'req.session.userID'
+      // is not accessible anymore (already deleted in this callback).
+      await CacheService.deleteUserSessions(user.userID);
+
+      // Send back response.
+      sendResponse({
+        req,
+        res,
+        status: 'success',
+        statusCode: 200,
+        data: [],
+        message: 'Successfully changed passwords. Please log in again!',
+        type: 'auth',
+      });
     });
   },
 

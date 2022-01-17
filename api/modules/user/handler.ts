@@ -28,7 +28,12 @@ const UserHandler = () => {
   handler
     .route('/me')
     .get(getMe, asyncHandler(UserController.getUser))
-    .patch(getMe, asyncHandler(UserController.updateUser));
+    .patch(
+      getMe,
+      validate(UserValidation.updateMe),
+      asyncHandler(UserController.updateUser)
+    )
+    .delete(getMe, asyncHandler(UserController.deactivateUser));
 
   // Restrict endpoints for admins who are logged in and authenticated with MFA.
   handler.use(hasRole('admin'), asyncHandler(hasJWT));
