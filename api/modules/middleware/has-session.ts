@@ -35,6 +35,7 @@ const hasSession = async (req: Request, _: Response, next: NextFunction) => {
   }
 
   // Refresh session data to contain the new session information.
+  req.session.lastActive = Date.now().toString();
   req.session.sessionInfo = getDeviceID(req);
 
   // Go to the next middleware.
