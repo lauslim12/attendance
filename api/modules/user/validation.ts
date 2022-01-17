@@ -32,6 +32,7 @@ const UserValidation = {
       phoneNumber: joi.string().trim(),
       password: joi.string(),
       fullName: joi.string().trim(),
+      isActive: joi.boolean(),
     }),
     params: joi.object().keys({
       id: joi

@@ -105,7 +105,7 @@ const UserController = {
    * @param next - Express.js's next function.
    */
   updateUser: async (req: Request, res: Response, next: NextFunction) => {
-    const { email, phoneNumber, password, fullName } = req.body;
+    const { email, phoneNumber, password, fullName, isActive } = req.body;
     const { id } = req.params;
 
     const currentUser = await UserService.getUser({ userID: id });
@@ -136,6 +136,7 @@ const UserController = {
         phoneNumber,
         fullName,
         password,
+        isActive,
       }
     );
 
