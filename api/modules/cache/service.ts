@@ -5,6 +5,14 @@ import CacheRepository from './repository';
  */
 const CacheService = {
   /**
+   * Blacklists an OTP using Redis.
+   *
+   * @param otp - One time password.
+   * @returns Asynchronous number from Redis.
+   */
+  blacklistOTP: async (otp: string) => CacheRepository.blacklistOTP(otp),
+
+  /**
    * Deletes a single session from the cache.
    *
    * @param sessionID - Session ID.
@@ -21,6 +29,15 @@ const CacheService = {
    */
   deleteUserSessions: async (userID: string) =>
     CacheRepository.deleteUserSessions(userID),
+
+  /**
+   * Gets an OTP from the Redis cache in order to know whether it is blacklisted or not.
+   *
+   * @param otp - One time password.
+   * @returns The OTP, or null.
+   */
+  getBlacklistedOTP: async (otp: string) =>
+    CacheRepository.getBlacklistedOTP(otp),
 
   /**
    * Gets whether the user has asked OTP or not.
