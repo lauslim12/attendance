@@ -2,6 +2,7 @@ import type { NextFunction, Request, Response } from 'express';
 
 import AppError from '../../util/app-error';
 import sendResponse from '../../util/send-response';
+import CacheService from '../cache/service';
 import UserService from './service';
 
 /**
@@ -12,24 +13,33 @@ const UserController = {
    * Creates a single user. Has several validations to ensure that the username,
    * email, and phone number are all unique and have not yet been used by another user.
    *
-   * @param _ - Express.js's request object.
+   * @param req - Express.js's request object.
    * @param res - Express.js's response object.
    * @param next - Express.js's next function.
    */
   createUser: async (req: Request, res: Response, next: NextFunction) => {
     const { username, email, phoneNumber, password, fullName } = req.body;
 
-    if (await UserService.getUser({ username })) {
+    // Validates whether the username or email or phone is already used or not. Use
+    // parallel processing for speed.
+    const users = await Promise.all([
+      UserService.getUser({ username }),
+      UserService.getUser({ email }),
+      UserService.getUser({ phoneNumber }),
+    ]);
+
+    // Perform checks and validations.
+    if (users[0]) {
       next(new AppError('This username has existed already!', 400));
       return;
     }
 
-    if (await UserService.getUser({ email })) {
+    if (users[1]) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (await UserService.getUser({ phoneNumber })) {
+    if (users[2]) {
       next(
         new AppError('This phone number has been used by another user!', 400)
       );
@@ -73,7 +83,16 @@ const UserController = {
 
     await UserService.updateUser({ userID: id }, { isActive: false });
 
-    res.status(204).send();
+    // Delete all of their sessions.
+    req.session.destroy(async (err) => {
+      if (err) {
+        next(new AppError('Failed to log out. Please try again.', 500));
+        return;
+      }
+
+      await CacheService.deleteUserSessions(id);
+      res.status(204).send();
+    });
   },
 
   /**
@@ -93,7 +112,23 @@ const UserController = {
 
     await UserService.deleteUser({ userID: id });
 
-    res.status(204).send();
+    // Delete all of their sessions.
+    if (req.session.userID !== id) {
+      await CacheService.deleteUserSessions(id);
+      res.status(204).send();
+      return;
+    }
+
+    // This shouldn't happen, but let's say if an admin deletes themself...
+    req.session.destroy(async (err) => {
+      if (err) {
+        next(new AppError('Internal server error. Please try again.', 500));
+        return;
+      }
+
+      await CacheService.deleteUserSessions(id);
+      res.status(204).send();
+    });
   },
 
   /**
@@ -148,27 +183,30 @@ const UserController = {
     const { email, phoneNumber, password, fullName, isActive } = req.body;
     const { id } = req.params;
 
-    const currentUser = await UserService.getUser({ userID: id });
-    if (!currentUser) {
+    // Validate everything via 'Promise.all' for speed.
+    const users = await Promise.all([
+      UserService.getUser({ userID: id }),
+      email ? UserService.getUser({ email }) : null,
+      phoneNumber ? UserService.getUser({ phoneNumber }) : null,
+    ]);
+
+    // Perform validations.
+    if (!users[0]) {
       next(new AppError('The user with this ID does not exist!', 404));
       return;
     }
 
-    const userByEmail = email ? await UserService.getUser({ email }) : null;
-    if (userByEmail && userByEmail.userID !== currentUser.userID) {
+    if (users[1] && users[1].userID !== users[0].userID) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    const userByPhone = phoneNumber
-      ? await UserService.getUser({ phoneNumber })
-      : null;
-    if (userByPhone && userByPhone.userID !== currentUser.userID) {
+    if (users[2] && users[2].userID !== users[0].userID) {
       next(new AppError('This number has been used by another user!', 400));
       return;
     }
 
-    // everything is optional and sanitized according to the previous validation layer
+    // Everything is optional and sanitized according to the previous validation layer.
     const user = await UserService.updateUser(
       { userID: id },
       {

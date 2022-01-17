@@ -219,17 +219,26 @@ const AuthController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
     const { username, email, phoneNumber, password, fullName } = req.body;
 
-    if (await UserService.getUser({ username })) {
+    // Validates whether the username or email or phone is already used or not. Use
+    // parallel processing for speed.
+    const users = await Promise.all([
+      UserService.getUser({ username }),
+      UserService.getUser({ email }),
+      UserService.getUser({ phoneNumber }),
+    ]);
+
+    // Perform checks and validations.
+    if (users[0]) {
       next(new AppError('This username has existed already!', 400));
       return;
     }
 
-    if (await UserService.getUser({ email })) {
+    if (users[1]) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (await UserService.getUser({ phoneNumber })) {
+    if (users[2]) {
       next(
         new AppError('This phone number has been used by another user!', 400)
       );
