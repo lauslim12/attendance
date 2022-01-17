@@ -24,6 +24,7 @@ model User {
   password    String
   totpSecret  String
   fullName    String
+  isActive    Boolean      @default(true)
   updatedAt   DateTime     @updatedAt
   createdAt   DateTime     @default(now())
   role        Roles        @default(user)
