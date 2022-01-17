@@ -25,7 +25,9 @@ Below is the list of main features that this system have:
 
 - Users can check the health of the API.
 - Users can log in and register.
-- (**A**) Users can see their own profile, modify it, and get their own authentication status.
+- Users can get their own authentication status.
+- (**A**) Users can see their own profile, modify it (except password), and delete it.
+- (**A**) Users can modify their own password.
 - (**A**) Users can get all of their own sessions and can invalidate them if necessary.
 - (**A**) Users can get their own attendance data.
 - (**A**) Users can request OTP from the API via Email, SMS, or Authenticator apps.
@@ -49,12 +51,14 @@ As this research focuses on creating a secure API, below are the considerations 
 - Sessions are signed cookies, implemented with a high-entropy session secret, and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security.
 - Passwords are hashed with `Argon2` algorithm.
 - The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator), and it is different for every other users in the system.
-- OTP is time-based and it is generated with RFC 6238 algorithm with `SHA-1` hash function and a high-entropy secret (above). OTP is verified with the `userID` via RFC 7617 algorithm.
+- Conforms to RFC 6238 and RFC 7617 (TOTP, Basic Authorization).
+- OTP is time-based and it is generated with RFC 6238 algorithm with `SHA-1` hash function and a high-entropy secret (above). OTP is verified with the `userID` via RFC 7617 algorithm. OTPs are for one-time use only (in a certain timeframe).
 - User identification generator is based on `uuidv4` algorithm for low-collision user IDs.
 - Secure API protection middlewares (`helmet`, `hpp`, JSON-only API with a secure parser, slow downs, rate limiters, XST prevention, XSS prevention, and many more).
 - Secure API authorization (session authorization, role-based access control, MFA with JWT/JWS).
 - API logging is performed using `morgan`.
 - API implementation conforms to JSON:API Standard and provides structured error messages and responses according to the best practices.
+- User can be banned by setting their `isActive` attribute to `false`. Banned users cannot access the API.
 - No cheap tricks and 'unusual' security through obscurity (double encryption, triple encoding, multiple hashing, and the like). Cryptography/security is used to serve a specific purpose and be an effective solution for that purpose. Incorrect use of said concepts will make the system to be less secure.
 
 ## Documentation
@@ -153,8 +157,6 @@ Application is licensed under MIT License. The research itself will follow the p
 
 Upcoming features to be implemented:
 
-- Ability for admins to block accounts (`isActive` attribute in Prisma).
-- Special endpoint for credential resets (password change, etc.).
 - Implement front-end with Next.js.
 - SMS implementation.
 - Hosting, webservers, and mailservers.
