@@ -77,8 +77,7 @@ function loadExpress() {
   const sessOptions: CookieOptions = {
     httpOnly: true,
     sameSite: 'strict',
-    maxAge: 86400 * 1000, // 1 day
-    // maxAge: 60000, // 60 seconds
+    maxAge: 7200 * 1000, // 2 hours that will be refreshed every time the user hits a 'has-session' middleware.
   };
 
   // Inject 'secure' attributes on production environment.
