@@ -1,9 +1,9 @@
 import type { NextFunction, Request, Response } from 'express';
 
+import config from '../../config';
 import AppError from '../../util/app-error';
 import { extractToken, verifyToken } from '../../util/header-and-jwt';
 import CacheService from '../cache/service';
-import UserService from '../user/service';
 
 /**
  * Sets the 'WWW-Authenticate' header properly with the right 'Realm'.
@@ -29,7 +29,7 @@ const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
   // Extract token and validate.
   const token = extractToken(
     req.headers.authorization,
-    req.signedCookies['attendance-jws']
+    req.signedCookies[config.JWT_COOKIE_NAME]
   );
   if (!token) {
     invalidBearerAuth(
@@ -60,9 +60,9 @@ const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
     return;
   }
 
-  // Check if the user still exists in the database.
-  const user = await UserService.getUser({ userID });
-  if (!user) {
+  // Validate whether the session is equal to the user ID + the sub property,
+  // there is no need to call the database here (reduces overhead).
+  if (req.session.userID !== userID || decoded.payload.sub !== userID) {
     invalidBearerAuth(
       'User belonging to this token does not exist.',
       res,
@@ -72,7 +72,6 @@ const hasJWT = async (req: Request, res: Response, next: NextFunction) => {
   }
 
   // Grant user access to an endpoint, go to next middleware.
-  req.userID = userID;
   next();
 };
 

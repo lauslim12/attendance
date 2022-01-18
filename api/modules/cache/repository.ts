@@ -63,6 +63,15 @@ const allSessions = async () => {
  */
 const CacheRepository = {
   /**
+   * Sets an OTP to be blacklisted in the Redis cache for 120 seconds.
+   *
+   * @param otp - One-time password.
+   * @returns Asynchronous number, response returned from Redis.
+   */
+  blacklistOTP: async (otp: string) =>
+    redis.setex(`blacklisted-otp:${otp}`, 120, 'true'),
+
+  /**
    * Deletes a single session from the cache.
    *
    * @param sessionID - Session identifier.
@@ -81,6 +90,14 @@ const CacheRepository = {
 
     return Promise.all(sessions.map(async (s) => redis.del(`sess:${s.sid}`)));
   },
+
+  /**
+   * Gets an OTP from the Redis cache in order to check if it is blacklisted or not.
+   *
+   * @param otp - One-time password.
+   * @returns Asynchronous number, response returned from Redis.
+   */
+  getBlacklistedOTP: async (otp: string) => redis.get(`blacklisted-otp:${otp}`),
 
   /**
    * Gets whether the user has asked OTP or not.

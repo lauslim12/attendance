@@ -163,6 +163,7 @@ const AuthController = {
       req.session.userRole = user.role;
       req.session.lastActive = Date.now().toString();
       req.session.sessionInfo = getDeviceID(req);
+      req.session.signedIn = Date.now().toString();
 
       // Remove MFA session cookie if it exists.
       res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
@@ -221,24 +222,24 @@ const AuthController = {
 
     // Validates whether the username or email or phone is already used or not. Use
     // parallel processing for speed.
-    const users = await Promise.all([
+    const [userByUsername, userByEmail, userByPhone] = await Promise.all([
       UserService.getUser({ username }),
       UserService.getUser({ email }),
       UserService.getUser({ phoneNumber }),
     ]);
 
     // Perform checks and validations.
-    if (users[0]) {
+    if (userByUsername) {
       next(new AppError('This username has existed already!', 400));
       return;
     }
 
-    if (users[1]) {
+    if (userByEmail) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (users[2]) {
+    if (userByPhone) {
       next(
         new AppError('This phone number has been used by another user!', 400)
       );
@@ -288,14 +289,14 @@ const AuthController = {
       return;
     }
 
-    // check the availability of the user
+    // Check the availability of the user.
     const user = await UserService.getUserComplete({ userID });
     if (!user) {
       next(new AppError('User with this ID does not exist!', 400));
       return;
     }
 
-    // if not yet expired, means that the user has asked in 'successive' order and it is a potential to spam
+    // If not yet expired, means that the user has asked in 'successive' order and it is a potential to spam.
     if (await CacheService.getHasAskedOTP(userID)) {
       next(
         new AppError(
@@ -306,15 +307,14 @@ const AuthController = {
       return;
     }
 
-    // guaranteed to be 'email', 'sms', or 'authenticator' due to the validation layer
+    // Guaranteed to be 'email', 'sms', or 'authenticator' due to the validation layer.
     const totp = generateDefaultTOTP(user.username, user.totpSecret);
     if (req.query.media === 'email') {
-      // sends an email to the user
       await new Email(user.email, user.fullName).sendOTP(totp.token);
     }
 
+    // TODO: send SMS
     if (req.query.media === 'sms') {
-      // TODO: send sms
       next(
         new AppError(
           'Media is not yet implemented. Please use another media.',
@@ -324,10 +324,10 @@ const AuthController = {
       return;
     }
 
-    // if using authenticator, do nothing as its already there, increment redis instead
+    // If using authenticator, do nothing as its already there, increment redis instead.
     await CacheService.setHasAskedOTP(userID);
 
-    // send back response
+    // Send back response.
     sendResponse({
       req,
       res,
@@ -424,27 +424,27 @@ const AuthController = {
    * @param next - Express.js's next function.
    */
   verifyOTP: async (req: Request, res: Response, next: NextFunction) => {
-    // check headers
+    // Validate header.
     if (!req.headers.authorization) {
       invalidBasicAuth('Missing authorization header!', res, next);
       return;
     }
 
-    // check whether authentication scheme is correct
+    // Check whether authentication scheme is correct.
     const { username, password } = parseBasicAuth(req.headers.authorization);
     if (!username || !password) {
       invalidBasicAuth('Invalid authentication scheme!', res, next);
       return;
     }
 
-    // check whether username exists
+    // Check whether username exists.
     const user = await UserService.getUserComplete({ userID: username });
     if (!user) {
       invalidBasicAuth('User with that identifier is not found.', res, next);
       return;
     }
 
-    // if user has reached 3 times, then block attempt
+    // If user has reached 3 times, then block the user's attempt.
     // TODO: should send email/sms/push notification to the relevant user
     const attempts = await CacheService.getOTPAttempts(user.userID);
     if (attempts && Number.parseInt(attempts, 10) === 3) {
@@ -459,7 +459,15 @@ const AuthController = {
       return;
     }
 
-    // validate otp
+    // Ensures that OTP has never been used before.
+    const usedOTP = await CacheService.getBlacklistedOTP(password);
+    if (usedOTP) {
+      await CacheService.setOTPAttempts(user.userID);
+      invalidBasicAuth('This OTP has expired.', res, next);
+      return;
+    }
+
+    // Validate OTP.
     const validTOTP = validateDefaultTOTP(password, user.totpSecret);
     if (!validTOTP) {
       await CacheService.setOTPAttempts(user.userID);
@@ -467,14 +475,17 @@ const AuthController = {
       return;
     }
 
-    // generate JWS as the authorization ticket
+    // Make sure to blacklist the TOTP (according to the specs).
+    await CacheService.blacklistOTP(password);
+
+    // Generate JWS as the authorization ticket.
     const jti = await nanoid();
     const token = await signJWS(jti, user.userID);
 
-    // set otp session by JTI
+    // Set OTP session by its JTI.
     await CacheService.setOTPSession(jti, user.userID);
 
-    // set cookie
+    // Set cookie for the JWS.
     res.cookie(config.JWT_COOKIE_NAME, token, {
       httpOnly: true,
       secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
@@ -483,7 +494,7 @@ const AuthController = {
       signed: true,
     });
 
-    // send response
+    // Send response.
     sendResponse({
       req,
       res,
