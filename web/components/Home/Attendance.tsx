@@ -10,6 +10,7 @@ import { FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
 import useRequest from '../../hooks/useRequest';
 import type { User } from '../../types/User';
+import OTPModal from '../OTPModal';
 
 /**
  * Attendance component to provide checking-in and checking-out functionalities.
@@ -19,6 +20,7 @@ import type { User } from '../../types/User';
 const Attendance = () => {
   const { data: user } = useRequest<User>('/api/v1/users/me');
   const [time, setTime] = useState(new Date());
+  const [isOpen, setIsOpen] = useState(true);
 
   useEffect(() => {
     const timerUpdate = setInterval(() => setTime(new Date()), 1000);
@@ -27,69 +29,79 @@ const Attendance = () => {
   }, []);
 
   return (
-    <VStack w="full" align="center" spacing={3}>
-      {user && <Text fontSize="lg">Welcome back, {user.fullName}!</Text>}
+    <>
+      {user && (
+        <OTPModal
+          isOpen={isOpen}
+          onClose={() => setIsOpen(false)}
+          user={user}
+        />
+      )}
 
-      <Heading
-        as="h1"
-        bgGradient={useColorModeValue(
-          'linear(to-r, #00baff, #00baff, #063ef9)',
-          'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
-        )}
-        bgClip="text"
-        fontSize={['3xl', '5xl', '7xl']}
-        fontWeight="extrabold"
-        letterSpacing={10}
-        mb={5}
-      >
-        {time.toLocaleDateString('en-GB')}
-      </Heading>
+      <VStack w="full" align="center" spacing={3}>
+        {user && <Text fontSize="lg">Welcome back, {user.fullName}!</Text>}
 
-      <Heading
-        as="h2"
-        bgGradient={useColorModeValue(
-          'linear(to-r, #00baff, #00baff, #063ef9)',
-          'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
-        )}
-        bgClip="text"
-        fontSize={['3xl', '4xl', '6xl']}
-        fontWeight="extrabold"
-        letterSpacing={10}
-        mb={5}
-      >
-        {time.toLocaleTimeString('en-GB')}
-      </Heading>
-
-      <VStack
-        align="stretch"
-        spacing={3}
-        textAlign={['center', 'left']}
-        fontSize="sm"
-      >
-        <Text>
-          Check in and check out your attendance by clicking these buttons. You
-          will be asked for an OTP for MFA if you have not yet already.
-        </Text>
-
-        <Button
-          colorScheme="green"
-          leftIcon={<FaRegGrinAlt />}
-          variant="outline"
-          isFullWidth
+        <Heading
+          as="h1"
+          bgGradient={useColorModeValue(
+            'linear(to-r, #00baff, #00baff, #063ef9)',
+            'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
+          )}
+          bgClip="text"
+          fontSize={['3xl', '5xl', '7xl']}
+          fontWeight="extrabold"
+          letterSpacing={10}
+          mb={5}
         >
-          Check in
-        </Button>
+          {time.toLocaleDateString('en-GB')}
+        </Heading>
 
-        <Button
-          colorScheme="purple"
-          leftIcon={<FaRegGrinBeam />}
-          variant="outline"
-          isFullWidth
+        <Heading
+          as="h2"
+          bgGradient={useColorModeValue(
+            'linear(to-r, #00baff, #00baff, #063ef9)',
+            'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
+          )}
+          bgClip="text"
+          fontSize={['3xl', '4xl', '6xl']}
+          fontWeight="extrabold"
+          letterSpacing={10}
+          mb={5}
         >
-          Check out
-        </Button>
+          {time.toLocaleTimeString('en-GB')}
+        </Heading>
+
+        <VStack
+          align="stretch"
+          spacing={3}
+          textAlign={['center', 'left']}
+          fontSize="sm"
+        >
+          <Text>
+            Check in and check out your attendance by clicking these buttons.
+            You will be asked for an OTP for MFA if you have not yet already.
+          </Text>
+
+          <Button
+            colorScheme="green"
+            leftIcon={<FaRegGrinAlt />}
+            variant="outline"
+            isFullWidth
+          >
+            Check in
+          </Button>
+
+          <Button
+            colorScheme="purple"
+            leftIcon={<FaRegGrinBeam />}
+            variant="outline"
+            isFullWidth
+          >
+            Check out
+          </Button>
+        </VStack>
       </VStack>
-    </VStack>
+    </>
   );
 };
 
