@@ -13,6 +13,7 @@ import NextLink from 'next/link';
 import QRCode from 'qrcode.react';
 import type { MutableRefObject } from 'react';
 import { memo } from 'react';
+import { FaArrowRight, FaCode } from 'react-icons/fa';
 
 import routes from '../utils/routes';
 
@@ -54,7 +55,7 @@ const QRDialog = ({
       onClose={onClose}
       closeOnEsc={false}
       closeOnOverlayClick={false}
-      size="2xl"
+      size="3xl"
       isCentered
     >
       <AlertDialogOverlay>
@@ -71,7 +72,9 @@ const QRDialog = ({
                 Below is your QR code to be used with Authenticator apps. Use
                 your Authenticator application and scan this QR code and/or save
                 the QR code properly. This is used to authenticate you into the
-                application.
+                application. Do NOT share this with anyone, treat this like your
+                password! This code will NOT be shown again, so please save it
+                before proceeding.
               </Text>
 
               <Text>
@@ -94,6 +97,7 @@ const QRDialog = ({
 
           <AlertDialogFooter>
             <Button
+              leftIcon={<FaCode />}
               colorScheme="green"
               ref={leastDestructiveRef}
               onClick={downloadQR}
@@ -101,8 +105,8 @@ const QRDialog = ({
               Save Code
             </Button>
 
-            <NextLink href={routes.home} passHref>
-              <Button colorScheme="blue" ml={3}>
+            <NextLink href={routes.home} passHref replace>
+              <Button leftIcon={<FaArrowRight />} colorScheme="blue" ml={3}>
                 Continue
               </Button>
             </NextLink>
