@@ -18,7 +18,10 @@ import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
+import useRequest from '../hooks/useRequest';
+import type { Status } from '../types/Auth';
 import type Response from '../types/Response';
+import type { User } from '../types/User';
 import axios from '../utils/http';
 import routes from '../utils/routes';
 
@@ -33,13 +36,15 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const { mutate: mutateStatus } = useRequest<Status>('/api/v1/auth/status');
+  const { mutate: mutateUser } = useRequest<User>('/api/v1/users/me');
   const router = useRouter();
   const toast = useToast();
 
   const login = () => {
     setIsLoading(true);
 
-    axios<Response<unknown>>({
+    axios<Response<User>>({
       method: 'POST',
       url: '/api/v1/auth/login',
       data: { username, password },
@@ -54,6 +59,10 @@ const Login = () => {
           duration: 5000,
           isClosable: true,
         });
+
+        // revalidate mutation against the data from the server
+        mutateStatus();
+        mutateUser(res.data);
 
         router.replace(routes.home);
       })

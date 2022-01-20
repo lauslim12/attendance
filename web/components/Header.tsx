@@ -4,12 +4,19 @@ import {
   IconButton,
   Link,
   Spacer,
+  Text,
   useColorMode,
+  useToast,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { memo } from 'react';
 import { FaMoon } from 'react-icons/fa';
 
+import useRequest from '../hooks/useRequest';
+import type { Status } from '../types/Auth';
+import type Response from '../types/Response';
+import { User } from '../types/User';
+import axios from '../utils/http';
 import routes from '../utils/routes';
 
 /**
@@ -18,7 +25,32 @@ import routes from '../utils/routes';
  * @returns React Functional Component.
  */
 const Header = () => {
+  const { data: status, mutate: mutateStatus } = useRequest<Status>(
+    '/api/v1/auth/status'
+  );
+  const { mutate: mutateUser } = useRequest<User>('/api/v1/users/me');
   const { toggleColorMode } = useColorMode();
+  const toast = useToast();
+
+  const logout = () => {
+    // reset all status
+    mutateStatus({ isAuthenticated: false, isMFA: false }, false);
+    mutateUser(undefined, false);
+
+    axios<Response<unknown>>({ method: 'POST', url: '/api/v1/auth/logout' })
+      .then((res) => {
+        toast({
+          title: 'Success!',
+          description: res.message,
+          status: 'success',
+          duration: 5000,
+          isClosable: true,
+        });
+
+        mutateStatus();
+      })
+      .catch((err) => console.error(err));
+  };
 
   return (
     <HStack as="nav" p={4} spacing={2}>
@@ -32,7 +64,13 @@ const Header = () => {
 
       <Spacer />
 
-      <p>About</p>
+      {status && status.isAuthenticated ? (
+        <Text as="button" onClick={logout}>
+          Logout
+        </Text>
+      ) : (
+        <Text>About</Text>
+      )}
 
       <Spacer />
 

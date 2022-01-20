@@ -1,16 +1,12 @@
-import {
-  Button,
-  Heading,
-  Stack,
-  Text,
-  useColorMode,
-  VStack,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
-import { FaAddressCard, FaSignInAlt } from 'react-icons/fa';
+import { VStack } from '@chakra-ui/react';
+import { memo } from 'react';
 
+import Attendance from '../components/Home/Attendance';
+import Main from '../components/Home/Main';
 import Layout from '../components/Layout';
-import routes from '../utils/routes';
+import Spinner from '../components/Spinner';
+import useRequest from '../hooks/useRequest';
+import type { Status } from '../types/Auth';
 
 /**
  * Homepage of the website.
@@ -18,11 +14,14 @@ import routes from '../utils/routes';
  * @returns React functional component.
  */
 const Home = () => {
-  const { colorMode } = useColorMode();
+  const { data: status, isLoading } = useRequest<Status>('/api/v1/auth/status');
+
+  if (isLoading) return <Spinner />;
 
   return (
     <Layout title={['Home']}>
       <VStack
+        as="section"
         align={['center', 'start', 'start']}
         justify="center"
         w={['full', 'full', '60vw']}
@@ -30,48 +29,10 @@ const Home = () => {
         margin="0 auto"
         p={2}
       >
-        <Heading
-          bgGradient={
-            colorMode === 'dark'
-              ? 'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
-              : 'linear(to-r, #00baff, #00baff, #063ef9)'
-          }
-          bgClip="text"
-          fontSize={['4xl', '4xl', '6xl']}
-          fontWeight="extrabold"
-          mb={5}
-        >
-          Hello and Welcome! 👋
-        </Heading>
-
-        <Text fontSize={['md', 'lg']}>
-          Welcome to this web application. This is used to provide a proof of
-          concept of a secure REST API using various security considerations
-          (mainly with OTPs and MFAs with RFC 6238 and RFC 7617). The API is
-          implemented as an attendance system to solve a real use-case. Help me
-          to graduate by providing evaluations!
-        </Text>
-
-        <Stack justify="stretch" direction={['column', 'row']} w="full" pt={2}>
-          <NextLink href={routes.register} passHref>
-            <Button
-              colorScheme="orange"
-              leftIcon={<FaAddressCard />}
-              isFullWidth
-            >
-              Sign up
-            </Button>
-          </NextLink>
-
-          <NextLink href={routes.login} passHref>
-            <Button colorScheme="blue" leftIcon={<FaSignInAlt />} isFullWidth>
-              Log in
-            </Button>
-          </NextLink>
-        </Stack>
+        {status?.isAuthenticated ? <Attendance /> : <Main />}
       </VStack>
     </Layout>
   );
 };
 
-export default Home;
+export default memo(Home);
