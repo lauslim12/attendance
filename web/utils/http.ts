@@ -19,14 +19,14 @@ instance.interceptors.response.use(
   (res) => res.data,
   (err) => {
     if (err.response) {
-      return err.response.data;
+      return Promise.reject(err.response.data);
     }
 
     if (err.request) {
-      return err.request;
+      return Promise.reject(err.request);
     }
 
-    return err.message;
+    return Promise.reject(err.message);
   }
 );
 
