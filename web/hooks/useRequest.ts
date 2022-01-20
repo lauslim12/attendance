@@ -1,3 +1,4 @@
+import type { Key } from 'swr';
 import useSWR from 'swr';
 
 import { fetcher } from '../utils/http';
@@ -11,13 +12,13 @@ import { fetcher } from '../utils/http';
  * if (data) return <UserProfile user={me}} />
  * if (error) return <InternalServerError />
  *
- * @param path - Path to the API.
+ * @param key - Key argument to the SWR.
  * @returns An object consisting of the data, a boolean value whether
  * it is loading or not, an error if it exists, and a mutator function
  * to update the state again.
  */
-const useRequest = <T>(path: string) => {
-  const { data, error, mutate } = useSWR<T>(path, fetcher);
+const useRequest = <T>(key: Key) => {
+  const { data, error, mutate } = useSWR<T>(key, fetcher);
 
   return {
     data,
