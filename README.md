@@ -149,6 +149,28 @@ yarn dev
 
 - If you have already set up everything above and are coming back to develop after a while, then the steps to run this quickly are: `cd attendance`, `docker-compose up -d`, `cd api`, `yarn migrate`, and finally `yarn dev`.
 
+### Web Setup
+
+- Change directory to the `web` directory.
+
+```bash
+cd web
+```
+
+- Install all dependencies.
+
+```bash
+yarn --frozen-lockfile
+```
+
+- Run the web application in development mode.
+
+```bash
+yarn dev
+```
+
+- Keep in mind that your API has to be in an active state, or else it will not work.
+
 ## License
 
 Application is licensed under MIT License. The research itself will follow the publisher's license after it has been published.
