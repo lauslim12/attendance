@@ -6,17 +6,18 @@ import {
   useColorMode,
   VStack,
 } from '@chakra-ui/react';
-import type { NextPage } from 'next';
+import NextLink from 'next/link';
 import { FaAddressCard, FaSignInAlt } from 'react-icons/fa';
 
 import Layout from '../components/Layout';
+import routes from '../utils/routes';
 
 /**
  * Homepage of the website.
  *
  * @returns React functional component.
  */
-const Home: NextPage = () => {
+const Home = () => {
   const { colorMode } = useColorMode();
 
   return (
@@ -52,23 +53,27 @@ const Home: NextPage = () => {
         </Text>
 
         <Stack justify="stretch" direction={['column', 'row']} w="full" pt={2}>
-          <Button
-            size="lg"
-            colorScheme="orange"
-            leftIcon={<FaAddressCard />}
-            isFullWidth
-          >
-            Sign up
-          </Button>
+          <NextLink href={routes.register} passHref>
+            <Button
+              size="lg"
+              colorScheme="orange"
+              leftIcon={<FaAddressCard />}
+              isFullWidth
+            >
+              Sign up
+            </Button>
+          </NextLink>
 
-          <Button
-            size="lg"
-            colorScheme="blue"
-            leftIcon={<FaSignInAlt />}
-            isFullWidth
-          >
-            Log in
-          </Button>
+          <NextLink href={routes.login} passHref>
+            <Button
+              size="lg"
+              colorScheme="blue"
+              leftIcon={<FaSignInAlt />}
+              isFullWidth
+            >
+              Log in
+            </Button>
+          </NextLink>
         </Stack>
       </VStack>
     </Layout>
