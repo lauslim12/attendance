@@ -55,7 +55,6 @@ const Home = () => {
         <Stack justify="stretch" direction={['column', 'row']} w="full" pt={2}>
           <NextLink href={routes.register} passHref>
             <Button
-              size="lg"
               colorScheme="orange"
               leftIcon={<FaAddressCard />}
               isFullWidth
@@ -65,12 +64,7 @@ const Home = () => {
           </NextLink>
 
           <NextLink href={routes.login} passHref>
-            <Button
-              size="lg"
-              colorScheme="blue"
-              leftIcon={<FaSignInAlt />}
-              isFullWidth
-            >
+            <Button colorScheme="blue" leftIcon={<FaSignInAlt />} isFullWidth>
               Log in
             </Button>
           </NextLink>

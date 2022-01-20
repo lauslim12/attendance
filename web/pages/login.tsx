@@ -72,7 +72,7 @@ const Login = () => {
           borderStyle="solid"
           borderColor="gray.300"
           borderRadius="md"
-          w={['full', '80vw', '70vw', '60vw', '40vw']}
+          w={['full', '80vw', '70vw', '60vw', '60vw', '40vw']}
           p={[0, 4, 10]}
           spacing={4}
         >

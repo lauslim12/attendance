@@ -21,7 +21,7 @@ const Header = () => {
   const { toggleColorMode } = useColorMode();
 
   return (
-    <HStack as="nav" p={4} spacing={2} mt={3}>
+    <HStack as="nav" p={4} spacing={2}>
       <Heading size="lg" fontWeight="extrabold">
         <NextLink href={routes.home} passHref>
           <Link _hover={{ textDecor: 'none', color: 'orange.400' }}>
