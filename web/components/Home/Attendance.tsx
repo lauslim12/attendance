@@ -21,7 +21,7 @@ import OTPModal from '../OTPModal';
  */
 const Attendance = ({ status }: { status: Status }) => {
   const { data: user } = useRequest<User>('/api/v1/users/me');
-  const [attendModalOpen, setAttendModalOpen] = useState(true);
+  const [attendModalOpen, setAttendModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalTypeIn, setIsModalTypeIn] = useState(true);
   const [time, setTime] = useState(new Date());

@@ -164,12 +164,12 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
                 isDisabled={isVerifyLoading || sendingOTP}
                 isInvalid={isOTPError}
               >
-                <PinInputField isRequired />
-                <PinInputField isRequired />
-                <PinInputField isRequired />
-                <PinInputField isRequired />
-                <PinInputField isRequired />
-                <PinInputField isRequired />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
+                <PinInputField />
               </PinInput>
             </HStack>
 
