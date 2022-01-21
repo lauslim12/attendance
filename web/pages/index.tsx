@@ -29,7 +29,7 @@ const Home = () => {
         margin="0 auto"
         p={2}
       >
-        {status?.isAuthenticated ? <Attendance /> : <Main />}
+        {status?.isAuthenticated ? <Attendance status={status} /> : <Main />}
       </VStack>
     </Layout>
   );

@@ -17,8 +17,11 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import { memo, useCallback, useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
+import { FaGoogle, FaMagic, FaMailBulk, FaSms, FaTimes } from 'react-icons/fa';
 
+import useRequest from '../hooks/useRequest';
+import type { Status } from '../types/Auth';
 import type Response from '../types/Response';
 import type { User } from '../types/User';
 import axios from '../utils/http';
@@ -39,8 +42,10 @@ type Props = {
  * @returns React functional component.
  */
 const OTPModal = ({ isOpen, onClose, user }: Props) => {
+  const { mutate: mutateStatus } = useRequest<Status>('/api/v1/auth/status');
   const [counter, setCounter] = useState(0);
   const [flash, setFlash] = useState({ type: 'sucess', message: '' });
+  const [isOTPError, setIsOTPError] = useState(false);
   const [isVerifyLoading, setIsVerifyLoading] = useState(false);
   const [otp, setOTP] = useState('');
   const toast = useToast();
@@ -61,6 +66,8 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
 
   // Sends an OTP.
   const sendOTP = (media: 'sms' | 'authenticator' | 'email') => {
+    setIsOTPError(false);
+
     axios<Response<unknown>>({
       method: 'POST',
       url: `/api/v1/auth/otp?media=${media}`,
@@ -71,7 +78,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
   };
 
   // Verifies an OTP.
-  const verifyOTP = useCallback(() => {
+  const verifyOTP = (otp: string) => {
     setIsVerifyLoading(true);
 
     axios<Response<unknown>>({
@@ -90,25 +97,25 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
 
         setFlash({ type: 'success', message: '' });
         setIsVerifyLoading(false);
+        setIsOTPError(false);
+
+        // Mutate the data without revalidation.
+        mutateStatus({ isAuthenticated: true, isMFA: true }, false);
+
         onClose();
       })
       .catch((err) => {
         setFlash({ type: 'error', message: err.message });
         setIsVerifyLoading(false);
+        setIsOTPError(true);
       });
-  }, [otp, toast, user.userID, onClose]);
-
-  useEffect(() => {
-    if (otp.length === 6) {
-      verifyOTP();
-    }
-  }, [otp, verifyOTP]);
+  };
 
   return (
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      size="xl"
+      size="2xl"
       closeOnEsc={false}
       closeOnOverlayClick={false}
       isCentered
@@ -148,7 +155,9 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
               <PinInput
                 value={otp}
                 onChange={(otp: string) => setOTP(otp)}
+                onComplete={(otp: string) => verifyOTP(otp)}
                 isDisabled={isVerifyLoading}
+                isInvalid={isOTPError}
               >
                 <PinInputField />
                 <PinInputField />
@@ -166,7 +175,9 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
 
             <Stack direction={['column', 'row']}>
               <Button
+                colorScheme="blue"
                 size="sm"
+                leftIcon={<FaMailBulk />}
                 isDisabled={counter !== 0 || isVerifyLoading}
                 onClick={() => sendOTP('email')}
               >
@@ -174,7 +185,9 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
               </Button>
 
               <Button
+                colorScheme="purple"
                 size="sm"
+                leftIcon={<FaSms />}
                 isDisabled={counter !== 0 || isVerifyLoading}
                 onClick={() => sendOTP('sms')}
               >
@@ -182,7 +195,9 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
               </Button>
 
               <Button
+                colorScheme="orange"
                 size="sm"
+                leftIcon={<FaGoogle />}
                 isDisabled={counter !== 0 || isVerifyLoading}
                 onClick={() => sendOTP('authenticator')}
               >
@@ -193,13 +208,22 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
         </ModalBody>
 
         <ModalFooter>
-          <Button colorScheme="blue" mr={3} onClick={onClose}>
+          <Button
+            leftIcon={<FaTimes />}
+            variant="ghost"
+            size="sm"
+            colorScheme="blue"
+            mr={3}
+            onClick={onClose}
+          >
             Close
           </Button>
 
           <Button
-            variant="ghost"
-            onClick={verifyOTP}
+            leftIcon={<FaMagic />}
+            size="sm"
+            colorScheme="green"
+            onClick={() => verifyOTP(otp)}
             isDisabled={isVerifyLoading}
             isLoading={isVerifyLoading}
           >
