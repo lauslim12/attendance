@@ -15,18 +15,6 @@ import Email from '../email';
 import UserService from '../user/service';
 
 /**
- * Utility function to set 'WWW-Authenticate' header with the proper 'Realm'.
- *
- * @param msg - Error message to be passed to the user.
- * @param res - Express.js's response object.
- * @param next - Express.js's next function.
- */
-const invalidBasicAuth = (msg: string, res: Response, next: NextFunction) => {
-  res.set('WWW-Authenticate', 'Basic realm="OTP-Session"');
-  next(new AppError(msg, 401));
-};
-
-/**
  * Sends the user's authentication status to the client in the form of JSON response.
  * The 'type' of the response is authentication, as this one does not really
  * fit with the 'users' type.
@@ -292,7 +280,7 @@ const AuthController = {
     // Check the availability of the user.
     const user = await UserService.getUserComplete({ userID });
     if (!user) {
-      next(new AppError('User with this ID does not exist!', 400));
+      next(new AppError('User with this ID does not exist!', 404));
       return;
     }
 
@@ -426,36 +414,37 @@ const AuthController = {
   verifyOTP: async (req: Request, res: Response, next: NextFunction) => {
     // Validate header.
     if (!req.headers.authorization) {
-      invalidBasicAuth('Missing authorization header!', res, next);
+      next(new AppError('Missing authorization header!', 400));
       return;
     }
 
     // Check whether authentication scheme is correct.
     const { username, password } = parseBasicAuth(req.headers.authorization);
     if (!username || !password) {
-      invalidBasicAuth('Invalid authentication scheme!', res, next);
+      next(new AppError('Invalid authentication scheme!', 400));
       return;
     }
 
     // Check whether username exists.
     const user = await UserService.getUserComplete({ userID: username });
     if (!user) {
-      invalidBasicAuth('User with that identifier is not found.', res, next);
+      next(new AppError('User with that identifier is not found.', 404));
       return;
     }
 
     // If user has reached 3 times, then block the user's attempt.
+    // Send response first BEFORE sending the email for performance.
     // TODO: should send email/sms/push notification to the relevant user
     const attempts = await CacheService.getOTPAttempts(user.userID);
     if (attempts && Number.parseInt(attempts, 10) === 3) {
-      await new Email(user.email, user.fullName).sendNotification();
-
       next(
         new AppError(
           'You have exceeded the number of times allowed for a secured session. Please try again in the next day.',
           429
         )
       );
+
+      await new Email(user.email, user.fullName).sendNotification();
       return;
     }
 
@@ -463,7 +452,7 @@ const AuthController = {
     const usedOTP = await CacheService.getBlacklistedOTP(password);
     if (usedOTP) {
       await CacheService.setOTPAttempts(user.userID);
-      invalidBasicAuth('This OTP has expired.', res, next);
+      next(new AppError('This OTP has expired.', 410));
       return;
     }
 
@@ -471,7 +460,7 @@ const AuthController = {
     const validTOTP = validateDefaultTOTP(password, user.totpSecret);
     if (!validTOTP) {
       await CacheService.setOTPAttempts(user.userID);
-      invalidBasicAuth('Invalid authentication, wrong OTP code.', res, next);
+      next(new AppError('Invalid authentication, wrong OTP code.', 401));
       return;
     }
 
@@ -503,8 +492,7 @@ const AuthController = {
       data: {
         token,
       },
-      message:
-        'OTP has been verified. Special session has been given to the current user.',
+      message: 'OTP verified. Special session has been given to the user.',
       type: 'auth',
     });
   },
