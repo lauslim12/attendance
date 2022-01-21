@@ -1,0 +1,59 @@
+{
+  "name": "attendace-web",
+  "version": "1.0.0",
+  "description": "Front-end implementation of Attendance API",
+  "repository": "git@github.com/lauslim12/attendance.git",
+  "author": "Nicholas",
+  "license": "MIT",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "circular-check": "dpdm --tree --circular --warning ./**/*.ts",
+    "prettier-check": "prettier --check ./**/*.ts",
+    "type-check": "tsc --noEmit",
+    "lint": "yarn prettier-check && next lint && yarn type-check"
+  },
+  "dependencies": {
+    "@chakra-ui/react": "^1.7.4",
+    "@emotion/react": "^11",
+    "@emotion/styled": "^11",
+    "axios": "^0.24.0",
+    "focus-visible": "^5.2.0",
+    "framer-motion": "^5",
+    "next": "12.0.8",
+    "qrcode.react": "^1.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "react-icons": "^4.3.1",
+    "swr": "^1.1.2"
+  },
+  "devDependencies": {
+    "@types/node": "17.0.9",
+    "@types/qrcode.react": "^1.0.2",
+    "@types/react": "17.0.38",
+    "dpdm": "^3.8.0",
+    "eslint": "8.7.0",
+    "eslint-config-next": "12.0.8",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "prettier": "^2.5.1",
+    "typescript": "4.5.4"
+  },
+  "eslintConfig": {
+    "extends": [
+      "next/core-web-vitals"
+    ],
+    "plugins": [
+      "simple-import-sort"
+    ],
+    "rules": {
+      "simple-import-sort/imports": "error",
+      "simple-import-sort/exports": "error"
+    }
+  },
+  "prettier": {
+    "singleQuote": true,
+    "printWidth": 80
+  }
+}
