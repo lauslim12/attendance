@@ -332,10 +332,10 @@ const AuthController = {
       req,
       res,
       status: 'success',
-      statusCode: 200,
+      statusCode: 202,
       data: [],
       message:
-        'OTP has been processed. Please check your chosen media and verify the OTP there.',
+        'OTP processed. Please check your chosen media and verify the OTP there.',
       type: 'auth',
     });
   },
