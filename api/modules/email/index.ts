@@ -4,9 +4,11 @@ import path from 'path';
 import { renderFile } from 'pug';
 
 import config from '../../config';
+import bull from '../../infra/bull';
 
 /**
- * Class for method reusability.
+ * Class for method reusability. Email is usually pushed to a Bull queue
+ * to be processed later by the lightweight queue.
  */
 class Email {
   public to: string;
@@ -91,23 +93,29 @@ class Email {
   }
 
   /**
-   * Sends a security alert notification.
+   * Sends a security alert notification. Will be pushed into a
+   * Bull queue to prevent overhead.
    */
   async sendNotification() {
-    await this.send('Security alert for Attendance', 'notification', {
-      name: this.name,
+    await bull.add(`email-notification-${this.to}`, {
+      task: this.send('Security Alert for Attendance', 'notification', {
+        name: this.name,
+      }),
     });
   }
 
   /**
-   * Sends an OTP with Email media.
+   * Sends an OTP with Email media. Will be pushed into a Bull queue
+   * to prevent overhead.
    *
    * @param otp - OTP as a string.
    */
   async sendOTP(otp: string) {
-    await this.send('Your requested OTP for Attendance', 'otp', {
-      otp,
-      name: this.name,
+    await bull.add(`email-otp-${this.to}`, {
+      task: this.send('Your requested OTP for Attendance', 'otp', {
+        otp,
+        name: this.name,
+      }),
     });
   }
 }

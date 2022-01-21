@@ -445,10 +445,12 @@ const AuthController = {
     }
 
     // If user has reached 3 times, then block the user's attempt.
-    // Send response first BEFORE sending the email for performance.
     // TODO: should send email/sms/push notification to the relevant user
     const attempts = await CacheService.getOTPAttempts(user.userID);
     if (attempts && Number.parseInt(attempts, 10) === 3) {
+      // This will put email into the queue to be sent.
+      await new Email(user.email, user.fullName).sendNotification();
+
       next(
         new AppError(
           'You have exceeded the number of times allowed for a secured session. Please try again in the next day.',
@@ -456,7 +458,6 @@ const AuthController = {
         )
       );
 
-      await new Email(user.email, user.fullName).sendNotification();
       return;
     }
 

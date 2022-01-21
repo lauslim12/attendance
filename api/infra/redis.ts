@@ -1,9 +1,14 @@
 import { createNodeRedisClient } from 'handy-redis';
 
+import config from '../config';
+
 /**
  * Creates a Redis instance to be used by the application.
  */
-const redis = createNodeRedisClient();
+const redis = createNodeRedisClient(config.REDIS_PORT, {
+  host: config.REDIS_HOST,
+  password: config.REDIS_PASSWORD,
+});
 
 /**
  * Set up pub/sub listeners.

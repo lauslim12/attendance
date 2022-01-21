@@ -48,6 +48,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
   const [isOTPError, setIsOTPError] = useState(false);
   const [isVerifyLoading, setIsVerifyLoading] = useState(false);
   const [otp, setOTP] = useState('');
+  const [sendingOTP, setSendingOTP] = useState(false);
   const toast = useToast();
 
   // Allow to perform timer-esque stuff in this component.
@@ -67,6 +68,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
   // Sends an OTP.
   const sendOTP = (media: 'sms' | 'authenticator' | 'email') => {
     setIsOTPError(false);
+    setSendingOTP(true);
 
     axios<Response<unknown>>({
       method: 'POST',
@@ -74,7 +76,10 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
     })
       .then((res) => setFlash({ type: 'success', message: res.message }))
       .catch((err) => setFlash({ type: 'error', message: err.message }))
-      .finally(() => setCounter(30));
+      .finally(() => {
+        setCounter(30);
+        setSendingOTP(false);
+      });
   };
 
   // Verifies an OTP.
@@ -149,28 +154,29 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
               </Alert>
             )}
 
-            <Text>Please input your OTP or request one!</Text>
+            <Text fontWeight="bold">Please input your OTP or request one!</Text>
 
             <HStack>
               <PinInput
                 value={otp}
                 onChange={(otp: string) => setOTP(otp)}
                 onComplete={(otp: string) => verifyOTP(otp)}
-                isDisabled={isVerifyLoading}
+                isDisabled={isVerifyLoading || sendingOTP}
                 isInvalid={isOTPError}
               >
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
-                <PinInputField />
+                <PinInputField isRequired />
+                <PinInputField isRequired />
+                <PinInputField isRequired />
+                <PinInputField isRequired />
+                <PinInputField isRequired />
+                <PinInputField isRequired />
               </PinInput>
             </HStack>
 
             <Text>
-              Please keep in mind that OTPs are integers only. Remember to not
-              share your OTPs with anyone. We will never ask for your OTP.
+              Please keep in mind that OTPs are integers only and are only valid
+              for 30 seconds. Remember to not share your OTPs with anyone. We
+              will never ask for your OTP.
             </Text>
 
             <Stack direction={['column', 'row']}>
@@ -178,7 +184,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
                 colorScheme="blue"
                 size="sm"
                 leftIcon={<FaMailBulk />}
-                isDisabled={counter !== 0 || isVerifyLoading}
+                isDisabled={counter !== 0 || isVerifyLoading || sendingOTP}
                 onClick={() => sendOTP('email')}
               >
                 Send OTP (Email)
@@ -188,7 +194,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
                 colorScheme="purple"
                 size="sm"
                 leftIcon={<FaSms />}
-                isDisabled={counter !== 0 || isVerifyLoading}
+                isDisabled={counter !== 0 || isVerifyLoading || sendingOTP}
                 onClick={() => sendOTP('sms')}
               >
                 Send OTP (Phone)
@@ -198,7 +204,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
                 colorScheme="orange"
                 size="sm"
                 leftIcon={<FaGoogle />}
-                isDisabled={counter !== 0 || isVerifyLoading}
+                isDisabled={counter !== 0 || isVerifyLoading || sendingOTP}
                 onClick={() => sendOTP('authenticator')}
               >
                 Send OTP (Authenticator)
@@ -224,7 +230,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
             size="sm"
             colorScheme="green"
             onClick={() => verifyOTP(otp)}
-            isDisabled={isVerifyLoading}
+            isDisabled={isVerifyLoading || sendingOTP}
             isLoading={isVerifyLoading}
           >
             Verify

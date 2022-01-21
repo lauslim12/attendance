@@ -18,6 +18,9 @@ declare global {
       MAILTRAP_PASSWORD: string;
       NODE_ENV?: 'production' | 'development';
       PORT?: number;
+      REDIS_HOST: string;
+      REDIS_PASSWORD: string;
+      REDIS_PORT: string;
       SESSION_COOKIE?: string;
       TOTP_ISSUER?: string;
     }
