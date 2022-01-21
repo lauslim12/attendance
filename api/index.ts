@@ -1,6 +1,7 @@
 import type { Server } from 'http';
 
 import config from './config';
+import bull from './infra/bull';
 import loadExpress from './infra/express';
 import prisma from './infra/prisma';
 import redis from './infra/redis';
@@ -64,6 +65,7 @@ async function startServer() {
   const status = await Promise.all([
     CacheService.ping(),
     prisma.$queryRaw`SELECT 1`,
+    bull.getMaxListeners(),
   ]);
   console.log(`Status of infrastructures: ${JSON.stringify(status)}.`);
 
