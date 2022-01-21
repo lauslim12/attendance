@@ -30,18 +30,18 @@ const UserController = {
 
     // Perform checks and validations.
     if (userByUsername) {
-      next(new AppError('This username has existed already!', 400));
+      next(new AppError('This username has existed already!', 422));
       return;
     }
 
     if (userByEmail) {
-      next(new AppError('This email has been used by another user!', 400));
+      next(new AppError('This email has been used by another user!', 422));
       return;
     }
 
     if (userByPhone) {
       next(
-        new AppError('This phone number has been used by another user!', 400)
+        new AppError('This phone number has been used by another user!', 422)
       );
       return;
     }
