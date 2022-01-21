@@ -21,9 +21,18 @@ const connection: ConnectionOptions = {
 
 /**
  * Bull queue to process asynchronous, 'queueable' things such as
- * email and SMS.
+ * email and SMS. Retry job after failure.
  */
-const bull = new Queue<BullData>('attendance-queue', { connection });
+const bull = new Queue<BullData>('attendance-queue', {
+  connection,
+  defaultJobOptions: {
+    attempts: 3,
+    backoff: {
+      type: 'exponential',
+      delay: 1000,
+    },
+  },
+});
 
 /**
  * Automatically called in every instance, no need to `await` as it implicitly
