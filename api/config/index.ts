@@ -62,6 +62,10 @@ const config = {
 
   NODE_ENV: process.env.NODE_ENV || 'development',
 
+  REDIS_HOST: env(process.env.REDIS_HOST),
+  REDIS_PORT: env(process.env.REDIS_PORT),
+  REDIS_PASSWORD: process.env.REDIS_PASSWORD || undefined,
+
   PORT: process.env.PORT || 8080,
 
   SESSION_COOKIE: process.env.SESSION_COOKIE || 'attendance-sid',
