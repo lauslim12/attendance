@@ -66,6 +66,37 @@ const AttendanceController = {
   },
 
   /**
+   * Gets the attendance status of the current user.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  getStatus: async (req: Request, res: Response, next: NextFunction) => {
+    const { userID } = req.session;
+    if (!userID) {
+      next(new AppError('No session detected. Please log in again!', 401));
+      return;
+    }
+
+    const today = new Date();
+    const [inData, outData] = await Promise.all([
+      AttendanceService.checked(today, userID, 'in'),
+      AttendanceService.checked(today, userID, 'out'),
+    ]);
+
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: { hasCheckedIn: !!inData, hasCheckedOut: !!outData },
+      message: 'Successfully fetched attendance status for the current user!',
+      type: 'attendance',
+    });
+  },
+
+  /**
    * Checks in a user inside the webservice. Algorithm:
    * - Ensure that the request is made within time (optional).
    * - Fetches the current user to get their identifier.

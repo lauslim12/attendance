@@ -1,4 +1,5 @@
 import express from 'express';
+import type { RateLimit } from 'express-rate-limit';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
@@ -13,16 +14,18 @@ import UserValidation from './validation';
 /**
  * Handler to take care of 'Users' entity.
  *
- * @returns Express router
+ * @param limiter - General rate limit.
+ * @param strictLimiter - Specific rate limit for sensitive endpoints.
+ * @returns Express router.
  */
-const UserHandler = () => {
+const UserHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
   const handler = express.Router();
 
   // Route to 'Attendance' entity based on the current user for better REST-ful experience.
-  handler.use('/:id/attendance', AttendanceHandler());
+  handler.use('/:id/attendance', AttendanceHandler(limiter, strictLimiter));
 
-  // Below endpoints are allowed for only authenticated users.
-  handler.use(asyncHandler(hasSession));
+  // Below endpoints are allowed for only authenticated users, and place rate limiter.
+  handler.use(limiter, asyncHandler(hasSession));
 
   // Allow user to get their own data and update their own data as well.
   handler
