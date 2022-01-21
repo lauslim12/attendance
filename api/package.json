@@ -22,6 +22,7 @@
   "dependencies": {
     "@prisma/client": "3.7.0",
     "argon2": "^0.28.3",
+    "bullmq": "^1.65.0",
     "connect-redis": "^6.0.0",
     "cookie-parser": "^1.4.6",
     "device-detector-js": "^3.0.0",
