@@ -63,6 +63,19 @@ const AuthController = {
         return;
       }
 
+      // Make sure that the user exists in the database.
+      const user = await UserService.getUser({ userID: req.session.userID });
+      if (!user) {
+        sendUserStatus(req, res, false, false);
+        return;
+      }
+
+      // Make sure that the user is not blocked.
+      if (!user.isActive) {
+        sendUserStatus(req, res, false, false);
+        return;
+      }
+
       // Extract token and validate.
       const token = extractToken(
         req.headers.authorization,
@@ -89,11 +102,10 @@ const AuthController = {
         return;
       }
 
-      // Check if user exists in the database.
-      const user = await UserService.getUser({ userID });
-      if (!user) {
+      // Check if JTI is equal to the current session, and ensure that the subject
+      // is equal to the user ID as well.
+      if (req.session.userID !== userID || decoded.payload.sub !== userID) {
         sendUserStatus(req, res, true, false);
-        return;
       }
 
       // Send final response that the user is properly authenticated and authorized.
