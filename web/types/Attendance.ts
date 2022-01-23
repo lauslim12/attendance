@@ -19,4 +19,9 @@ export type Attendance = {
   };
 };
 
+export type AttendanceStatus = {
+  hasCheckedIn: boolean;
+  hasCheckedOut: boolean;
+};
+
 export type AttendanceResponse = Response<Attendance>;

@@ -11,6 +11,7 @@ import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 import useRequest from '../../hooks/useRequest';
 import type { Status } from '../../types/Auth';
 import type { User } from '../../types/User';
+import AttendanceModal from '../AttendanceModal';
 import OTPModal from '../OTPModal';
 
 /**
@@ -20,8 +21,10 @@ import OTPModal from '../OTPModal';
  */
 const Attendance = ({ status }: { status: Status }) => {
   const { data: user } = useRequest<User>('/api/v1/users/me');
-  const [time, setTime] = useState(new Date());
+  const [attendModalOpen, setAttendModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const [isModalTypeIn, setIsModalTypeIn] = useState(true);
+  const [time, setTime] = useState(new Date());
 
   useEffect(() => {
     const timerUpdate = setInterval(() => setTime(new Date()), 1000);
@@ -36,6 +39,14 @@ const Attendance = ({ status }: { status: Status }) => {
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
           user={user}
+        />
+      )}
+
+      {user && (
+        <AttendanceModal
+          isOpen={attendModalOpen}
+          onClose={() => setAttendModalOpen(false)}
+          isIn={isModalTypeIn}
         />
       )}
 
@@ -97,6 +108,10 @@ const Attendance = ({ status }: { status: Status }) => {
                 leftIcon={<FaRegGrinAlt />}
                 variant="outline"
                 isFullWidth
+                onClick={() => {
+                  setIsModalTypeIn(true);
+                  setAttendModalOpen(true);
+                }}
               >
                 Check in
               </Button>
@@ -106,6 +121,10 @@ const Attendance = ({ status }: { status: Status }) => {
                 leftIcon={<FaRegGrinBeam />}
                 variant="outline"
                 isFullWidth
+                onClick={() => {
+                  setIsModalTypeIn(false);
+                  setAttendModalOpen(true);
+                }}
               >
                 Check out
               </Button>

@@ -144,19 +144,19 @@ function loadExpress() {
   });
 
   // Define handlers.
-  const attendanceHandler = AttendanceHandler();
+  const attendanceHandler = AttendanceHandler(limiter, strictLimiter);
   const authHandler = AuthHandler(strictLimiter);
   const healthHandler = HealthHandler();
   const sessionHandler = SessionHandler();
-  const userHandler = UserHandler();
+  const userHandler = UserHandler(limiter, strictLimiter);
 
   // Define API routes.
   app.use('/api', throttler);
   app.use('/api/v1', healthHandler);
-  app.use('/api/v1/attendance', strictLimiter, attendanceHandler);
+  app.use('/api/v1/attendance', attendanceHandler);
   app.use('/api/v1/auth', authHandler);
   app.use('/api/v1/sessions', strictLimiter, sessionHandler);
-  app.use('/api/v1/users', limiter, userHandler);
+  app.use('/api/v1/users', userHandler);
 
   // Catch-all routes for API.
   app.all('*', (req: Request, _: Response, next: NextFunction) => {
