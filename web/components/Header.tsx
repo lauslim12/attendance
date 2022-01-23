@@ -18,6 +18,7 @@ import type Response from '../types/Response';
 import { User } from '../types/User';
 import axios from '../utils/http';
 import routes from '../utils/routes';
+import { FailedToast, SuccessToast } from './Toast';
 
 /**
  * Header of the whole application.
@@ -33,23 +34,12 @@ const Header = () => {
   const toast = useToast();
 
   const logout = () => {
-    // reset all status
     mutateStatus({ isAuthenticated: false, isMFA: false }, false);
     mutateUser(undefined, false);
 
     axios<Response<unknown>>({ method: 'POST', url: '/api/v1/auth/logout' })
-      .then((res) => {
-        toast({
-          title: 'Success!',
-          description: res.message,
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-
-        mutateStatus();
-      })
-      .catch((err) => console.error(err));
+      .then((res) => SuccessToast(toast, res.message))
+      .catch((err) => FailedToast(toast, err.message));
   };
 
   return (
