@@ -25,6 +25,7 @@ import type { Status } from '../types/Auth';
 import type Response from '../types/Response';
 import type { User } from '../types/User';
 import axios from '../utils/http';
+import { SuccessToast } from './Toast';
 
 /**
  * Accepts ChakraUI's basic props: 'isOpen' and 'onClose'.
@@ -92,23 +93,18 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
       auth: { username: user.userID, password: otp },
     })
       .then((res) => {
-        toast({
-          title: 'Success!',
-          description: res.message,
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        });
+        // Show feedback.
+        SuccessToast(toast, res.message);
 
+        // Reset all states.
         setFlash({ type: 'success', message: '' });
         setIsVerifyLoading(false);
         setIsOTPError(false);
 
         // Mutate the data without revalidation.
         mutateStatus({ isAuthenticated: true, isMFA: true }, false);
-
-        onClose();
       })
+      .then(onClose)
       .catch((err) => {
         setFlash({ type: 'error', message: err.message });
         setIsVerifyLoading(false);

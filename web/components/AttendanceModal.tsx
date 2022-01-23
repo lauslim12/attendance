@@ -20,6 +20,7 @@ import { FaBolt, FaCube } from 'react-icons/fa';
 
 import type Response from '../types/Response';
 import axios from '../utils/http';
+import { SuccessToast } from './Toast';
 
 /**
  * Props.
@@ -64,15 +65,7 @@ const AttendanceModal = ({ isOpen, onClose, isIn }: Props) => {
       url: `/api/v1/attendance/${isIn ? 'in' : 'out'}`,
       data,
     })
-      .then((res) => {
-        toast({
-          title: 'Success!',
-          description: res.message,
-          status: 'success',
-          duration: 2000,
-          isClosable: true,
-        });
-      })
+      .then((res) => SuccessToast(toast, res.message))
       .then(onClose)
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));

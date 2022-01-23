@@ -18,6 +18,7 @@ import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
+import { SuccessToast } from '../components/Toast';
 import useRequest from '../hooks/useRequest';
 import type { Status } from '../types/Auth';
 import type Response from '../types/Response';
@@ -50,23 +51,17 @@ const Login = () => {
       data: { username, password },
     })
       .then((res) => {
+        // On success, give feedback, mutate state.
+        SuccessToast(toast, res.message);
         setIsLoading(false);
+        mutateStatus({ isAuthenticated: true, isMFA: false }, false);
+        mutateUser(res.data, false);
 
-        toast({
-          title: 'Success!',
-          description: res.message,
-          status: 'success',
-          duration: 5000,
-          isClosable: true,
-        });
-
-        // revalidate mutation against the data from the server
-        mutateStatus();
-        mutateUser(res.data);
-
+        // Replace page.
         router.replace(routes.home);
       })
       .catch((err) => {
+        // On  failure, set error and remove 'setIsLoading'.
         setError(err.message);
         setIsLoading(false);
       });
