@@ -12,6 +12,8 @@ const routes = {
   users: '/admin/users',
   sitemap: '/sitemap.xml',
   robots: '/robots.txt',
+  notFound: '/404',
+  notAuthorized: '/401',
 } as const;
 
 export default routes;
