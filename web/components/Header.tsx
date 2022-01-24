@@ -49,9 +49,15 @@ const Header = () => {
       <Spacer />
 
       {status && status.isAuthenticated ? (
-        <Text as="button" onClick={logout}>
-          Logout
-        </Text>
+        <HStack>
+          <NextLink href={routes.profile} passHref>
+            <Link>Profile</Link>
+          </NextLink>
+
+          <Text as="button" onClick={logout}>
+            Logout
+          </Text>
+        </HStack>
       ) : (
         <Text>About</Text>
       )}
