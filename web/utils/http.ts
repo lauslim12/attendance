@@ -1,6 +1,8 @@
 import type { AxiosRequestConfig } from 'axios';
 import axiosClient from 'axios';
 
+import type Response from '../types/Response';
+
 /**
  * Creates an initial 'axios' instance with custom settings.
  */
@@ -59,5 +61,14 @@ export const fetcher = async (url: string) => {
 
   return parsed.data;
 };
+
+/**
+ * Make a request to the back-end API.
+ *
+ * @param cfg - Axios configurations.
+ * @returns A promise object, `data` object already destructured, and typed according to `Response`.
+ */
+export const api = <T = unknown>(cfg: AxiosRequestConfig) =>
+  axios<Response<T>>(cfg);
 
 export default axios;
