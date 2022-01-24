@@ -54,8 +54,10 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
         user={user}
       />
 
-      <VStack p={[2, 10]} spacing={5} mt={10}>
-        <Heading size="lg">📱 Authenticator Refresh</Heading>
+      <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+        <Heading as="p" size="lg">
+          📱 Authenticator Refresh
+        </Heading>
         <Text textAlign="center">
           You may refresh your Authenticator account in your phone by clicking
           below button. You have to be verified by MFA before using this

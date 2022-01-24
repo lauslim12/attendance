@@ -157,8 +157,10 @@ const SessionCard = ({ session }: { session: Session }) => {
  * @returns React functional component.
  */
 const Sessionbox = ({ sessions }: { sessions: Session[] }) => (
-  <VStack p={[2, 10]} spacing={5} mt={10}>
-    <Heading size="lg">🖥️ Sessions</Heading>
+  <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+    <Heading as="p" size="lg">
+      🖥️ Sessions
+    </Heading>
     <Text textAlign="center">
       You may examine your sessions and invalidate them if necessary.
     </Text>

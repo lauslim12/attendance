@@ -49,6 +49,7 @@ const Attendance = ({ status }: { status: Status }) => {
 
         <MainHeading
           text={time.toLocaleDateString('en-GB')}
+          as="h2"
           fontSize={['3xl', '5xl', '7xl']}
           letterSpacing={10}
           mb={5}
@@ -56,7 +57,7 @@ const Attendance = ({ status }: { status: Status }) => {
 
         <MainHeading
           text={time.toLocaleTimeString('en-GB')}
-          as="h2"
+          as="h3"
           fontSize={['3xl', '4xl', '6xl']}
           letterSpacing={10}
           mb={5}

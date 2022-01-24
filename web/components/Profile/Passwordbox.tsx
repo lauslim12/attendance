@@ -51,8 +51,10 @@ const Passwordbox = () => {
   };
 
   return (
-    <VStack p={[2, 10]} spacing={5} mt={10}>
-      <Heading size="lg">🔑 Update Password</Heading>
+    <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+      <Heading as="p" size="lg">
+        🔑 Update Password
+      </Heading>
       <Text textAlign="center">
         You may edit your authentication data by changing below values.
       </Text>

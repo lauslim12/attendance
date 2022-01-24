@@ -43,7 +43,7 @@ const Header = () => {
 
   return (
     <HStack as="nav" p={4} spacing={2}>
-      <Heading size="lg" fontWeight="extrabold">
+      <Heading as="h1" size="lg" fontWeight="extrabold">
         <NextLink href={routes.home} passHref>
           <Link _hover={{ textDecor: 'none', color: 'orange.400' }}>
             @attendance

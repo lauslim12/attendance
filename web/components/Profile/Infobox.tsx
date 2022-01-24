@@ -46,8 +46,10 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
   };
 
   return (
-    <VStack p={[2, 10]} spacing={5} mt={10}>
-      <Heading size="lg">✍️ Edit Profile</Heading>
+    <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+      <Heading as="p" size="lg">
+        ✍️ Edit Profile
+      </Heading>
       <Text textAlign="center">
         You may edit your profile by changing below values.
       </Text>
