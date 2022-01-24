@@ -1,4 +1,4 @@
-import type { TypographyProps } from '@chakra-ui/react';
+import type { As, SpaceProps, TypographyProps } from '@chakra-ui/react';
 import { Heading, useColorModeValue } from '@chakra-ui/react';
 import { memo } from 'react';
 
@@ -7,7 +7,10 @@ import { memo } from 'react';
  */
 type Props = {
   text: string;
+  as?: As;
   fontSize?: TypographyProps['fontSize'];
+  letterSpacing?: TypographyProps['letterSpacing'];
+  mb?: SpaceProps['mb'];
 };
 
 /**
@@ -16,9 +19,15 @@ type Props = {
  * @param params - An object, text and optionally the font size.
  * @returns React functional component.
  */
-const MainHeading = ({ text, fontSize = ['4xl', '4xl', '6xl'] }: Props) => (
+const MainHeading = ({
+  text,
+  as = 'h1',
+  fontSize = ['4xl', '4xl', '6xl'],
+  letterSpacing = 0,
+  mb = 0,
+}: Props) => (
   <Heading
-    as="h1"
+    as={as}
     bgGradient={useColorModeValue(
       'linear(to-r, #00baff, #00baff, #063ef9)',
       'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
@@ -26,6 +35,8 @@ const MainHeading = ({ text, fontSize = ['4xl', '4xl', '6xl'] }: Props) => (
     bgClip="text"
     fontSize={fontSize}
     fontWeight="extrabold"
+    letterSpacing={letterSpacing}
+    mb={mb}
   >
     {text}
   </Heading>
