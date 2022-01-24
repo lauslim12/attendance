@@ -5,8 +5,7 @@ import Attendance from '../components/Home/Attendance';
 import Main from '../components/Home/Main';
 import Layout from '../components/Layout';
 import Spinner from '../components/Spinner';
-import useRequest from '../hooks/useRequest';
-import type { Status } from '../types/Auth';
+import { useStatusAndUser } from '../utils/hooks';
 
 /**
  * Homepage of the website.
@@ -14,7 +13,7 @@ import type { Status } from '../types/Auth';
  * @returns React functional component.
  */
 const Home = () => {
-  const { data: status, isLoading } = useRequest<Status>('/api/v1/auth/status');
+  const { status, isLoading } = useStatusAndUser();
 
   if (isLoading) return <Spinner />;
 

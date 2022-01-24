@@ -1,5 +1,3 @@
-import type Response from './Response';
-
 /**
  * Session type from the back-end.
  */
@@ -22,5 +20,3 @@ export type Session = {
   signedIn: string;
   sid: string;
 };
-
-export type SessionResponse = Response<Session>;

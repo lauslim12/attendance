@@ -12,11 +12,8 @@ import NextLink from 'next/link';
 import { memo } from 'react';
 import { FaMoon } from 'react-icons/fa';
 
-import useRequest from '../hooks/useRequest';
-import type { Status } from '../types/Auth';
-import type Response from '../types/Response';
-import { User } from '../types/User';
-import axios from '../utils/http';
+import { useStatusAndUser } from '../utils/hooks';
+import { api } from '../utils/http';
 import routes from '../utils/routes';
 import { FailedToast, SuccessToast } from './Toast';
 
@@ -26,18 +23,15 @@ import { FailedToast, SuccessToast } from './Toast';
  * @returns React Functional Component.
  */
 const Header = () => {
-  const { data: status, mutate: mutateStatus } = useRequest<Status>(
-    '/api/v1/auth/status'
-  );
-  const { mutate: mutateUser } = useRequest<User>('/api/v1/users/me');
+  const { status, mutate } = useStatusAndUser();
   const { toggleColorMode } = useColorMode();
   const toast = useToast();
 
   const logout = () => {
-    mutateStatus({ isAuthenticated: false, isMFA: false }, false);
-    mutateUser(undefined, false);
+    // Does not need revalidation as it's definitely resetting its state.
+    mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
 
-    axios<Response<unknown>>({ method: 'POST', url: '/api/v1/auth/logout' })
+    api({ method: 'POST', url: '/api/v1/auth/logout' })
       .then((res) => SuccessToast(toast, res.message))
       .catch((err) => FailedToast(toast, err.message));
   };

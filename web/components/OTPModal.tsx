@@ -20,11 +20,9 @@ import {
 import { memo, useEffect, useState } from 'react';
 import { FaGoogle, FaMagic, FaMailBulk, FaSms, FaTimes } from 'react-icons/fa';
 
-import useRequest from '../hooks/useRequest';
-import type { Status } from '../types/Auth';
-import type Response from '../types/Response';
 import type { User } from '../types/User';
-import axios from '../utils/http';
+import { useStatusAndUser } from '../utils/hooks';
+import { api } from '../utils/http';
 import { SuccessToast } from './Toast';
 
 /**
@@ -43,7 +41,7 @@ type Props = {
  * @returns React functional component.
  */
 const OTPModal = ({ isOpen, onClose, user }: Props) => {
-  const { mutate: mutateStatus } = useRequest<Status>('/api/v1/auth/status');
+  const { mutate } = useStatusAndUser();
   const [counter, setCounter] = useState(0);
   const [flash, setFlash] = useState({ type: 'sucess', message: '' });
   const [isOTPError, setIsOTPError] = useState(false);
@@ -71,7 +69,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
     setIsOTPError(false);
     setSendingOTP(true);
 
-    axios<Response<unknown>>({
+    api({
       method: 'POST',
       url: `/api/v1/auth/otp?media=${media}`,
     })
@@ -87,7 +85,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
   const verifyOTP = (otp: string) => {
     setIsVerifyLoading(true);
 
-    axios<Response<unknown>>({
+    api({
       method: 'PUT',
       url: '/api/v1/auth/otp',
       auth: { username: user.userID, password: otp },
@@ -102,7 +100,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
         setIsOTPError(false);
 
         // Mutate the data without revalidation.
-        mutateStatus({ isAuthenticated: true, isMFA: true }, false);
+        mutate({ isAuthenticated: true, isMFA: true, user }, false);
       })
       .then(onClose)
       .catch((err) => {

@@ -1,5 +1,3 @@
-import type Response from './Response';
-
 /**
  * Attendance response from the back-end.
  */
@@ -19,9 +17,11 @@ export type Attendance = {
   };
 };
 
+/**
+ * Attendance status to check whether the user has
+ * already checked their attendance.
+ */
 export type AttendanceStatus = {
   hasCheckedIn: boolean;
   hasCheckedOut: boolean;
 };
-
-export type AttendanceResponse = Response<Attendance>;

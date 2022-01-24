@@ -17,12 +17,12 @@ import { FaKey } from 'react-icons/fa';
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
 import QRDialog from '../components/QRDialog';
-import type Response from '../types/Response';
 import type { User } from '../types/User';
-import axios from '../utils/http';
+import { api } from '../utils/http';
 import routes from '../utils/routes';
 
 const Register = () => {
+  // Use for forms.
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [email, setEmail] = useState('');
@@ -33,6 +33,7 @@ const Register = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
 
+  // Use for modals.
   const [qrCode, setQRCode] = useState('');
   const [openDialog, setOpenDialog] = useState(false);
   const leastDestructiveRef = useRef(null);
@@ -44,7 +45,7 @@ const Register = () => {
     }
 
     setIsLoading(true);
-    axios<Response<User & { uri: string }>>({
+    api<User & { uri: string }>({
       method: 'POST',
       url: '/api/v1/auth/register',
       data: { username, password, email, phoneNumber, fullName },

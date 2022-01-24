@@ -1,4 +1,4 @@
-import type Response from './Response';
+import type { User } from './User';
 
 /**
  * Status from the back-end.
@@ -6,6 +6,5 @@ import type Response from './Response';
 export type Status = {
   isAuthenticated: boolean;
   isMFA: boolean;
+  user: User | null;
 };
-
-export type StatusResponse = Response<Status>;

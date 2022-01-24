@@ -17,25 +17,30 @@ import UserService from '../user/service';
 /**
  * Sends the user's authentication status to the client in the form of JSON response.
  * The 'type' of the response is authentication, as this one does not really
- * fit with the 'users' type.
+ * fit with the 'users' type. This intentionally returns both the authentication status
+ * AND the user, so the front-end does not need to create two sequential requests just to get
+ * the current user (this will be used in many requests in the front-end, so let's just keep our
+ * bandwith small).
  *
  * @param req - Express.js's request object.
  * @param res - Express.js's response object.
  * @param isAuthenticated - Boolean value whether the user is authenticated or not.
  * @param isMFA - Boolean value whether the user is on secure session or not.
+ * @param user - The user's data, or a null value.
  */
 const sendUserStatus = (
   req: Request,
   res: Response,
   isAuthenticated: boolean,
-  isMFA: boolean
+  isMFA: boolean,
+  user: Record<string, unknown> | null
 ) => {
   sendResponse({
     req,
     res,
     status: 'success',
     statusCode: 200,
-    data: { isAuthenticated, isMFA },
+    data: { isAuthenticated, isMFA, user },
     message: "Successfully fetched the user's status!",
     type: 'auth',
   });
@@ -59,30 +64,31 @@ const AuthController = {
     try {
       // Check session.
       if (!req.session.userID) {
-        sendUserStatus(req, res, false, false);
+        sendUserStatus(req, res, false, false, null);
         return;
       }
 
       // Make sure that the user exists in the database.
       const user = await UserService.getUser({ userID: req.session.userID });
       if (!user) {
-        sendUserStatus(req, res, false, false);
+        sendUserStatus(req, res, false, false, null);
         return;
       }
 
       // Make sure that the user is not blocked.
       if (!user.isActive) {
-        sendUserStatus(req, res, false, false);
+        sendUserStatus(req, res, false, false, null);
         return;
       }
 
-      // Extract token and validate.
+      // Extract token and validate. From this point on, the user is defined (authenticated)
+      // and will be sent back as part of the response (not null as in the previous ones).
       const token = extractToken(
         req.headers.authorization,
-        req.signedCookies['attendance-jws']
+        req.signedCookies[config.JWT_COOKIE_NAME]
       );
       if (!token) {
-        sendUserStatus(req, res, true, false);
+        sendUserStatus(req, res, true, false, user);
         return;
       }
 
@@ -91,27 +97,27 @@ const AuthController = {
 
       // Verify JTI.
       if (!decoded.payload.jti) {
-        sendUserStatus(req, res, true, false);
+        sendUserStatus(req, res, true, false, user);
         return;
       }
 
       // Checks whether JTI exists or not in the cache.
       const userID = await CacheService.getOTPSession(decoded.payload.jti);
       if (!userID) {
-        sendUserStatus(req, res, true, false);
+        sendUserStatus(req, res, true, false, user);
         return;
       }
 
       // Check if JTI is equal to the current session, and ensure that the subject
       // is equal to the user ID as well.
       if (req.session.userID !== userID || decoded.payload.sub !== userID) {
-        sendUserStatus(req, res, true, false);
+        sendUserStatus(req, res, true, false, user);
       }
 
       // Send final response that the user is properly authenticated and authorized.
-      sendUserStatus(req, res, true, true);
+      sendUserStatus(req, res, true, true, user);
     } catch {
-      sendUserStatus(req, res, false, false);
+      sendUserStatus(req, res, false, false, null);
     }
   },
 
