@@ -3,9 +3,9 @@ import { memo, useEffect, useState } from 'react';
 import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
 import type { Status } from '../../utils/types';
-import AttendanceModal from '../AttendanceModal';
 import MainHeading from '../MainHeading';
-import OTPModal from '../OTPModal';
+import AttendanceModal from '../Overlay/AttendanceModal';
+import OTPModal from '../Overlay/OTPModal';
 
 /**
  * Attendance component to provide checking-in and checking-out functionalities.

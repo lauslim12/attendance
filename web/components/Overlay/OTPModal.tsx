@@ -20,10 +20,10 @@ import {
 import { memo, useEffect, useState } from 'react';
 import { FaGoogle, FaMagic, FaMailBulk, FaSms, FaTimes } from 'react-icons/fa';
 
-import { useStatusAndUser } from '../utils/hooks';
-import axios from '../utils/http';
-import type { User } from '../utils/types';
-import { SuccessToast } from './Toast';
+import { useStatusAndUser } from '../../utils/hooks';
+import axios from '../../utils/http';
+import type { User } from '../../utils/types';
+import { SuccessToast } from '../Toast';
 
 /**
  * Accepts ChakraUI's basic props: 'isOpen' and 'onClose'.

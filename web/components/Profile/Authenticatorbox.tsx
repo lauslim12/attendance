@@ -4,8 +4,8 @@ import { FaBarcode } from 'react-icons/fa';
 
 import axios from '../../utils/http';
 import type { Status, User } from '../../utils/types';
-import OTPModal from '../OTPModal';
-import QRDialog from '../QRDialog';
+import OTPModal from '../Overlay/OTPModal';
+import QRDialog from '../Overlay/QRDialog';
 import { FailedToast } from '../Toast';
 
 /**

@@ -18,8 +18,8 @@ import {
 import { memo, useEffect, useState } from 'react';
 import { FaBolt, FaCube } from 'react-icons/fa';
 
-import axios from '../utils/http';
-import { SuccessToast } from './Toast';
+import axios from '../../utils/http';
+import { SuccessToast } from '../Toast';
 
 /**
  * Props.
