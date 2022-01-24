@@ -75,7 +75,7 @@ const QRDialog = ({
 
           <AlertDialogBody>
             <VStack spacing={4} align="start">
-              <Text>Thanks for registering with Attendance, {name}!</Text>
+              <Text>Thanks for using Attendance, {name}!</Text>
 
               <Text>
                 Below is your QR code to be used with Authenticator apps. Use
@@ -99,7 +99,7 @@ const QRDialog = ({
               <Text>
                 After you are ready, feel free to click the Continue button in
                 order to start using this webservice! You will be redirected
-                into the homepage and you have to log in again for security.
+                into the homepage. You may have to log in again for security.
               </Text>
             </VStack>
           </AlertDialogBody>
