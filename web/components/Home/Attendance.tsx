@@ -8,9 +8,7 @@ import {
 import { memo, useEffect, useState } from 'react';
 import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
-import useRequest from '../../hooks/useRequest';
 import type { Status } from '../../types/Auth';
-import type { User } from '../../types/User';
 import AttendanceModal from '../AttendanceModal';
 import OTPModal from '../OTPModal';
 
@@ -20,7 +18,6 @@ import OTPModal from '../OTPModal';
  * @returns React functional component.
  */
 const Attendance = ({ status }: { status: Status }) => {
-  const { data: user } = useRequest<User>('/api/v1/users/me');
   const [attendModalOpen, setAttendModalOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [isModalTypeIn, setIsModalTypeIn] = useState(true);
@@ -34,15 +31,15 @@ const Attendance = ({ status }: { status: Status }) => {
 
   return (
     <>
-      {user && (
+      {status.user && (
         <OTPModal
           isOpen={isOpen}
           onClose={() => setIsOpen(false)}
-          user={user}
+          user={status.user}
         />
       )}
 
-      {user && (
+      {status.user && (
         <AttendanceModal
           isOpen={attendModalOpen}
           onClose={() => setAttendModalOpen(false)}
@@ -51,7 +48,9 @@ const Attendance = ({ status }: { status: Status }) => {
       )}
 
       <VStack w="full" align="center" spacing={3}>
-        {user && <Text fontSize="lg">Welcome back, {user.fullName}!</Text>}
+        {status.user && (
+          <Text fontSize="lg">Welcome back, {status.user.fullName}!</Text>
+        )}
 
         <Heading
           as="h1"

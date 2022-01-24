@@ -19,11 +19,9 @@ import { FaKey } from 'react-icons/fa';
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
 import { SuccessToast } from '../components/Toast';
-import useRequest from '../hooks/useRequest';
-import type { Status } from '../types/Auth';
-import type Response from '../types/Response';
 import type { User } from '../types/User';
-import axios from '../utils/http';
+import { useStatusAndUser } from '../utils/hooks';
+import { api } from '../utils/http';
 import routes from '../utils/routes';
 
 /**
@@ -37,15 +35,14 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
-  const { mutate: mutateStatus } = useRequest<Status>('/api/v1/auth/status');
-  const { mutate: mutateUser } = useRequest<User>('/api/v1/users/me');
+  const { mutate } = useStatusAndUser();
   const router = useRouter();
   const toast = useToast();
 
   const login = () => {
     setIsLoading(true);
 
-    axios<Response<User>>({
+    api<User>({
       method: 'POST',
       url: '/api/v1/auth/login',
       data: { username, password },
@@ -54,8 +51,7 @@ const Login = () => {
         // On success, give feedback, mutate state.
         SuccessToast(toast, res.message);
         setIsLoading(false);
-        mutateStatus({ isAuthenticated: true, isMFA: false }, false);
-        mutateUser(res.data, false);
+        mutate({ isAuthenticated: true, isMFA: false, user: res.data }, false);
 
         // Replace page.
         router.replace(routes.home);

@@ -18,8 +18,7 @@ import {
 import { memo, useEffect, useState } from 'react';
 import { FaBolt, FaCube } from 'react-icons/fa';
 
-import type Response from '../types/Response';
-import axios from '../utils/http';
+import { api } from '../utils/http';
 import { SuccessToast } from './Toast';
 
 /**
@@ -60,7 +59,7 @@ const AttendanceModal = ({ isOpen, onClose, isIn }: Props) => {
     const data = isIn ? { remarksEnter: remark } : { remarksLeave: remark };
 
     setIsLoading(true);
-    axios<Response<unknown>>({
+    api({
       method: isIn ? 'POST' : 'PATCH',
       url: `/api/v1/attendance/${isIn ? 'in' : 'out'}`,
       data,
