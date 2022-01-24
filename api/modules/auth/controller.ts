@@ -347,6 +347,47 @@ const AuthController = {
   },
 
   /**
+   * Updates the MFA secret of the currently logged in user.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  updateMFA: async (req: Request, res: Response, next: NextFunction) => {
+    const { userID } = req.session;
+
+    if (!userID) {
+      next(new AppError('No session detected. Please log in again.', 401));
+      return;
+    }
+
+    // Fetch current user.
+    const user = await UserService.getUserComplete({ userID });
+    if (!user) {
+      next(new AppError('There is no user with that ID.', 404));
+      return;
+    }
+
+    // Regenerate new MFA secret.
+    const newSecret = await nanoid();
+    const totp = generateDefaultTOTP(user.username, newSecret);
+    await UserService.updateUser({ userID }, { totpSecret: newSecret });
+
+    // Send response.
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: {
+        uri: totp.uri,
+      },
+      message: 'Successfully updated MFA secrets.',
+      type: 'auth',
+    });
+  },
+
+  /**
    * Updates a password for the currently logged in user.
    *
    * @param req - Express.js's request object.
@@ -371,12 +412,12 @@ const AuthController = {
 
     // Compare old passwords.
     const passwordsMatch = await verifyPassword(user.password, currentPassword);
-    if (passwordsMatch) {
+    if (!passwordsMatch) {
       next(new AppError('Your previous password is wrong!', 401));
       return;
     }
 
-    // Confirm passwords. We have no need to use safe-compare in this one.
+    // Confirm passwords. We time-safe compare to prevent timing attacks.
     if (!safeCompare(newPassword, confirmPassword)) {
       next(new AppError('Your new passwords do not match.', 401));
       return;
@@ -405,7 +446,7 @@ const AuthController = {
         status: 'success',
         statusCode: 200,
         data: [],
-        message: 'Successfully changed passwords. Please log in again!',
+        message: 'Password updated. For security, please log in again!',
         type: 'auth',
       });
     });

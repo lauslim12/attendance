@@ -53,33 +53,44 @@ export const useStatusAndUser = () => {
 };
 
 /**
- * A hook to get all of the required user data, used in the Profile page.
+ * A hook to get all of the required user data, used in the Profile page. Will kick out
+ * the user from the profile page if the user is not logged in.
  *
  * @returns An object of status and user data, their attendance data, their sessions,
  * any errors that might exist as well.
  */
 export const useMe = () => {
-  const { data: status, error: statusError } = useSWR<Status>(
-    '/api/v1/auth/status',
-    fetcher
-  );
+  const {
+    data: status,
+    error: statusError,
+    mutate: mutateStatus,
+  } = useSWR<Status>('/api/v1/auth/status', fetcher);
 
-  const { data: attendance, error: attendanceError } = useSWR<Attendance[]>(
+  const {
+    data: attendance,
+    error: attendanceError,
+    mutate: mutateAttendance,
+  } = useSWR<Attendance[]>(
     status?.user ? `/api/v1/users/${status.user.userID}/attendance` : null,
     fetcher
   );
 
-  const { data: sessions, error: sessionsError } = useSWR<Session[]>(
-    status?.user ? '/api/v1/sessions/me' : null,
-    fetcher
-  );
+  const {
+    data: sessions,
+    error: sessionsError,
+    mutate: mutateSession,
+  } = useSWR<Session[]>(status?.user ? '/api/v1/sessions/me' : null, fetcher);
 
-  const error = statusError || attendanceError || sessionsError;
+  // Declare return values.
   const data = { status, attendance, sessions };
+  const error = statusError || attendanceError || sessionsError;
+  const isLoading = !status && !attendance && !sessions && !error;
+  const mutate = { mutateStatus, mutateAttendance, mutateSession };
 
   return {
     data,
-    isLoading: !data && !error,
+    isLoading,
     isError: error,
+    mutate,
   };
 };

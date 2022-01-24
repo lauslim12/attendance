@@ -18,6 +18,7 @@ import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
+import NotAuthRoute from '../components/NotAuthRoute';
 import { SuccessToast } from '../components/Toast';
 import type { User } from '../types/User';
 import { useStatusAndUser } from '../utils/hooks';
@@ -64,81 +65,83 @@ const Login = () => {
   };
 
   return (
-    <Layout title={['Login']}>
-      <VStack as="section" h="full" justify={['start', 'center']} p={1}>
-        <VStack
-          as="form"
-          borderWidth={[0, 1]}
-          borderStyle="solid"
-          borderColor="gray.300"
-          borderRadius="md"
-          w={['full', '80vw', '70vw', '60vw', '60vw', '40vw']}
-          p={[0, 4, 10]}
-          spacing={4}
-        >
-          <VStack spacing={1}>
-            <Heading size="lg">Login</Heading>
-            <Text>Use your Attendance Account</Text>
-          </VStack>
-
-          {error.trim() !== '' && (
-            <Alert status="error" variant="left-accent">
-              <AlertIcon />
-              <AlertTitle>Error!</AlertTitle>
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          <TextInput
-            label="Username"
-            placeholder="my-username"
-            value={username}
-            setValue={setUsername}
-            helper="The username that you used to register"
-          />
-
-          <TextInput
-            label="Password"
-            placeholder="••••••••••"
-            value={password}
-            setValue={setPassword}
-            helper="The password that you used to register"
-            isPassword={!showPassword}
-          />
-
-          <Checkbox
-            colorScheme="blue"
-            alignSelf="start"
-            onChange={() => setShowPassword(!showPassword)}
-            isChecked={showPassword}
+    <NotAuthRoute>
+      <Layout title={['Login']}>
+        <VStack as="section" h="full" justify={['start', 'center']} p={1}>
+          <VStack
+            as="form"
+            borderWidth={[0, 1]}
+            borderStyle="solid"
+            borderColor="gray.300"
+            borderRadius="md"
+            w={['full', '80vw', '70vw', '60vw', '60vw', '40vw']}
+            p={[0, 4, 10]}
+            spacing={4}
           >
-            <Text fontSize="sm">Show password</Text>
-          </Checkbox>
+            <VStack spacing={1}>
+              <Heading size="lg">Login</Heading>
+              <Text>Use your Attendance Account</Text>
+            </VStack>
 
-          <VStack align="start" w="full">
-            <NextLink href={routes.register} passHref>
-              <Link fontSize="xs" color="orange.400" fontWeight="bold">
-                Not yet registered? Create an account!
-              </Link>
-            </NextLink>
+            {error.trim() !== '' && (
+              <Alert status="error" variant="left-accent">
+                <AlertIcon />
+                <AlertTitle>Error!</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <TextInput
+              label="Username"
+              placeholder="my-username"
+              value={username}
+              setValue={setUsername}
+              helper="The username that you used to register"
+            />
+
+            <TextInput
+              label="Password"
+              placeholder="••••••••••"
+              value={password}
+              setValue={setPassword}
+              helper="The password that you used to register"
+              isPassword={!showPassword}
+            />
+
+            <Checkbox
+              colorScheme="blue"
+              alignSelf="start"
+              onChange={() => setShowPassword(!showPassword)}
+              isChecked={showPassword}
+            >
+              <Text fontSize="sm">Show password</Text>
+            </Checkbox>
+
+            <VStack align="start" w="full">
+              <NextLink href={routes.register} passHref>
+                <Link fontSize="xs" color="orange.400" fontWeight="bold">
+                  Not yet registered? Create an account!
+                </Link>
+              </NextLink>
+            </VStack>
+
+            <Button
+              alignSelf={['end', 'center']}
+              onClick={login}
+              leftIcon={<FaKey />}
+              colorScheme="blue"
+              disabled={
+                username.trim() === '' || password.trim() === '' || isLoading
+              }
+              w="50%"
+              isLoading={isLoading}
+            >
+              Log in
+            </Button>
           </VStack>
-
-          <Button
-            alignSelf={['end', 'center']}
-            onClick={login}
-            leftIcon={<FaKey />}
-            colorScheme="blue"
-            disabled={
-              username.trim() === '' || password.trim() === '' || isLoading
-            }
-            w="50%"
-            isLoading={isLoading}
-          >
-            Log in
-          </Button>
         </VStack>
-      </VStack>
-    </Layout>
+      </Layout>
+    </NotAuthRoute>
   );
 };
 

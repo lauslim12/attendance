@@ -3,6 +3,7 @@ import type { RateLimit } from 'express-rate-limit';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
+import hasJWT from '../middleware/has-jwt';
 import hasSession from '../middleware/has-session';
 import AuthController from './controller';
 import AuthValidation from './validation';
@@ -48,6 +49,14 @@ const AuthHandler = (rateLimit: RateLimit) => {
     '/register',
     validate(AuthValidation.register),
     asyncHandler(AuthController.register)
+  );
+
+  // Updates MFA for the currently logged in user.
+  handler.put(
+    '/update-mfa',
+    asyncHandler(hasSession),
+    asyncHandler(hasJWT),
+    asyncHandler(AuthController.updateMFA)
   );
 
   // Change password for a logged in user.

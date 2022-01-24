@@ -1,15 +1,10 @@
-import {
-  Button,
-  Heading,
-  Stack,
-  Text,
-  useColorModeValue,
-} from '@chakra-ui/react';
+import { Button, Stack, Text } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { memo } from 'react';
 import { FaAddressCard, FaSignInAlt } from 'react-icons/fa';
 
 import routes from '../../utils/routes';
+import MainHeading from '../MainHeading';
 
 /**
  * Main page of the website, renders if user is not logged in.
@@ -18,18 +13,11 @@ import routes from '../../utils/routes';
  */
 const Main = () => (
   <>
-    <Heading
-      bgGradient={useColorModeValue(
-        'linear(to-r, #00baff, #00baff, #063ef9)',
-        'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
-      )}
-      bgClip="text"
+    <MainHeading
+      text="Hello and Welcome! 👋"
       fontSize={['4xl', '4xl', '6xl']}
-      fontWeight="extrabold"
       mb={5}
-    >
-      Hello and Welcome! 👋
-    </Heading>
+    />
 
     <Text fontSize={['md', 'lg']}>
       Welcome to this web application. This is used to provide a proof of

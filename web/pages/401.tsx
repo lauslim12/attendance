@@ -8,12 +8,12 @@ import MainHeading from '../components/MainHeading';
 import routes from '../utils/routes';
 
 /**
- * Renders a `404 Not Found` page.
+ * Renders a `401 Unauthorized` page.
  *
  * @returns React functional component.
  */
-const NotFoundPage = () => (
-  <Layout title={['Not Found']}>
+const UnauthorizedPage = () => (
+  <Layout title={['Unauthorized']}>
     <VStack
       as="section"
       w="full"
@@ -22,11 +22,10 @@ const NotFoundPage = () => (
       spacing={4}
       textAlign="center"
     >
-      <MainHeading text="404 Page Not Found!" />
+      <MainHeading text="401 Unauthorized!" />
 
       <Text>
-        Oops. The page you are looking may or may not have existed in the past,
-        but it certainly does not now.
+        Oops. You are not authorized to access this page. Please log in first.
       </Text>
 
       <NextLink href={routes.home} passHref>
@@ -38,4 +37,4 @@ const NotFoundPage = () => (
   </Layout>
 );
 
-export default memo(NotFoundPage);
+export default memo(UnauthorizedPage);

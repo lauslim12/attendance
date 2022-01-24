@@ -1,15 +1,10 @@
-import {
-  Button,
-  Heading,
-  Text,
-  useColorModeValue,
-  VStack,
-} from '@chakra-ui/react';
+import { Button, Text, VStack } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
 import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
 import type { Status } from '../../types/Auth';
 import AttendanceModal from '../AttendanceModal';
+import MainHeading from '../MainHeading';
 import OTPModal from '../OTPModal';
 
 /**
@@ -52,35 +47,20 @@ const Attendance = ({ status }: { status: Status }) => {
           <Text fontSize="lg">Welcome back, {status.user.fullName}!</Text>
         )}
 
-        <Heading
-          as="h1"
-          bgGradient={useColorModeValue(
-            'linear(to-r, #00baff, #00baff, #063ef9)',
-            'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
-          )}
-          bgClip="text"
+        <MainHeading
+          text={time.toLocaleDateString('en-GB')}
           fontSize={['3xl', '5xl', '7xl']}
-          fontWeight="extrabold"
           letterSpacing={10}
           mb={5}
-        >
-          {time.toLocaleDateString('en-GB')}
-        </Heading>
+        />
 
-        <Heading
+        <MainHeading
+          text={time.toLocaleTimeString('en-GB')}
           as="h2"
-          bgGradient={useColorModeValue(
-            'linear(to-r, #00baff, #00baff, #063ef9)',
-            'linear(to-r, #945bf1, #bb48bf, #bb48bf, #f67e4d)'
-          )}
-          bgClip="text"
           fontSize={['3xl', '4xl', '6xl']}
-          fontWeight="extrabold"
           letterSpacing={10}
           mb={5}
-        >
-          {time.toLocaleTimeString('en-GB')}
-        </Heading>
+        />
 
         <VStack align="stretch" spacing={3} textAlign="center" fontSize="sm">
           <Text>
