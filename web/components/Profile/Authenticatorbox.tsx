@@ -4,7 +4,7 @@ import { FaBarcode } from 'react-icons/fa';
 
 import type { Status } from '../../types/Auth';
 import type { User } from '../../types/User';
-import { api } from '../../utils/http';
+import axios from '../../utils/http';
 import OTPModal from '../OTPModal';
 import QRDialog from '../QRDialog';
 import { FailedToast } from '../Toast';
@@ -26,7 +26,7 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
   const refreshMFA = () => {
     setIsLoading(true);
 
-    api<{ uri: string }>({
+    axios<{ uri: string }>({
       method: 'PUT',
       url: '/api/v1/auth/update-mfa',
     })

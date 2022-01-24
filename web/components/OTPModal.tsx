@@ -22,7 +22,7 @@ import { FaGoogle, FaMagic, FaMailBulk, FaSms, FaTimes } from 'react-icons/fa';
 
 import type { User } from '../types/User';
 import { useStatusAndUser } from '../utils/hooks';
-import { api } from '../utils/http';
+import axios from '../utils/http';
 import { SuccessToast } from './Toast';
 
 /**
@@ -69,7 +69,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
     setIsOTPError(false);
     setSendingOTP(true);
 
-    api({
+    axios({
       method: 'POST',
       url: `/api/v1/auth/otp?media=${media}`,
     })

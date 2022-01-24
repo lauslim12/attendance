@@ -12,7 +12,7 @@ import { FaPencilRuler } from 'react-icons/fa';
 import type { Status } from '../../types/Auth';
 import type { User } from '../../types/User';
 import { useStatusAndUser } from '../../utils/hooks';
-import { api } from '../../utils/http';
+import axios from '../../utils/http';
 import TextInput from '../Input/TextInput';
 import { FailedToast, SuccessToast } from '../Toast';
 
@@ -30,7 +30,7 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
   const toast = useToast();
 
   const editProfile = () => {
-    api<User>({
+    axios<User>({
       method: 'PATCH',
       url: '/api/v1/users/me',
       data: { email, fullName, phoneNumber },

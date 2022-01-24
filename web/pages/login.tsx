@@ -22,7 +22,7 @@ import NotAuthRoute from '../components/NotAuthRoute';
 import { SuccessToast } from '../components/Toast';
 import type { User } from '../types/User';
 import { useStatusAndUser } from '../utils/hooks';
-import { api } from '../utils/http';
+import axios from '../utils/http';
 import routes from '../utils/routes';
 
 /**
@@ -43,7 +43,7 @@ const Login = () => {
   const login = () => {
     setIsLoading(true);
 
-    api<User>({
+    axios<User>({
       method: 'POST',
       url: '/api/v1/auth/login',
       data: { username, password },

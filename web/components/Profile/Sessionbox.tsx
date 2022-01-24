@@ -20,7 +20,7 @@ import { FaFire } from 'react-icons/fa';
 
 import type { Session } from '../../types/Session';
 import { useMe } from '../../utils/hooks';
-import { api } from '../../utils/http';
+import axios from '../../utils/http';
 import routes from '../../utils/routes';
 import { FailedToast, SuccessToast } from '../Toast';
 
@@ -48,7 +48,7 @@ const SessionCard = ({ session }: { session: Session }) => {
   const toast = useToast();
 
   const invalidateSession = (sid: string) => {
-    api({ method: 'DELETE', url: `/api/v1/sessions/me/${sid}` })
+    axios({ method: 'DELETE', url: `/api/v1/sessions/me/${sid}` })
       .then(() => {
         SuccessToast(toast, 'Successfully invalidated a session.');
 

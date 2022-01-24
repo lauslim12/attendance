@@ -12,7 +12,7 @@ import { memo, useState } from 'react';
 import { FaPassport } from 'react-icons/fa';
 
 import { useStatusAndUser } from '../../utils/hooks';
-import { api } from '../../utils/http';
+import axios from '../../utils/http';
 import routes from '../../utils/routes';
 import TextInput from '../Input/TextInput';
 import { FailedToast, SuccessToast } from '../Toast';
@@ -32,7 +32,7 @@ const Passwordbox = () => {
   const router = useRouter();
 
   const updatePassword = () => {
-    api({
+    axios({
       method: 'PATCH',
       url: '/api/v1/auth/update-password',
       data: { currentPassword, newPassword, confirmPassword },

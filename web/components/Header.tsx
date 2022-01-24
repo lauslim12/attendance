@@ -14,7 +14,7 @@ import { memo } from 'react';
 import { FaMoon } from 'react-icons/fa';
 
 import { useStatusAndUser } from '../utils/hooks';
-import { api } from '../utils/http';
+import axios from '../utils/http';
 import routes from '../utils/routes';
 import { FailedToast, SuccessToast } from './Toast';
 
@@ -33,7 +33,7 @@ const Header = () => {
     // Does not need revalidation as it's definitely resetting its state.
     mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
 
-    api({ method: 'POST', url: '/api/v1/auth/logout' })
+    axios({ method: 'POST', url: '/api/v1/auth/logout' })
       .then((res) => {
         SuccessToast(toast, res.message);
         router.replace(routes.home);

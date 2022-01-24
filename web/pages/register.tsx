@@ -18,7 +18,7 @@ import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
 import QRDialog from '../components/QRDialog';
 import type { User } from '../types/User';
-import { api } from '../utils/http';
+import axios from '../utils/http';
 import routes from '../utils/routes';
 
 /**
@@ -50,7 +50,7 @@ const Register = () => {
     }
 
     setIsLoading(true);
-    api<User & { uri: string }>({
+    axios<User & { uri: string }>({
       method: 'POST',
       url: '/api/v1/auth/register',
       data: { username, password, email, phoneNumber, fullName },
