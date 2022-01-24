@@ -17,6 +17,9 @@ import { FaArrowRight, FaCode } from 'react-icons/fa';
 
 import routes from '../utils/routes';
 
+/**
+ * Props.
+ */
 type Props = {
   isOpen: boolean;
   leastDestructiveRef: MutableRefObject<null>;
@@ -25,6 +28,12 @@ type Props = {
   name: string;
 };
 
+/**
+ * QRDialog is a dialog box consisting of the registration QR.
+ *
+ * @param params - Object of props.
+ * @returns React functional component.
+ */
 const QRDialog = ({
   isOpen,
   leastDestructiveRef,

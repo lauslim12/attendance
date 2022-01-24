@@ -5,6 +5,11 @@ import AuthRoute from '../components/AuthRoute';
 import Layout from '../components/Layout';
 import { useMe } from '../utils/hooks';
 
+/**
+ * Profile page of the website.
+ *
+ * @returns React functional component.
+ */
 const Profile = () => {
   const { data } = useMe();
 

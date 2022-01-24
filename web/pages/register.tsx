@@ -21,6 +21,11 @@ import type { User } from '../types/User';
 import { api } from '../utils/http';
 import routes from '../utils/routes';
 
+/**
+ * Registration screen for the website.
+ *
+ * @returns React functional component.
+ */
 const Register = () => {
   // Use for forms.
   const [username, setUsername] = useState('');
