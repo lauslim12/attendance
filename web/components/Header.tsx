@@ -9,6 +9,7 @@ import {
   useToast,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
+import { useRouter } from 'next/router';
 import { memo } from 'react';
 import { FaMoon } from 'react-icons/fa';
 
@@ -26,13 +27,17 @@ const Header = () => {
   const { status, mutate } = useStatusAndUser();
   const { toggleColorMode } = useColorMode();
   const toast = useToast();
+  const router = useRouter();
 
   const logout = () => {
     // Does not need revalidation as it's definitely resetting its state.
     mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
 
     api({ method: 'POST', url: '/api/v1/auth/logout' })
-      .then((res) => SuccessToast(toast, res.message))
+      .then((res) => {
+        SuccessToast(toast, res.message);
+        router.replace(routes.home);
+      })
       .catch((err) => FailedToast(toast, err.message));
   };
 
@@ -51,10 +56,20 @@ const Header = () => {
       {status && status.isAuthenticated ? (
         <HStack>
           <NextLink href={routes.profile} passHref>
-            <Link>Profile</Link>
+            <Link
+              fontWeight="bold"
+              _hover={{ textDecor: 'none', color: 'pink.400' }}
+            >
+              Profile
+            </Link>
           </NextLink>
 
-          <Text as="button" onClick={logout}>
+          <Text
+            as="button"
+            fontWeight="bold"
+            _hover={{ textDecor: 'none', color: 'pink.400' }}
+            onClick={logout}
+          >
             Logout
           </Text>
         </HStack>
