@@ -6,7 +6,6 @@ const routes = {
   login: '/login',
   register: '/register',
   profile: '/profile',
-  editProfile: '/profile/edit',
   attendances: '/attendances',
   admin: '/admin',
   users: '/admin/users',
