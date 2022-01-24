@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 import axiosClient from 'axios';
 
-import type Response from '../types/Response';
+import type { Response } from './types';
 
 /**
  * Creates an initial 'axios' instance with custom settings.

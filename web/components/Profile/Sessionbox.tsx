@@ -18,10 +18,10 @@ import { useRouter } from 'next/router';
 import { memo, useRef, useState } from 'react';
 import { FaFire } from 'react-icons/fa';
 
-import type { Session } from '../../types/Session';
 import { useMe } from '../../utils/hooks';
 import axios from '../../utils/http';
 import routes from '../../utils/routes';
+import type { Session } from '../../utils/types';
 import { FailedToast, SuccessToast } from '../Toast';
 
 /**

@@ -20,10 +20,10 @@ import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
 import NotAuthRoute from '../components/NotAuthRoute';
 import { SuccessToast } from '../components/Toast';
-import type { User } from '../types/User';
 import { useStatusAndUser } from '../utils/hooks';
 import axios from '../utils/http';
 import routes from '../utils/routes';
+import type { User } from '../utils/types';
 
 /**
  * Login screen for the website.

@@ -17,9 +17,9 @@ import { FaKey } from 'react-icons/fa';
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
 import QRDialog from '../components/QRDialog';
-import type { User } from '../types/User';
 import axios from '../utils/http';
 import routes from '../utils/routes';
+import type { User } from '../utils/types';
 
 /**
  * Registration screen for the website.

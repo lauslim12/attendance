@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { memo } from 'react';
 
-import type { Attendance } from '../../types/Attendance';
+import type { Attendance } from '../../utils/types';
 
 /**
  * Formats working hours into a readable format.

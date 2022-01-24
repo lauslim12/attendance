@@ -20,9 +20,9 @@ import {
 import { memo, useEffect, useState } from 'react';
 import { FaGoogle, FaMagic, FaMailBulk, FaSms, FaTimes } from 'react-icons/fa';
 
-import type { User } from '../types/User';
 import { useStatusAndUser } from '../utils/hooks';
 import axios from '../utils/http';
+import type { User } from '../utils/types';
 import { SuccessToast } from './Toast';
 
 /**
@@ -85,7 +85,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
   const verifyOTP = (otp: string) => {
     setIsVerifyLoading(true);
 
-    api({
+    axios({
       method: 'PUT',
       url: '/api/v1/auth/otp',
       auth: { username: user.userID, password: otp },

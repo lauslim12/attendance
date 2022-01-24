@@ -1,10 +1,8 @@
 import type { Key } from 'swr';
 import useSWR from 'swr';
 
-import type { Attendance } from '../types/Attendance';
-import type { Status } from '../types/Auth';
-import type { Session } from '../types/Session';
 import { fetcher } from './http';
+import type { Attendance, Session, Status } from './types';
 
 /**
  * Hook to call a `GET` request with Vercel's `useSWR` for performance and reactive

@@ -2,9 +2,8 @@ import { Button, Heading, Text, useToast, VStack } from '@chakra-ui/react';
 import { memo, useRef, useState } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 
-import type { Status } from '../../types/Auth';
-import type { User } from '../../types/User';
 import axios from '../../utils/http';
+import type { Status, User } from '../../utils/types';
 import OTPModal from '../OTPModal';
 import QRDialog from '../QRDialog';
 import { FailedToast } from '../Toast';

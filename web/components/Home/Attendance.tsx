@@ -2,7 +2,7 @@ import { Button, Text, VStack } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
 import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
-import type { Status } from '../../types/Auth';
+import type { Status } from '../../utils/types';
 import AttendanceModal from '../AttendanceModal';
 import MainHeading from '../MainHeading';
 import OTPModal from '../OTPModal';

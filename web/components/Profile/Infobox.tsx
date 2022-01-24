@@ -9,10 +9,9 @@ import {
 import { memo, useState } from 'react';
 import { FaPencilRuler } from 'react-icons/fa';
 
-import type { Status } from '../../types/Auth';
-import type { User } from '../../types/User';
 import { useStatusAndUser } from '../../utils/hooks';
 import axios from '../../utils/http';
+import type { Status, User } from '../../utils/types';
 import TextInput from '../Input/TextInput';
 import { FailedToast, SuccessToast } from '../Toast';
 
