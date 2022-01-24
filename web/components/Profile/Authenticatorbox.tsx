@@ -2,11 +2,10 @@ import { Button, Heading, Text, useToast, VStack } from '@chakra-ui/react';
 import { memo, useRef, useState } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 
-import type { Status } from '../../types/Auth';
-import type { User } from '../../types/User';
-import { api } from '../../utils/http';
-import OTPModal from '../OTPModal';
-import QRDialog from '../QRDialog';
+import axios from '../../utils/http';
+import type { Status, User } from '../../utils/types';
+import OTPModal from '../Overlay/OTPModal';
+import QRDialog from '../Overlay/QRDialog';
 import { FailedToast } from '../Toast';
 
 /**
@@ -26,7 +25,7 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
   const refreshMFA = () => {
     setIsLoading(true);
 
-    api<{ uri: string }>({
+    axios<{ uri: string }>({
       method: 'PUT',
       url: '/api/v1/auth/update-mfa',
     })
@@ -54,8 +53,10 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
         user={user}
       />
 
-      <VStack p={[2, 10]} spacing={5} mt={10}>
-        <Heading size="lg">📱 Authenticator Refresh</Heading>
+      <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+        <Heading as="p" size="lg">
+          📱 Authenticator Refresh
+        </Heading>
         <Text textAlign="center">
           You may refresh your Authenticator account in your phone by clicking
           below button. You have to be verified by MFA before using this

@@ -10,8 +10,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "circular-check": "dpdm --tree --circular --warning ./**/*.ts",
-    "prettier-check": "prettier --check ./**/*.ts",
+    "circular-check": "dpdm --tree --circular --warning ./**/*.{ts,tsx}",
+    "prettier-check": "prettier --check ./**/*.{ts,tsx}",
     "type-check": "tsc --noEmit",
     "lint": "yarn prettier-check && next lint && yarn type-check"
   },

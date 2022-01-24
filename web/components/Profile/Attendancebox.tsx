@@ -12,7 +12,7 @@ import {
 } from '@chakra-ui/react';
 import { memo } from 'react';
 
-import type { Attendance } from '../../types/Attendance';
+import type { Attendance } from '../../utils/types';
 
 /**
  * Formats working hours into a readable format.
@@ -36,8 +36,10 @@ const formatWorkingHours = (end: string, start: string) => {
  * @returns React functional component.
  */
 const Attendancebox = ({ attendances }: { attendances: Attendance[] }) => (
-  <VStack p={[2, 10]} spacing={5} mt={10}>
-    <Heading size="lg">✅ Attendances</Heading>
+  <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+    <Heading as="p" size="lg">
+      ✅ Attendances
+    </Heading>
     <Text textAlign="center">All of your attendances in this system.</Text>
 
     <Box overflowX="auto" w="full">

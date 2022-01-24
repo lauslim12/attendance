@@ -15,7 +15,7 @@ import type { MutableRefObject } from 'react';
 import { memo } from 'react';
 import { FaArrowRight, FaCode } from 'react-icons/fa';
 
-import routes from '../utils/routes';
+import routes from '../../utils/routes';
 
 /**
  * Props.

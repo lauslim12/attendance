@@ -18,10 +18,10 @@ import { useRouter } from 'next/router';
 import { memo, useRef, useState } from 'react';
 import { FaFire } from 'react-icons/fa';
 
-import type { Session } from '../../types/Session';
 import { useMe } from '../../utils/hooks';
-import { api } from '../../utils/http';
+import axios from '../../utils/http';
 import routes from '../../utils/routes';
+import type { Session } from '../../utils/types';
 import { FailedToast, SuccessToast } from '../Toast';
 
 /**
@@ -48,7 +48,7 @@ const SessionCard = ({ session }: { session: Session }) => {
   const toast = useToast();
 
   const invalidateSession = (sid: string) => {
-    api({ method: 'DELETE', url: `/api/v1/sessions/me/${sid}` })
+    axios({ method: 'DELETE', url: `/api/v1/sessions/me/${sid}` })
       .then(() => {
         SuccessToast(toast, 'Successfully invalidated a session.');
 
@@ -157,8 +157,10 @@ const SessionCard = ({ session }: { session: Session }) => {
  * @returns React functional component.
  */
 const Sessionbox = ({ sessions }: { sessions: Session[] }) => (
-  <VStack p={[2, 10]} spacing={5} mt={10}>
-    <Heading size="lg">🖥️ Sessions</Heading>
+  <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+    <Heading as="p" size="lg">
+      🖥️ Sessions
+    </Heading>
     <Text textAlign="center">
       You may examine your sessions and invalidate them if necessary.
     </Text>

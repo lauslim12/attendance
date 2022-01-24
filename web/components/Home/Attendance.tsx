@@ -2,10 +2,10 @@ import { Button, Text, VStack } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
 import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
-import type { Status } from '../../types/Auth';
-import AttendanceModal from '../AttendanceModal';
+import type { Status } from '../../utils/types';
 import MainHeading from '../MainHeading';
-import OTPModal from '../OTPModal';
+import AttendanceModal from '../Overlay/AttendanceModal';
+import OTPModal from '../Overlay/OTPModal';
 
 /**
  * Attendance component to provide checking-in and checking-out functionalities.
@@ -49,6 +49,7 @@ const Attendance = ({ status }: { status: Status }) => {
 
         <MainHeading
           text={time.toLocaleDateString('en-GB')}
+          as="h2"
           fontSize={['3xl', '5xl', '7xl']}
           letterSpacing={10}
           mb={5}
@@ -56,7 +57,7 @@ const Attendance = ({ status }: { status: Status }) => {
 
         <MainHeading
           text={time.toLocaleTimeString('en-GB')}
-          as="h2"
+          as="h3"
           fontSize={['3xl', '4xl', '6xl']}
           letterSpacing={10}
           mb={5}

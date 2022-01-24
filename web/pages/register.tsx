@@ -16,10 +16,10 @@ import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
-import QRDialog from '../components/QRDialog';
-import type { User } from '../types/User';
-import { api } from '../utils/http';
+import QRDialog from '../components/Overlay/QRDialog';
+import axios from '../utils/http';
 import routes from '../utils/routes';
+import type { User } from '../utils/types';
 
 /**
  * Registration screen for the website.
@@ -50,7 +50,7 @@ const Register = () => {
     }
 
     setIsLoading(true);
-    api<User & { uri: string }>({
+    axios<User & { uri: string }>({
       method: 'POST',
       url: '/api/v1/auth/register',
       data: { username, password, email, phoneNumber, fullName },

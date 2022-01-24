@@ -12,7 +12,7 @@ import { memo, useState } from 'react';
 import { FaPassport } from 'react-icons/fa';
 
 import { useStatusAndUser } from '../../utils/hooks';
-import { api } from '../../utils/http';
+import axios from '../../utils/http';
 import routes from '../../utils/routes';
 import TextInput from '../Input/TextInput';
 import { FailedToast, SuccessToast } from '../Toast';
@@ -26,33 +26,42 @@ const Passwordbox = () => {
   const { mutate } = useStatusAndUser();
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const router = useRouter();
 
   const updatePassword = () => {
-    api({
+    setIsLoading(true);
+
+    axios({
       method: 'PATCH',
       url: '/api/v1/auth/update-password',
       data: { currentPassword, newPassword, confirmPassword },
     })
       .then((res) => {
+        // Set is loading to false.
+        setIsLoading(false);
+
         // Mutate session and force user to log out.
         mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
 
         // Spawn modal.
         SuccessToast(toast, res.message);
-
-        // Force redirect to 'Home'.
-        router.replace(routes.home);
       })
-      .catch((err) => FailedToast(toast, err.message));
+      .then(() => router.replace(routes.login))
+      .catch((err) => {
+        FailedToast(toast, err.message);
+        setIsLoading(false);
+      });
   };
 
   return (
-    <VStack p={[2, 10]} spacing={5} mt={10}>
-      <Heading size="lg">🔑 Update Password</Heading>
+    <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
+      <Heading as="p" size="lg">
+        🔑 Update Password
+      </Heading>
       <Text textAlign="center">
         You may edit your authentication data by changing below values.
       </Text>
@@ -99,6 +108,8 @@ const Passwordbox = () => {
         colorScheme="facebook"
         leftIcon={<FaPassport />}
         onClick={updatePassword}
+        isLoading={isLoading}
+        isDisabled={isLoading}
       >
         Update Password
       </Button>

@@ -1,7 +1,7 @@
 import type { AxiosRequestConfig } from 'axios';
 import axiosClient from 'axios';
 
-import type Response from '../types/Response';
+import type { Response } from './types';
 
 /**
  * Creates an initial 'axios' instance with custom settings.
@@ -33,13 +33,15 @@ instance.interceptors.response.use(
 );
 
 /**
- * Replaces main `axios` instance with the custom-one.
+ * Replaces main `axios` instance with the custom-one, already typed with
+ * the `Response` object.
  *
  * @param cfg - Axios configuration object.
  * @returns A promise object of a response of the HTTP request with the 'data' object already
  * destructured.
  */
-const axios = <T>(cfg: AxiosRequestConfig) => instance.request<any, T>(cfg);
+const axios = <T = unknown>(cfg: AxiosRequestConfig) =>
+  instance.request<any, Response<T>>(cfg);
 
 /**
  * Fetcher is created to be used with `useSWR` hook.
@@ -61,14 +63,5 @@ export const fetcher = async (url: string) => {
 
   return parsed.data;
 };
-
-/**
- * Make a request to the back-end API.
- *
- * @param cfg - Axios configurations.
- * @returns A promise object, `data` object already destructured, and typed according to `Response`.
- */
-export const api = <T = unknown>(cfg: AxiosRequestConfig) =>
-  axios<Response<T>>(cfg);
 
 export default axios;

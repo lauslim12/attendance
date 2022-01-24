@@ -1,7 +1,7 @@
 import { Badge, Heading, useColorModeValue, VStack } from '@chakra-ui/react';
 import { memo } from 'react';
 
-import type { User } from '../../types/User';
+import type { User } from '../../utils/types';
 
 /**
  * Top part of the Profile page.
@@ -10,26 +10,34 @@ import type { User } from '../../types/User';
  * @returns React functional component.
  */
 const Topbox = ({ user }: { user: User }) => (
-  <VStack bg={useColorModeValue('#00baff', '#bb48bf')} py={7} rounded="md">
-    <VStack spacing={3}>
-      <Heading as="h1" size="lg">
-        {user.fullName}
-      </Heading>
+  <VStack
+    as="header"
+    bg={useColorModeValue('#00baff', '#bb48bf')}
+    py={7}
+    rounded="md"
+    spacing={3}
+  >
+    <Heading as="h1" size="lg">
+      {user.fullName}
+    </Heading>
 
-      <Heading as="h2" size="md">
-        {user.email}
-      </Heading>
+    <Heading as="h2" size="md">
+      {user.email}
+    </Heading>
 
-      <Heading as="h3" size="sm">
-        {user.phoneNumber}
-      </Heading>
+    <Heading as="h3" size="sm">
+      {user.phoneNumber}
+    </Heading>
 
-      {user.role === 'admin' ? (
-        <Badge colorScheme="green">{user.role}</Badge>
-      ) : (
-        <Badge colorScheme="blue">{user.role}</Badge>
-      )}
-    </VStack>
+    <Heading as="h4" size="xs">
+      {user.username}
+    </Heading>
+
+    {user.role === 'admin' ? (
+      <Badge colorScheme="green">{user.role}</Badge>
+    ) : (
+      <Badge colorScheme="blue">{user.role}</Badge>
+    )}
   </VStack>
 );
 
