@@ -1,5 +1,5 @@
 /**
- * Response from the back-end.
+ * JSONAPI standard response from the back-end.
  */
 interface Response<T> {
   status: 'success' | 'fail' | 'error';

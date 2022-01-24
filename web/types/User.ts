@@ -1,5 +1,3 @@
-import type Response from './Response';
-
 /**
  * User type from the back-end.
  */
@@ -14,5 +12,3 @@ export type User = {
   createdAt: string;
   role: 'admin' | 'user';
 };
-
-export type UserResponse = Response<User>;
