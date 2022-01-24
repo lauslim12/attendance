@@ -74,7 +74,15 @@ const Header = () => {
           </Text>
         </HStack>
       ) : (
-        <Text>About</Text>
+        <>
+          <Text
+            as="button"
+            fontWeight="bold"
+            _hover={{ textDecor: 'none', color: 'pink.400' }}
+          >
+            About
+          </Text>
+        </>
       )}
 
       <Spacer />
