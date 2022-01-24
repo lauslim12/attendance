@@ -73,8 +73,17 @@ function loadExpress() {
     next();
   });
 
+  // Send 204 on icon requests.
+  app.use((req: Request, res: Response, next: NextFunction) => {
+    if (req.originalUrl.includes('favicon.ico')) {
+      res.status(204).end();
+    }
+
+    next();
+  });
+
   // Prepare cookie options.
-  const sessOptions: CookieOptions = {
+  const options: CookieOptions = {
     httpOnly: true,
     sameSite: 'strict',
     maxAge: 7200 * 1000, // 2 hours that will be refreshed every time the user hits a 'has-session' middleware.
@@ -82,8 +91,7 @@ function loadExpress() {
 
   // Inject 'secure' attributes on production environment.
   app.use((req: Request, _: Response, next: NextFunction) => {
-    sessOptions.secure =
-      req.secure || req.headers['x-forwarded-proto'] === 'https';
+    options.secure = req.secure || req.headers['x-forwarded-proto'] === 'https';
 
     next();
   });
@@ -97,7 +105,7 @@ function loadExpress() {
       saveUninitialized: false,
       resave: false,
       secret: config.COOKIE_SECRET,
-      cookie: sessOptions,
+      cookie: options,
     })
   );
 
