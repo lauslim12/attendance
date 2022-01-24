@@ -371,12 +371,12 @@ const AuthController = {
 
     // Compare old passwords.
     const passwordsMatch = await verifyPassword(user.password, currentPassword);
-    if (passwordsMatch) {
+    if (!passwordsMatch) {
       next(new AppError('Your previous password is wrong!', 401));
       return;
     }
 
-    // Confirm passwords. We have no need to use safe-compare in this one.
+    // Confirm passwords. We time-safe compare to prevent timing attacks.
     if (!safeCompare(newPassword, confirmPassword)) {
       next(new AppError('Your new passwords do not match.', 401));
       return;
@@ -405,7 +405,7 @@ const AuthController = {
         status: 'success',
         statusCode: 200,
         data: [],
-        message: 'Successfully changed passwords. Please log in again!',
+        message: 'Password updated. For security, please log in again!',
         type: 'auth',
       });
     });
