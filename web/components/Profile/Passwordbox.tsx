@@ -26,28 +26,35 @@ const Passwordbox = () => {
   const { mutate } = useStatusAndUser();
   const [confirmPassword, setConfirmPassword] = useState('');
   const [currentPassword, setCurrentPassword] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const [newPassword, setNewPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const toast = useToast();
   const router = useRouter();
 
   const updatePassword = () => {
+    setIsLoading(true);
+
     axios({
       method: 'PATCH',
       url: '/api/v1/auth/update-password',
       data: { currentPassword, newPassword, confirmPassword },
     })
       .then((res) => {
+        // Set is loading to false.
+        setIsLoading(false);
+
         // Mutate session and force user to log out.
         mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
 
         // Spawn modal.
         SuccessToast(toast, res.message);
-
-        // Force redirect to 'Home'.
-        router.replace(routes.home);
       })
-      .catch((err) => FailedToast(toast, err.message));
+      .then(() => router.replace(routes.login))
+      .catch((err) => {
+        FailedToast(toast, err.message);
+        setIsLoading(false);
+      });
   };
 
   return (
@@ -101,6 +108,8 @@ const Passwordbox = () => {
         colorScheme="facebook"
         leftIcon={<FaPassport />}
         onClick={updatePassword}
+        isLoading={isLoading}
+        isDisabled={isLoading}
       >
         Update Password
       </Button>

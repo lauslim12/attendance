@@ -25,10 +25,13 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
   const { mutate } = useStatusAndUser();
   const [email, setEmail] = useState(user.email);
   const [fullName, setFullName] = useState(user.fullName);
+  const [isLoading, setIsLoading] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState(user.phoneNumber);
   const toast = useToast();
 
   const editProfile = () => {
+    setIsLoading(true);
+
     axios<User>({
       method: 'PATCH',
       url: '/api/v1/users/me',
@@ -41,7 +44,8 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
         // Send back toast.
         SuccessToast(toast, res.message);
       })
-      .catch((err) => FailedToast(toast, err.message));
+      .catch((err) => FailedToast(toast, err.message))
+      .finally(() => setIsLoading(false));
   };
 
   return (
@@ -88,6 +92,8 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
         colorScheme="yellow"
         leftIcon={<FaPencilRuler />}
         onClick={editProfile}
+        isLoading={isLoading}
+        isDisabled={isLoading}
       >
         Edit My Profile
       </Button>
