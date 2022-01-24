@@ -14,28 +14,27 @@ type Props = {
 };
 
 /**
- * A middleware, top-level component that prevents non-logged in users to access certain routes
- * in the client-side. Quite simple, if the user does not exist in the context / SWR,
- * then redirect to login screen.
+ * The reverse of `AuthRoute`, this one disallows people to access pages like
+ * '/login' if already logged in.
  *
  * @param params - Props.
  * @returns React Functional Component
  */
-const AuthRoute = ({ children }: Props) => {
+const NotAuthRoute = ({ children }: Props) => {
   const { data, isLoading } = useMe();
   const router = useRouter();
 
   useEffect(() => {
-    if (!isLoading && !data.status?.isAuthenticated) {
-      router.replace(routes.notAuthorized);
+    if (!isLoading && data.status?.isAuthenticated) {
+      router.replace(routes.home);
     }
   }, [isLoading, data.status, router]);
 
-  if (isLoading || !data.status?.isAuthenticated) {
+  if (isLoading || data.status?.isAuthenticated) {
     return <Spinner />;
   }
 
   return <>{children}</>;
 };
 
-export default memo(AuthRoute);
+export default memo(NotAuthRoute);
