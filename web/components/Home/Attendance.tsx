@@ -1,11 +1,16 @@
 import { Button, Text, VStack } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import { memo, useEffect, useState } from 'react';
 import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
 import type { Status } from '../../utils/types';
 import MainHeading from '../MainHeading';
 import AttendanceModal from '../Overlay/AttendanceModal';
-import OTPModal from '../Overlay/OTPModal';
+
+/**
+ * Dynamic import.
+ */
+const OTPModal = dynamic(() => import('../Overlay/OTPModal'));
 
 /**
  * Attendance component to provide checking-in and checking-out functionalities.

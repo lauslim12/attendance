@@ -1,12 +1,17 @@
 import { Button, Heading, Text, useToast, VStack } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import { memo, useRef, useState } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 
 import axios from '../../utils/http';
 import type { Status, User } from '../../utils/types';
-import OTPModal from '../Overlay/OTPModal';
-import QRDialog from '../Overlay/QRDialog';
 import { FailedToast } from '../Toast';
+
+/**
+ * Dynamic import overlays.
+ */
+const OTPModal = dynamic(() => import('../Overlay/OTPModal'));
+const QRDialog = dynamic(() => import('../Overlay/QRDialog'));
 
 /**
  * Box to refresh TOTP secrets.

@@ -10,16 +10,21 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { memo, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
-import QRDialog from '../components/Overlay/QRDialog';
 import axios from '../utils/http';
 import routes from '../utils/routes';
 import type { User } from '../utils/types';
+
+/**
+ * Dynamic import.
+ */
+const QRDialog = dynamic(() => import('../components/Overlay/QRDialog'));
 
 /**
  * Registration screen for the website.
