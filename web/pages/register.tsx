@@ -10,16 +10,23 @@ import {
   Text,
   VStack,
 } from '@chakra-ui/react';
+import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
-import { memo, useRef, useState } from 'react';
+import { memo, Suspense, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
-import QRDialog from '../components/Overlay/QRDialog';
 import axios from '../utils/http';
 import routes from '../utils/routes';
 import type { User } from '../utils/types';
+
+/**
+ * Dynamic import.
+ */
+const QRDialog = dynamic(() => import('../components/Overlay/QRDialog'), {
+  suspense: true,
+});
 
 /**
  * Registration screen for the website.
@@ -68,13 +75,15 @@ const Register = () => {
 
   return (
     <>
-      <QRDialog
-        isOpen={openDialog}
-        onClose={() => setOpenDialog(false)}
-        leastDestructiveRef={leastDestructiveRef}
-        code={qrCode}
-        name={fullName}
-      />
+      <Suspense fallback={null}>
+        <QRDialog
+          isOpen={openDialog}
+          onClose={() => setOpenDialog(false)}
+          leastDestructiveRef={leastDestructiveRef}
+          code={qrCode}
+          name={fullName}
+        />
+      </Suspense>
 
       <Layout title={['Register']}>
         <VStack as="section" h="full" justify={['start', 'center']} p={1}>

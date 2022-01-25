@@ -1,12 +1,21 @@
 import { Button, Heading, Text, useToast, VStack } from '@chakra-ui/react';
-import { memo, useRef, useState } from 'react';
+import dynamic from 'next/dynamic';
+import { memo, Suspense, useRef, useState } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 
 import axios from '../../utils/http';
 import type { Status, User } from '../../utils/types';
-import OTPModal from '../Overlay/OTPModal';
-import QRDialog from '../Overlay/QRDialog';
 import { FailedToast } from '../Toast';
+
+/**
+ * Dynamic import overlays.
+ */
+const OTPModal = dynamic(() => import('../Overlay/OTPModal'), {
+  suspense: true,
+});
+const QRDialog = dynamic(() => import('../Overlay/QRDialog'), {
+  suspense: true,
+});
 
 /**
  * Box to refresh TOTP secrets.
@@ -39,19 +48,23 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
 
   return (
     <>
-      <QRDialog
-        isOpen={isQRDialogOpen}
-        leastDestructiveRef={leastDestructiveRef}
-        onClose={() => setIsQRDialogOpen(false)}
-        code={qrCode}
-        name={user.fullName}
-      />
+      <Suspense fallback={null}>
+        <QRDialog
+          isOpen={isQRDialogOpen}
+          leastDestructiveRef={leastDestructiveRef}
+          onClose={() => setIsQRDialogOpen(false)}
+          code={qrCode}
+          name={user.fullName}
+        />
+      </Suspense>
 
-      <OTPModal
-        isOpen={isMFADialogOpen}
-        onClose={() => setIsMFADialogOpen(false)}
-        user={user}
-      />
+      <Suspense fallback={null}>
+        <OTPModal
+          isOpen={isMFADialogOpen}
+          onClose={() => setIsMFADialogOpen(false)}
+          user={user}
+        />
+      </Suspense>
 
       <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
         <Heading as="p" size="lg">
