@@ -35,6 +35,7 @@ Below is the list of main features that this system have:
 - (**A C**) Users can check in and check out their attendance.
 - (**A B**) Admins can see all sessions and can invalidate them manually.
 - (**A B C**) Admins can perform CRUD operations on the `User` entity.
+- When set up, this system can remind people to log out at a certain time.
 
 Legend:
 
@@ -146,6 +147,14 @@ yarn dev
 ```
 
 - There are two modes available: `development`, and `production`. The difference is that `development` shows the full error stack trace when the app throws an error, and `production` shows the proper, appropriate error messages.
+
+- You may set up cronjobs in order to activate a Cloud Function to send reminders to people have checked in who have not yet checked out at a certain time. You have to install all dependencies (`yarn --frozen-lockfile`) in order to use this script (`ts-node-dev` is essential). The one that I usually use is:
+
+```bash
+crontab -l
+crontab -e
+00 18 * * * cd "~/attendance" && yarn reminder
+```
 
 - If you have already set up everything above and are coming back to develop after a while, then the steps to run this quickly are: `cd attendance`, `docker-compose up -d`, `cd api`, `yarn migrate`, and finally `yarn dev`.
 
