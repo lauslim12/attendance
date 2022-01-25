@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
   async rewrites() {
     return [
       {
@@ -9,6 +8,8 @@ const nextConfig = {
       },
     ];
   },
+  swcMinify: true,
+  reactStrictMode: true,
 };
 
 module.exports = nextConfig;
