@@ -1,6 +1,6 @@
 import { Button, Text, VStack } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
-import { memo, useEffect, useState } from 'react';
+import { memo, Suspense, useEffect, useState } from 'react';
 import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
 import type { Status } from '../../utils/types';
@@ -10,7 +10,9 @@ import AttendanceModal from '../Overlay/AttendanceModal';
 /**
  * Dynamic import.
  */
-const OTPModal = dynamic(() => import('../Overlay/OTPModal'));
+const OTPModal = dynamic(() => import('../Overlay/OTPModal'), {
+  suspense: true,
+});
 
 /**
  * Attendance component to provide checking-in and checking-out functionalities.
@@ -31,21 +33,25 @@ const Attendance = ({ status }: { status: Status }) => {
 
   return (
     <>
-      {status.user && (
-        <OTPModal
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          user={status.user}
-        />
-      )}
+      <Suspense fallback={null}>
+        {status.user && (
+          <OTPModal
+            isOpen={isOpen}
+            onClose={() => setIsOpen(false)}
+            user={status.user}
+          />
+        )}
+      </Suspense>
 
-      {status.user && (
-        <AttendanceModal
-          isOpen={attendModalOpen}
-          onClose={() => setAttendModalOpen(false)}
-          isIn={isModalTypeIn}
-        />
-      )}
+      <Suspense fallback={null}>
+        {status.user && (
+          <AttendanceModal
+            isOpen={attendModalOpen}
+            onClose={() => setAttendModalOpen(false)}
+            isIn={isModalTypeIn}
+          />
+        )}
+      </Suspense>
 
       <VStack w="full" align="center" spacing={3}>
         {status.user && (
