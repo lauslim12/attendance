@@ -75,7 +75,7 @@ class Email {
    */
   async send(
     subject: string,
-    template: 'otp' | 'notification',
+    template: 'otp' | 'notification' | 'reminder',
     vars: Record<string, unknown>
   ) {
     const html = renderFile(
@@ -116,6 +116,17 @@ class Email {
         otp,
         name: this.name,
       }),
+    });
+  }
+
+  /**
+   * Sends an email to remind the user to check out for today. This is
+   * not supposed to be used in the API, but it is used in Cloud Functions
+   * or cronjobs. Use a different Bull queue if need be.
+   */
+  async sendReminder() {
+    await this.send('Reminder to check out for today', 'reminder', {
+      name: this.name,
     });
   }
 }

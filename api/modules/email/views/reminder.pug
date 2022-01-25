@@ -1,0 +1,19 @@
+extend base
+
+block content
+    p Hi #{name},
+    p This is a friendly reminder for you to check out for today.
+    p Our systems note that you have checked in for today, yet have not checked out.
+    p If you are still working at this time, please do not forget to check out!
+    p You may click the following link in order to get redirected to the website.
+    table.btn.btn-primary(role='presentation', border='0', cellpadding='0', cellspacing='0')
+      tbody
+        tr
+          td(align='center')
+            table(role='presentation', border='0', cellpadding='0', cellspacing='0')
+              tbody
+                tr
+                  td
+                    a(href="#", target='_blank') Go to the website!
+    p Warm regards,
+    p - Attendance Inc.
