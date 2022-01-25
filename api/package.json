@@ -11,6 +11,7 @@
     "build": "tsc",
     "migrate": "yarn prisma migrate dev && yarn ts-node-dev cli/seed-data",
     "genkeys": "ts-node-dev cli/gen-keys",
+    "reminder": "ts-node-dev cli/reminder",
     "dev": "ts-node-dev .",
     "start": "NODE_ENV=production node dist/index.js",
     "circular-check": "dpdm --tree --circular --warning ./**/*.ts",
