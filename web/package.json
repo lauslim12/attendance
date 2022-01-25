@@ -1,5 +1,5 @@
 {
-  "name": "attendace-web",
+  "name": "attendance-web",
   "version": "1.0.0",
   "description": "Front-end implementation of Attendance API",
   "repository": "git@github.com/lauslim12/attendance.git",
