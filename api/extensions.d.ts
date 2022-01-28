@@ -27,12 +27,6 @@ declare global {
   }
 }
 
-declare module 'express' {
-  interface Request {
-    userID?: string;
-  }
-}
-
 declare module 'express-session' {
   interface SessionData {
     userID?: string;
