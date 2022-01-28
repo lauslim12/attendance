@@ -12,8 +12,8 @@ import {
 } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
-import { memo, useRef, useState } from 'react';
 import type { FormEvent } from 'react';
+import { memo, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';

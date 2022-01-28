@@ -10,8 +10,8 @@ import {
   useMediaQuery,
   VStack,
 } from '@chakra-ui/react';
-import { FaFlagCheckered, FaHourglassStart } from 'react-icons/fa';
 import { memo } from 'react';
+import { FaFlagCheckered, FaHourglassStart } from 'react-icons/fa';
 
 import type { Attendance } from '../../utils/types';
 

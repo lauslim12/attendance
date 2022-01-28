@@ -16,7 +16,7 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
-import { FaBars, FaUser, FaMoon, FaSignOutAlt } from 'react-icons/fa';
+import { FaBars, FaMoon, FaSignOutAlt, FaUser } from 'react-icons/fa';
 
 import { useStatusAndUser } from '../utils/hooks';
 import axios from '../utils/http';

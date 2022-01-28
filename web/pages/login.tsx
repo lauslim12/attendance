@@ -13,8 +13,8 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { memo, useState } from 'react';
 import type { FormEvent } from 'react';
+import { memo, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
