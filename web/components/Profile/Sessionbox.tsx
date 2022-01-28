@@ -8,6 +8,7 @@ import {
   Button,
   Grid,
   Heading,
+  Spacer,
   Stack,
   Text,
   useColorModeValue,
@@ -120,6 +121,9 @@ const SessionCard = ({ session }: { session: Session }) => {
         <Text fontSize="lg" fontWeight="bold">
           {session.sessionInfo.device}
         </Text>
+
+        <Spacer />
+
         <Text fontWeight="bold">{session.sessionInfo.ip}</Text>
 
         <VStack spacing={1}>
