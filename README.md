@@ -32,6 +32,7 @@ Below is the list of main features that this system have:
 - (**A**) Users can get their own attendance data.
 - (**A**) Users can request OTP from the API via Email, SMS, or Authenticator apps.
 - (**A**) Users can receive a special MFA authorization by verifying the OTP.
+- (**A C**) Users can update their own MFA secrets in Authenticator apps.
 - (**A C**) Users can check in and check out their attendance.
 - (**A B**) Admins can see all sessions and can invalidate them manually.
 - (**A B C**) Admins can perform CRUD operations on the `User` entity.
@@ -48,10 +49,10 @@ Legend:
 As this research focuses on creating a secure API, below are the considerations that are taken during development:
 
 - Users are divided into two roles: `admin` and `user`.
-- A special kind of authorized session: `OTPSession`, using JSON Web Tokens. Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes).
+- A special kind of authorized session: `OTPSession`, using JSON Web Tokens (RFC 7519). Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes).
 - Sessions are signed cookies, implemented with a high-entropy session secret, and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security.
 - Passwords are hashed with `Argon2` algorithm.
-- The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator), and it is different for every other users in the system.
+- The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator), and it is different for every other users in the system. Look at `cli/collision-test.ts` for tests.
 - Conforms to RFC 6238 and RFC 7617 (TOTP, Basic Authorization).
 - OTP is time-based and it is generated with RFC 6238 algorithm with `SHA-1` hash function and a high-entropy secret (above). OTP is verified with the `userID` via RFC 7617 algorithm. OTPs are for one-time use only (in a certain timeframe).
 - User identification generator is based on `uuidv4` algorithm for low-collision user IDs.
@@ -179,6 +180,12 @@ yarn dev
 ```
 
 - Keep in mind that your API has to be in an active state, or else it will not work.
+
+## Benchmarks
+
+Some calculations are done in order to keep track of security.
+
+- You may run `yarn collision-test` in order to check out the collision probability for `nanoid`, `rfc6238`, and `Math.random()`.
 
 ## License
 
