@@ -50,8 +50,8 @@ const AttendanceModal = ({ isOpen, onClose, isIn }: Props) => {
   }, [isIn]);
 
   const report = () => {
-    if (remarks.length > 200) {
-      setError('You remarks is too long. Max is 200 characters.');
+    if (remarks.length > 100) {
+      setError('You remarks is too long. Max is 100 characters.');
       return;
     }
 
@@ -102,7 +102,7 @@ const AttendanceModal = ({ isOpen, onClose, isIn }: Props) => {
             </chakra.div>
 
             <Textarea
-              placeholder="You can write up to 200 characters. This is optional."
+              placeholder="You can write up to 100 characters. This is optional."
               value={remarks}
               onChange={({ currentTarget: { value } }) => setRemarks(value)}
               h="25vh"

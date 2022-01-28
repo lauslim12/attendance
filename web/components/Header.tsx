@@ -3,15 +3,20 @@ import {
   HStack,
   IconButton,
   Link,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Spacer,
   Text,
   useColorMode,
+  useMediaQuery,
   useToast,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
-import { FaMoon } from 'react-icons/fa';
+import { FaBars, FaMoon, FaSignOutAlt, FaUser } from 'react-icons/fa';
 
 import { useStatusAndUser } from '../utils/hooks';
 import axios from '../utils/http';
@@ -26,6 +31,7 @@ import { FailedToast, SuccessToast } from './Toast';
 const Header = () => {
   const { status, mutate } = useStatusAndUser();
   const { toggleColorMode } = useColorMode();
+  const [largerThan1280] = useMediaQuery('(min-width: 1280px)');
   const toast = useToast();
   const router = useRouter();
 
@@ -53,7 +59,30 @@ const Header = () => {
 
       <Spacer />
 
-      {status && status.isAuthenticated ? (
+      {status && status.isAuthenticated && !largerThan1280 && (
+        <Menu isLazy>
+          <MenuButton
+            as={IconButton}
+            aria-label="Navigation and features"
+            icon={<FaBars />}
+            variant="outline"
+          />
+
+          <MenuList>
+            <NextLink href={routes.profile} passHref>
+              <Link>
+                <MenuItem icon={<FaUser />}>Profile</MenuItem>
+              </Link>
+            </NextLink>
+
+            <MenuItem icon={<FaSignOutAlt />} onClick={logout}>
+              Logout
+            </MenuItem>
+          </MenuList>
+        </Menu>
+      )}
+
+      {status && status.isAuthenticated && largerThan1280 && (
         <HStack>
           <NextLink href={routes.profile} passHref>
             <Link
@@ -73,19 +102,9 @@ const Header = () => {
             Logout
           </Text>
         </HStack>
-      ) : (
-        <>
-          <Text
-            as="button"
-            fontWeight="bold"
-            _hover={{ textDecor: 'none', color: 'pink.400' }}
-          >
-            About
-          </Text>
-        </>
       )}
 
-      <Spacer />
+      {largerThan1280 && <Spacer />}
 
       <IconButton
         onClick={toggleColorMode}

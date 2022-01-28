@@ -187,6 +187,10 @@ Some calculations are done in order to keep track of security.
 
 - You may run `yarn collision-test` in order to check out the collision probability for `nanoid`, `rfc6238`, and `Math.random()`.
 
+## Updates
+
+You may run `yarn upgrade-interactive --latest` to upgrade dependencies. Make sure there are no breaking changes that might break the application.
+
 ## License
 
 Application is licensed under MIT License. The research itself will follow the publisher's license after it has been published.

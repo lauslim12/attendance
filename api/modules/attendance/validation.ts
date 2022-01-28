@@ -14,14 +14,14 @@ const AttendanceValidation = {
   // POST /api/v1/attendance/in
   in: {
     body: joi.object().keys({
-      remarksEnter: joi.string().trim(),
+      remarksEnter: joi.string().trim().max(100),
     }),
   },
 
   // PATCH /api/v1/attendance/out
   out: {
     body: joi.object().keys({
-      remarksLeave: joi.string().trim(),
+      remarksLeave: joi.string().trim().max(100),
     }),
   },
 };

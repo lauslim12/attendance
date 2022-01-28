@@ -13,6 +13,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
+import type { FormEvent } from 'react';
 import { memo, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
@@ -40,7 +41,8 @@ const Login = () => {
   const router = useRouter();
   const toast = useToast();
 
-  const login = () => {
+  const login = (e: FormEvent) => {
+    e.preventDefault();
     setIsLoading(true);
 
     axios<User>({
@@ -77,6 +79,7 @@ const Login = () => {
             w={['full', '80vw', '70vw', '60vw', '60vw', '40vw']}
             p={[0, 4, 10]}
             spacing={4}
+            onSubmit={login}
           >
             <VStack spacing={1}>
               <Heading size="lg">Login</Heading>
@@ -126,8 +129,8 @@ const Login = () => {
             </VStack>
 
             <Button
+              type="submit"
               alignSelf={['end', 'center']}
-              onClick={login}
               leftIcon={<FaKey />}
               colorScheme="blue"
               disabled={
