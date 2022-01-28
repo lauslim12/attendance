@@ -13,6 +13,7 @@ import {
 import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { memo, useRef, useState } from 'react';
+import type { FormEvent } from 'react';
 import { FaKey } from 'react-icons/fa';
 
 import TextInput from '../components/Input/TextInput';
@@ -48,7 +49,8 @@ const Register = () => {
   const [openDialog, setOpenDialog] = useState(false);
   const leastDestructiveRef = useRef(null);
 
-  const register = () => {
+  const register = (e: FormEvent) => {
+    e.preventDefault();
     if (password !== confirmPassword) {
       setError('Your passwords do not match.');
       return;
@@ -92,6 +94,7 @@ const Register = () => {
             w={['full', '80vw', '70vw', '60vw', '60vw', '40vw']}
             p={[0, 4, 10]}
             spacing={4}
+            onSubmit={register}
           >
             <VStack spacing={1}>
               <Heading size="lg">Register</Heading>
@@ -180,8 +183,8 @@ const Register = () => {
             </VStack>
 
             <Button
+              type="submit"
               alignSelf={['end', 'center']}
-              onClick={register}
               leftIcon={<FaKey />}
               colorScheme="green"
               disabled={
