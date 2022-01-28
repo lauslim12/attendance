@@ -52,7 +52,7 @@ const AuthHandler = (rateLimit: RateLimit) => {
   );
 
   // Updates MFA for the currently logged in user.
-  handler.put(
+  handler.patch(
     '/update-mfa',
     asyncHandler(hasSession),
     asyncHandler(hasJWT),

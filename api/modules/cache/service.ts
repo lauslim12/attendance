@@ -66,20 +66,27 @@ const CacheService = {
   getOTPSession: async (jti: string) => CacheRepository.getOTPSession(jti),
 
   /**
-   * Gets all sessions from the cache.
+   * Gets all sessions from the cache, also strip cookie information.
    *
    * @returns All sessions in the cache.
    */
-  getSessions: async () => CacheRepository.getSessions(),
+  getSessions: async () => {
+    const sessions = await CacheRepository.getSessions();
+
+    return sessions.map((s) => ({ ...s, cookie: undefined, ...s.sessionInfo }));
+  },
 
   /**
-   * Gets all sessions specific for a single user.
+   * Gets all sessions specific for a single user, also strip cookie information.
    *
    * @param userID - User ID.
    * @returns All sessions specific for a single user.
    */
-  getUserSessions: async (userID: string) =>
-    CacheRepository.getUserSessions(userID),
+  getUserSessions: async (userID: string) => {
+    const sessions = await CacheRepository.getUserSessions(userID);
+
+    return sessions.map((s) => ({ ...s, cookie: undefined, ...s.sessionInfo }));
+  },
 
   /**
    * Pings the cache.

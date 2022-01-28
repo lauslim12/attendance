@@ -34,7 +34,13 @@ function loadExpress() {
   }
 
   // Security headers.
-  app.use(helmet());
+  app.use(
+    helmet({
+      frameguard: {
+        action: 'deny',
+      },
+    })
+  );
 
   // Load JSON parser and signed cookie parser.
   app.use(express.json({ type: 'application/json', limit: '512b' }));

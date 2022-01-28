@@ -8,6 +8,7 @@ import {
   Button,
   Grid,
   Heading,
+  Spacer,
   Stack,
   Text,
   useColorModeValue,
@@ -18,7 +19,7 @@ import { useRouter } from 'next/router';
 import { memo, useRef, useState } from 'react';
 import { FaFire } from 'react-icons/fa';
 
-import { useMe } from '../../utils/hooks';
+import { useMe, useStatusAndUser } from '../../utils/hooks';
 import axios from '../../utils/http';
 import routes from '../../utils/routes';
 import type { Session } from '../../utils/types';
@@ -40,7 +41,8 @@ const parseUNIXTime = (time: string) =>
  * @returns React functional component.
  */
 const SessionCard = ({ session }: { session: Session }) => {
-  const { data, mutate } = useMe();
+  const { mutate: mutateMe } = useMe();
+  const { mutate: mutateStatus } = useStatusAndUser();
   const [isOpen, setIsOpen] = useState(false);
   const onClose = () => setIsOpen(false);
   const cancelRef = useRef(null);
@@ -52,14 +54,15 @@ const SessionCard = ({ session }: { session: Session }) => {
       .then(() => {
         SuccessToast(toast, 'Successfully invalidated a session.');
 
-        // Mutate all states for security.
-        mutate.mutateSession();
-        mutate.mutateStatus();
-
-        // Redirect if happen to delete self data.
-        if (data.status?.isAuthenticated) {
-          router.replace(routes.home);
-        }
+        // Mutate all states for security. Redirect if happen to delete
+        // self data.
+        mutateMe.mutateSession().then(() => {
+          mutateStatus().then((res) => {
+            if (res && !res.isAuthenticated) {
+              router.push(routes.home);
+            }
+          });
+        });
       })
       .catch((err) => FailedToast(toast, err.message));
   };
@@ -120,6 +123,9 @@ const SessionCard = ({ session }: { session: Session }) => {
         <Text fontSize="lg" fontWeight="bold">
           {session.sessionInfo.device}
         </Text>
+
+        <Spacer />
+
         <Text fontWeight="bold">{session.sessionInfo.ip}</Text>
 
         <VStack spacing={1}>
