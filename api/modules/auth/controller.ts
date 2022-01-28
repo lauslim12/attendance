@@ -93,7 +93,13 @@ const AuthController = {
       }
 
       // Verify token.
-      const decoded = await verifyToken(token);
+      let decoded;
+      try {
+        decoded = await verifyToken(token);
+      } catch {
+        sendUserStatus(req, res, true, false, user);
+        return;
+      }
 
       // Verify JTI.
       if (!decoded.payload.jti) {
