@@ -207,6 +207,8 @@ const AuthController = {
         return;
       }
 
+      // Clears all session from cookie.
+      res.cookie(config.SESSION_COOKIE, 'loggedOut', { maxAge: 10 });
       res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
 
       sendResponse({
