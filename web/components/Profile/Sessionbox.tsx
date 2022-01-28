@@ -55,12 +55,13 @@ const SessionCard = ({ session }: { session: Session }) => {
 
         // Mutate all states for security.
         mutate.mutateSession();
-        mutate.mutateStatus();
 
         // Redirect if happen to delete self data.
-        if (data.status?.isAuthenticated) {
-          router.replace(routes.home);
-        }
+        mutate.mutateStatus().then((res) => {
+          if (res && !res.isAuthenticated) {
+            router.replace(routes.home);
+          }
+        });
       })
       .catch((err) => FailedToast(toast, err.message));
   };
