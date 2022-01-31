@@ -1,9 +1,6 @@
-import connectRedis from 'connect-redis';
 import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
-import type { CookieOptions } from 'express-session';
-import session from 'express-session';
 import slowDown from 'express-slow-down';
 import helmet from 'helmet';
 import hpp from 'hpp';
@@ -15,6 +12,7 @@ import AttendanceHandler from '../modules/attendance/handler';
 import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
+import session from '../modules/middleware/session';
 import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
 import AppError from '../util/app-error';
@@ -88,32 +86,8 @@ function loadExpress() {
     next();
   });
 
-  // Prepare cookie options.
-  const options: CookieOptions = {
-    httpOnly: true,
-    sameSite: 'strict',
-    maxAge: 7200 * 1000, // 2 hours that will be refreshed every time the user hits a 'has-session' middleware.
-  };
-
-  // Inject 'secure' attributes on production environment.
-  app.use((req: Request, _: Response, next: NextFunction) => {
-    options.secure = req.secure || req.headers['x-forwarded-proto'] === 'https';
-
-    next();
-  });
-
   // Prepare to use Express Sessions.
-  const RedisSessionStore = connectRedis(session);
-  app.use(
-    session({
-      store: new RedisSessionStore({ client: redis.nodeRedis }),
-      name: config.SESSION_COOKIE,
-      saveUninitialized: false,
-      resave: false,
-      secret: config.COOKIE_SECRET,
-      cookie: options,
-    })
-  );
+  app.use(session());
 
   // Set up throttling to prevent spam requests.
   const throttler = slowDown({
