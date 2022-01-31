@@ -1,5 +1,4 @@
 import express from 'express';
-import type { RateLimit } from 'express-rate-limit';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
@@ -9,27 +8,29 @@ import getMe from '../middleware/get-me';
 import hasJWT from '../middleware/has-jwt';
 import hasRole from '../middleware/has-role';
 import hasSession from '../middleware/has-session';
+import rateLimit from '../middleware/rate-limit';
 import UserController from './controller';
 import UserValidation from './validation';
 
 /**
  * Handler to take care of 'Users' entity.
  *
- * @param limiter - General rate limit.
- * @param strictLimiter - Specific rate limit for sensitive endpoints.
  * @returns Express router.
  */
-const UserHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
+const UserHandler = () => {
   const handler = express.Router();
+  const userRateLimit = rateLimit(100, 'users-me', 15);
+  const adminRateLimit = rateLimit(30, 'users-admin');
 
   // Route to 'Attendance' entity based on the current user for better REST-ful experience.
-  handler.use('/:id/attendance', AttendanceHandler(limiter, strictLimiter));
+  handler.use('/:id/attendance', AttendanceHandler());
 
-  // Below endpoints are allowed for only authenticated users, and place rate limiter.
-  handler.use(limiter, asyncHandler(hasSession));
+  // Below endpoints are allowed for only authenticated users.
+  handler.use(asyncHandler(hasSession));
 
   // Allow user to get their own data and update their own data as well.
   handler
+    .use(userRateLimit)
     .route('/me')
     .get(getMe, asyncHandler(UserController.getUser))
     .patch(
@@ -41,7 +42,7 @@ const UserHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
     .delete(getMe, asyncHandler(UserController.deactivateUser));
 
   // Restrict endpoints for admins who are logged in and authenticated with MFA.
-  handler.use(hasRole('admin'), asyncHandler(hasJWT));
+  handler.use(adminRateLimit, hasRole('admin'), asyncHandler(hasJWT));
 
   // Perform get and create operations on the general entity.
   handler

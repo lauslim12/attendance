@@ -24,7 +24,12 @@ const rateLimit = (max: number, prefix = 'common', minutes = 15) => {
     max, // max requests in 'windowMs'
     windowMs: minutes * 60 * 1000, // `minutes` number of minutes
     handler(_: Request, __: Response, next: NextFunction) {
-      next(new AppError('Too many requests! Please try again later!', 429));
+      next(
+        new AppError(
+          `Too many requests! Please try again in ${minutes} minute(s)!`,
+          429
+        )
+      );
     },
   });
 };
