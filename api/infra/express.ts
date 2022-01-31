@@ -1,11 +1,9 @@
 import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
-import slowDown from 'express-slow-down';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
-import RedisStore from 'rate-limit-redis';
 
 import config from '../config';
 import AttendanceHandler from '../modules/attendance/handler';
@@ -14,11 +12,11 @@ import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
 import favicon from '../modules/middleware/favicon';
 import session from '../modules/middleware/session';
+import slowDown from '../modules/middleware/slow-down';
 import xst from '../modules/middleware/xst';
 import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
 import AppError from '../util/app-error';
-import redis from './redis';
 
 /**
  * Loads an Express application.
@@ -64,17 +62,6 @@ function loadExpress() {
   // Prepare to use Express Sessions.
   app.use(session());
 
-  // Set up throttling to prevent spam requests.
-  const throttler = slowDown({
-    store: new RedisStore({
-      client: redis.nodeRedis,
-      prefix: 'sd-common',
-    }),
-    delayAfter: 50, // start to delay by 'delayMs' after 'delayAfter' requests has been made in 'windowMs'
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    delayMs: 200,
-  });
-
   // Define handlers.
   const attendanceHandler = AttendanceHandler();
   const authHandler = AuthHandler();
@@ -82,8 +69,8 @@ function loadExpress() {
   const sessionHandler = SessionHandler();
   const userHandler = UserHandler();
 
-  // Define API routes.
-  app.use('/api', throttler);
+  // Define API routes. Throttle '/api' route to prevent spammers.
+  app.use('/api', slowDown(75));
   app.use('/api/v1', healthHandler);
   app.use('/api/v1/attendance', attendanceHandler);
   app.use('/api/v1/auth', authHandler);
