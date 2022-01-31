@@ -12,6 +12,7 @@ import AttendanceHandler from '../modules/attendance/handler';
 import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
+import favicon from '../modules/middleware/favicon';
 import session from '../modules/middleware/session';
 import xst from '../modules/middleware/xst';
 import SessionHandler from '../modules/session/handler';
@@ -58,14 +59,7 @@ function loadExpress() {
   app.use(xst());
 
   // Send 204 on icon requests.
-  app.use((req: Request, res: Response, next: NextFunction) => {
-    if (req.originalUrl.includes('favicon.ico')) {
-      res.status(204).end();
-      return;
-    }
-
-    next();
-  });
+  app.use(favicon());
 
   // Prepare to use Express Sessions.
   app.use(session());
