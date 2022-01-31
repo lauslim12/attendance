@@ -3,6 +3,7 @@ import type { RateLimit } from 'express-rate-limit';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
+import bodyParser from '../middleware/body-parser';
 import hasJWT from '../middleware/has-jwt';
 import hasSession from '../middleware/has-session';
 import AuthController from './controller';
@@ -27,6 +28,7 @@ const AuthHandler = (rateLimit: RateLimit) => {
   // Logs in a single user.
   handler.post(
     '/login',
+    bodyParser,
     validate(AuthValidation.login),
     asyncHandler(AuthController.login)
   );
@@ -47,6 +49,7 @@ const AuthHandler = (rateLimit: RateLimit) => {
   // Registers a single user.
   handler.post(
     '/register',
+    bodyParser,
     validate(AuthValidation.register),
     asyncHandler(AuthController.register)
   );
@@ -63,6 +66,7 @@ const AuthHandler = (rateLimit: RateLimit) => {
   handler.patch(
     '/update-password',
     asyncHandler(hasSession),
+    bodyParser,
     validate(AuthValidation.updatePassword),
     asyncHandler(AuthController.updatePassword)
   );
