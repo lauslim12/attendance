@@ -13,6 +13,7 @@ import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
 import session from '../modules/middleware/session';
+import xst from '../modules/middleware/xst';
 import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
 import AppError from '../util/app-error';
@@ -54,27 +55,7 @@ function loadExpress() {
   }
 
   // Only allow the following methods: [OPTIONS, HEAD, CONNECT, GET, POST, PATCH, PUT, DELETE].
-  app.use((req: Request, _: Response, next: NextFunction) => {
-    const allowedMethods = [
-      'OPTIONS',
-      'HEAD',
-      'CONNECT',
-      'GET',
-      'POST',
-      'PATCH',
-      'PUT',
-      'DELETE',
-    ];
-
-    if (!allowedMethods.includes(req.method)) {
-      next(
-        new AppError(`Method ${req.method} is not allowed in this API!`, 405)
-      );
-      return;
-    }
-
-    next();
-  });
+  app.use(xst());
 
   // Send 204 on icon requests.
   app.use((req: Request, res: Response, next: NextFunction) => {
