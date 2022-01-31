@@ -5,6 +5,7 @@ import asyncHandler from '../../util/async-handler';
 import getMe from '../middleware/get-me';
 import hasRole from '../middleware/has-role';
 import hasSession from '../middleware/has-session';
+import rateLimit from '../middleware/rate-limit';
 import SessionController from './controller';
 import SessionValidation from './validation';
 
@@ -15,6 +16,9 @@ import SessionValidation from './validation';
  */
 const SessionHandler = () => {
   const handler = express.Router();
+
+  // Allow rate limiters.
+  handler.use(rateLimit(100, 'sessions'));
 
   // Only allow below handlers for authenticated users.
   handler.use(asyncHandler(hasSession));
