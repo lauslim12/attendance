@@ -42,8 +42,8 @@ function loadExpress() {
     })
   );
 
-  // Load JSON parser and signed cookie parser.
-  app.use(express.json({ type: 'application/json', limit: '512b' }));
+  // Load signed cookie parser. JSON parser is loaded in each required
+  // endpoints in a case-by-case basis.
   app.use(cookieParser(config.COOKIE_SECRET));
 
   // Prevent parameter pollution.
