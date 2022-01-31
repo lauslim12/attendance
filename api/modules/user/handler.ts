@@ -4,6 +4,7 @@ import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
 import AttendanceHandler from '../attendance/handler';
+import bodyParser from '../middleware/body-parser';
 import getMe from '../middleware/get-me';
 import hasJWT from '../middleware/has-jwt';
 import hasRole from '../middleware/has-role';
@@ -33,6 +34,7 @@ const UserHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
     .get(getMe, asyncHandler(UserController.getUser))
     .patch(
       getMe,
+      bodyParser,
       validate(UserValidation.updateMe),
       asyncHandler(UserController.updateUser)
     )
@@ -46,6 +48,7 @@ const UserHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
     .route('/')
     .get(asyncHandler(UserController.getUsers))
     .post(
+      bodyParser,
       validate(UserValidation.createUser),
       asyncHandler(UserController.createUser)
     );
@@ -55,6 +58,7 @@ const UserHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
     .route('/:id')
     .get(validate(UserValidation.getUser), asyncHandler(UserController.getUser))
     .patch(
+      bodyParser,
       validate(UserValidation.updateUser),
       asyncHandler(UserController.updateUser)
     )

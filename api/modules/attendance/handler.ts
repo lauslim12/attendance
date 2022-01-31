@@ -3,6 +3,7 @@ import type { RateLimit } from 'express-rate-limit';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
+import bodyParser from '../middleware/body-parser';
 import hasJWT from '../middleware/has-jwt';
 import hasSession from '../middleware/has-session';
 import AttendanceController from './controller';
@@ -29,6 +30,7 @@ const AttendanceHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
     '/in',
     strictLimiter,
     asyncHandler(hasJWT),
+    bodyParser,
     validate(AttendanceValidation.in),
     asyncHandler(AttendanceController.in)
   );
@@ -38,6 +40,7 @@ const AttendanceHandler = (limiter: RateLimit, strictLimiter: RateLimit) => {
     '/out',
     strictLimiter,
     asyncHandler(hasJWT),
+    bodyParser,
     validate(AttendanceValidation.out),
     asyncHandler(AttendanceController.out)
   );
