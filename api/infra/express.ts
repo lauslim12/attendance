@@ -1,5 +1,4 @@
 import cookieParser from 'cookie-parser';
-import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
@@ -11,12 +10,12 @@ import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
 import favicon from '../modules/middleware/favicon';
+import notFound from '../modules/middleware/not-found';
 import session from '../modules/middleware/session';
 import slowDown from '../modules/middleware/slow-down';
 import xst from '../modules/middleware/xst';
 import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
-import AppError from '../util/app-error';
 
 /**
  * Loads an Express application.
@@ -78,9 +77,7 @@ function loadExpress() {
   app.use('/api/v1/users', userHandler);
 
   // Catch-all routes for API.
-  app.all('*', (req: Request, _: Response, next: NextFunction) => {
-    next(new AppError(`Cannot find '${req.originalUrl}' on this server!`, 404));
-  });
+  app.all('*', notFound());
 
   // Define error handlers.
   app.use(errorHandler);
