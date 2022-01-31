@@ -2,7 +2,6 @@ import connectRedis from 'connect-redis';
 import cookieParser from 'cookie-parser';
 import type { NextFunction, Request, Response } from 'express';
 import express from 'express';
-import rateLimit from 'express-rate-limit';
 import type { CookieOptions } from 'express-session';
 import session from 'express-session';
 import slowDown from 'express-slow-down';
@@ -127,50 +126,19 @@ function loadExpress() {
     delayMs: 200,
   });
 
-  // Set up general limiter.
-  const limiter = rateLimit({
-    store: new RedisStore({
-      client: redis.nodeRedis,
-      prefix: 'rl-common',
-    }),
-    max: 75, // max requests in 'windowMs'
-    windowMs: 15 * 60 * 1000, // 15 minutes
-    handler(_: Request, __: Response, next: NextFunction) {
-      next(new AppError('Too many requests! Please try again later!', 429));
-    },
-  });
-
-  // Set up specific limiter.
-  const strictLimiter = rateLimit({
-    store: new RedisStore({
-      client: redis.nodeRedis,
-      prefix: 'rl-sensitive',
-    }),
-    max: 20, // max requests in 'windowMs'
-    windowMs: 5 * 60 * 1000, // 5 minutes
-    handler(_: Request, __: Response, next: NextFunction) {
-      next(
-        new AppError(
-          'Too many requests for this endpoint! Please try again later!',
-          429
-        )
-      );
-    },
-  });
-
   // Define handlers.
-  const attendanceHandler = AttendanceHandler(limiter, strictLimiter);
-  const authHandler = AuthHandler(strictLimiter);
+  const attendanceHandler = AttendanceHandler();
+  const authHandler = AuthHandler();
   const healthHandler = HealthHandler();
   const sessionHandler = SessionHandler();
-  const userHandler = UserHandler(limiter, strictLimiter);
+  const userHandler = UserHandler();
 
   // Define API routes.
   app.use('/api', throttler);
   app.use('/api/v1', healthHandler);
   app.use('/api/v1/attendance', attendanceHandler);
   app.use('/api/v1/auth', authHandler);
-  app.use('/api/v1/sessions', strictLimiter, sessionHandler);
+  app.use('/api/v1/sessions', sessionHandler);
   app.use('/api/v1/users', userHandler);
 
   // Catch-all routes for API.
