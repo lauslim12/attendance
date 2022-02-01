@@ -1,3 +1,4 @@
+import type { Request } from 'express';
 import type { JWTHeaderParameters, JWTPayload, JWTVerifyOptions } from 'jose';
 import { importPKCS8, importSPKI, jwtVerify, SignJWT } from 'jose';
 
@@ -51,19 +52,17 @@ export const verifyToken = async (token: string) => {
 
 /**
  * Extracts a token from either Authorization header or signed cookie.
- * Prioritize token from Authorization header.
+ * Will prioritize token from Authorization header.
  *
- * @param header - Authorization header value
- * @param signedCookie - Signed cookie if applicable
- * @returns Extracted JWT token
+ * @param req - Express.js's request object.
+ * @returns Extracted JWT token.
  */
-export const extractToken = (
-  header: string | undefined,
-  signedCookie: string | undefined
-) => {
-  if (header && header.startsWith('Bearer ')) {
-    return header.split(' ')[1];
+export const extractJWT = (req: Request) => {
+  const { authorization } = req.headers;
+
+  if (authorization?.startsWith('Bearer ')) {
+    return authorization.split(' ')[1];
   }
 
-  return signedCookie;
+  return req.signedCookies[config.JWT_COOKIE_NAME];
 };

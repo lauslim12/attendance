@@ -1,8 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
-import config from '../../config';
 import AppError from '../../util/app-error';
-import { extractToken, verifyToken } from '../../util/header-and-jwt';
+import { extractJWT, verifyToken } from '../../util/jwt';
 import CacheService from '../cache/service';
 
 /**
@@ -15,10 +14,7 @@ import CacheService from '../cache/service';
  */
 const hasJWT = async (req: Request, _: Response, next: NextFunction) => {
   // Extract token and validate.
-  const token = extractToken(
-    req.headers.authorization,
-    req.signedCookies[config.JWT_COOKIE_NAME]
-  );
+  const token = extractJWT(req);
   if (!token) {
     next(
       new AppError(

@@ -6,7 +6,8 @@ import { generateDefaultTOTP, validateDefaultTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
 import getDeviceID from '../../util/device-id';
-import { extractToken, signJWS, verifyToken } from '../../util/header-and-jwt';
+import isHTTPS from '../../util/is-https';
+import { extractJWT, signJWS, verifyToken } from '../../util/jwt';
 import { verifyPassword } from '../../util/passwords';
 import safeCompare from '../../util/safe-compare';
 import sendResponse from '../../util/send-response';
@@ -83,10 +84,7 @@ const AuthController = {
 
       // Extract token and validate. From this point on, the user is defined (authenticated)
       // and will be sent back as part of the response (not null as in the previous ones).
-      const token = extractToken(
-        req.headers.authorization,
-        req.signedCookies[config.JWT_COOKIE_NAME]
-      );
+      const token = extractJWT(req);
       if (!token) {
         sendUserStatus(req, res, true, false, user);
         return;
@@ -545,7 +543,7 @@ const AuthController = {
     // Set cookie for the JWS.
     res.cookie(config.JWT_COOKIE_NAME, token, {
       httpOnly: true,
-      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      secure: isHTTPS(req),
       sameSite: 'strict',
       maxAge: 900000, // 15 minutes
       signed: true,
