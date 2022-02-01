@@ -1,4 +1,8 @@
-/** @type {import('next').NextConfig} */
+const nextSafe = require('next-safe');
+
+/**
+ * @type {import('next').NextConfig}
+ */
 const nextConfig = {
   // Proxy to back-end in development mode.
   async rewrites() {
@@ -17,34 +21,39 @@ const nextConfig = {
       {
         source: '/:path*',
         headers: [
+          // Send app codename.
           {
             key: 'X-Attendance-Web',
             value: 'Azami',
           },
+
+          // Send app version number.
           {
             key: 'X-Attendance-Web-Version',
-            value: process.env.npm_package_version.toString(),
+            value: process.env.npm_package_version,
           },
+
+          // Allow prefetching.
           {
             key: 'X-DNS-Prefetch-Control',
             value: 'on',
           },
-          {
-            key: 'X-XSS-Protection',
-            value: '1; mode=block',
-          },
-          {
-            key: 'X-Frame-Options',
-            value: 'SAMEORIGIN',
-          },
-          {
-            key: 'X-Content-Type-Options',
-            value: 'nosniff',
-          },
-          {
-            key: 'Referrer-Policy',
-            value: 'strict-origin-when-cross-origin',
-          },
+
+          // Handle secure headers: `Content-Security-Policy`, `Referrer-Policy`,
+          // `X-Content-Type-Options`, `X-Frame-Options`, and `X-XSS-Protection`.
+          ...nextSafe({
+            // Only allow from Google Fonts.
+            contentSecurityPolicy: {
+              'font-src': ["'self'", 'fonts.gstatic.com'],
+              'style-src': ["'self'", 'fonts.googleapis.com'],
+            },
+
+            // `Permissions-Policy` CSP is still experimental.
+            permissionsPolicy: false,
+
+            // Development mode.
+            isDev: process.env.NODE_ENV,
+          }),
         ],
       },
     ];

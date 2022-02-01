@@ -30,8 +30,6 @@ const Layout = ({ children, title }: Props) => (
       <meta name="msapplication-navbutton-color" content="#f67e4d" />
       <meta name="apple-mobile-web-app-status-bar-style" content="#f67e4d" />
 
-      <link rel="icon" href="favicon.png" type="image/png" />
-
       <title>
         {[...title.map((x) => x?.trim()).filter((x) => x), 'Attendance'].join(
           ' · '
