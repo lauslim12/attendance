@@ -1,4 +1,3 @@
-import { ColorModeScript } from '@chakra-ui/react';
 import Document, {
   DocumentContext,
   Head,
@@ -33,7 +32,6 @@ class AppDocument extends Document {
           <link rel="shortcut icon" href="favicon.png" type="image/png" />
         </Head>
         <body>
-          <ColorModeScript initialColorMode="system" />
           <Main />
           <NextScript />
         </body>

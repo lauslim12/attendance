@@ -33,6 +33,7 @@ const App = ({ Component, pageProps }: AppProps) => {
           heading: `Nunito, ${fallbackFonts}`,
         },
         config: {
+          initialColorMode: 'light',
           useSystemColorMode: true,
         },
       })}
