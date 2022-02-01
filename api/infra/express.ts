@@ -10,6 +10,7 @@ import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
 import favicon from '../modules/middleware/favicon';
+import { errorLogger, successLogger } from '../modules/middleware/logger';
 import notFound from '../modules/middleware/not-found';
 import session from '../modules/middleware/session';
 import slowDown from '../modules/middleware/slow-down';
@@ -68,6 +69,9 @@ function loadExpress() {
   const sessionHandler = SessionHandler();
   const userHandler = UserHandler();
 
+  // Log requests (successful requests).
+  app.use(successLogger);
+
   // Define API routes. Throttle '/api' route to prevent spammers.
   app.use('/api', slowDown(75));
   app.use('/api/v1', healthHandler);
@@ -79,9 +83,13 @@ function loadExpress() {
   // Catch-all routes for API.
   app.all('*', notFound());
 
+  // Log errors.
+  app.use(errorLogger);
+
   // Define error handlers.
   app.use(errorHandler);
 
+  // Return configured app.
   return app;
 }
 
