@@ -52,7 +52,7 @@ const nextConfig = {
             permissionsPolicy: false,
 
             // Development mode.
-            isDev: process.env.NODE_ENV,
+            isDev: process.env.NODE_ENV !== 'production',
           }),
         ],
       },
