@@ -5,6 +5,7 @@ import expressSession from 'express-session';
 
 import config from '../../config';
 import redis from '../../infra/redis';
+import isHTTPS from '../../util/is-https';
 
 /**
  * Initializes a session middleware for use.
@@ -18,7 +19,7 @@ const session = () => (req: Request, res: Response, next: NextFunction) => {
     httpOnly: true,
     sameSite: 'strict',
     maxAge: 7200 * 1000, // 2 hours that will be refreshed every time the user hits a 'has-session' middleware.
-    secure: req.secure || req.headers['x-forwarded-proto'] === 'https', // Use 'secure' on production environment.
+    secure: isHTTPS(req), // Use 'secure' on production environment.
   };
 
   return expressSession({

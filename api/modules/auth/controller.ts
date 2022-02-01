@@ -7,6 +7,7 @@ import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
 import getDeviceID from '../../util/device-id';
 import { extractToken, signJWS, verifyToken } from '../../util/header-and-jwt';
+import isHTTPS from '../../util/is-https';
 import { verifyPassword } from '../../util/passwords';
 import safeCompare from '../../util/safe-compare';
 import sendResponse from '../../util/send-response';
@@ -545,7 +546,7 @@ const AuthController = {
     // Set cookie for the JWS.
     res.cookie(config.JWT_COOKIE_NAME, token, {
       httpOnly: true,
-      secure: req.secure || req.headers['x-forwarded-proto'] === 'https',
+      secure: isHTTPS(req),
       sameSite: 'strict',
       maxAge: 900000, // 15 minutes
       signed: true,
