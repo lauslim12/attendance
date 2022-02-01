@@ -1,7 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
 import AppError from '../../util/app-error';
-import { extractJWT, verifyToken } from '../../util/header-and-jwt';
+import { extractJWT, verifyToken } from '../../util/jwt';
 import CacheService from '../cache/service';
 
 /**
