@@ -36,14 +36,11 @@ function main() {
   const [b64PublicKey, b64PrivateKey] = convertKeys(publicKey, privateKey);
 
   console.log('');
-  console.log('Successfully generated JWS keys.');
+  console.log('Successfully generated JWS keys in Base-64 format as follows:');
   console.log(`Public key in Base-64 format: ${b64PublicKey}.`);
   console.log(`Private key in Base-64 format: ${b64PrivateKey}.`);
   console.log(
-    "Copy and use these keys as the environment variables for 'JWT_PUBLIC_KEY' and 'JWT_PRIVATE_KEY'."
-  );
-  console.log(
-    "Function in 'config/index.ts' will convert the Base64 encoded secrets from Base64 to normal UTF-8 encoding."
+    "Copy and set these keys as environment variables for 'JWT_PUBLIC_KEY' and 'JWT_PRIVATE_KEY'."
   );
 }
 

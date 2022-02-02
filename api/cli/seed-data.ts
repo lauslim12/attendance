@@ -71,7 +71,7 @@ async function main() {
   );
 
   console.log('Database seeded successfully.');
-  console.log('OTP strings are as follows (generate this into QR codes)');
+  console.log('OTP strings are as follows (generate these into QR codes):');
   console.log(totpStrings);
 }
 
