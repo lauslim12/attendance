@@ -15,8 +15,8 @@ type BullData = {
  */
 const connection: ConnectionOptions = {
   host: config.REDIS_HOST,
-  port: Number.parseInt(config.REDIS_PORT, 10),
   password: config.REDIS_PASSWORD,
+  port: config.REDIS_PORT,
 };
 
 /**

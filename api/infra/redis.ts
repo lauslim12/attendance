@@ -5,9 +5,10 @@ import config from '../config';
 /**
  * Creates a Redis instance to be used by the application.
  */
-const redis = createNodeRedisClient(config.REDIS_PORT, {
+const redis = createNodeRedisClient({
   host: config.REDIS_HOST,
   password: config.REDIS_PASSWORD,
+  port: config.REDIS_PORT,
 });
 
 /**
