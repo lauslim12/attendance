@@ -1,31 +1,9 @@
 import dotenv from 'dotenv';
+import { get } from 'env-var';
 import path from 'path';
 
 // Allow environment variables from a file for development.
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
-
-/**
- * Returns value stored in environment variable with the given 'name'.
- * Throws Error if no such variable or if variable undefined; thus ensuring that the variable exists.
- *
- * @param variable - A variable to check whether it exists or not.
- */
-const env = (variable: string) => {
-  if (!variable) {
-    throw new Error(`Missing core environment variable: '${variable}'.`);
-  }
-
-  return variable;
-};
-
-/**
- * Transforms Base64 strings into ASCII.
- *
- * @param value - String value in Base64 format
- * @returns ASCII encoded string
- */
-const fromBase64ToASCII = (value: string) =>
-  Buffer.from(value, 'base64').toString('ascii');
 
 /**
  * Helper function to check whether the server is in production mode or not to
@@ -40,37 +18,61 @@ const isProduction = () => process.env.NODE_ENV === 'production';
  * Intentionally spaced so it is easier to read and find out what is related with what.
  */
 const config = {
-  COOKIE_SECRET: process.env.COOKIE_SECRET || 'attendance-secret-cookie',
+  // Cookie.
+  COOKIE_SECRET: get('COOKIE_SECRET')
+    .default('attendance-secret-cookie')
+    .asString(),
 
-  DATABASE: env(process.env.DATABASE_URL),
+  // Databases.
+  DATABASE: get('DATABASE_URL').required().asString(),
 
-  EMAIL_FROM: process.env.EMAIL_FROM || 'Attendance',
-  EMAIL_HOST: isProduction() ? env(process.env.EMAIL_HOST) : '',
-  EMAIL_USERNAME: isProduction() ? env(process.env.EMAIL_USERNAME) : '',
-  EMAIL_PASSWORD: isProduction() ? env(process.env.EMAIL_PASSWORD) : '',
-  EMAIL_PORT: process.env.EMAIL_PORT || 465,
+  // Emails.
+  EMAIL_FROM: get('EMAIL_FROM').required(isProduction()).asString(),
+  EMAIL_HOST: get('EMAIL_HOST').required(isProduction()).asString(),
+  EMAIL_USERNAME: get('EMAIL_USERNAME').required(isProduction()).asString(),
+  EMAIL_PASSWORD: get('EMAIL_PASSWORD').required(isProduction()).asString(),
+  EMAIL_PORT: get('EMAIL_PORT').default(465).asPortNumber(),
 
-  JWT_AUDIENCE: process.env.JWT_AUDIENCE || 'attendance-users',
-  JWT_COOKIE_NAME: process.env.JWT_COOKIE_NAME || 'attendance-jws',
-  JWT_ISSUER: process.env.JWT_ISSUER || 'attendance-api',
-  JWT_PRIVATE_KEY: fromBase64ToASCII(env(process.env.JWT_PRIVATE_KEY)),
-  JWT_PUBLIC_KEY: fromBase64ToASCII(env(process.env.JWT_PUBLIC_KEY)),
+  // JWT tokens for second session.
+  JWT_AUDIENCE: get('JWT_AUDIENCE').default('attendance-users').asString(),
+  JWT_COOKIE_NAME: get('JWT_COOKIE_NAME').default('attendance-jws').asString(),
+  JWT_ISSUER: get('JWT_ISSUER').default('attendance-api').asString(),
+  JWT_PRIVATE_KEY: get('JWT_PRIVATE_KEY')
+    .required()
+    .convertFromBase64()
+    .asString(),
+  JWT_PUBLIC_KEY: get('JWT_PUBLIC_KEY')
+    .required()
+    .convertFromBase64()
+    .asString(),
 
-  MAILTRAP_HOST: isProduction() ? '' : env(process.env.MAILTRAP_HOST),
-  MAILTRAP_USERNAME: isProduction() ? '' : env(process.env.MAILTRAP_USERNAME),
-  MAILTRAP_PASSWORD: isProduction() ? '' : env(process.env.MAILTRAP_PASSWORD),
+  // Mailtrap: emails for development.
+  MAILTRAP_HOST: get('MAILTRAP_HOST').required(!isProduction()).asString(),
+  MAILTRAP_USERNAME: get('MAILTRAP_USERNAME')
+    .required(!isProduction())
+    .asString(),
+  MAILTRAP_PASSWORD: get('MAILTRAP_PASSWORD')
+    .required(!isProduction())
+    .asString(),
 
-  NODE_ENV: process.env.NODE_ENV || 'development',
+  // Environment.
+  NODE_ENV: get('NODE_ENV')
+    .default('development')
+    .asEnum(['development', 'production']),
 
-  REDIS_HOST: env(process.env.REDIS_HOST),
-  REDIS_PORT: env(process.env.REDIS_PORT),
-  REDIS_PASSWORD: process.env.REDIS_PASSWORD || undefined,
+  // Redis.
+  REDIS_HOST: get('REDIS_HOST').required().asString(),
+  REDIS_PASSWORD: get('REDIS_PASSWORD').default('').asString(),
+  REDIS_PORT: get('REDIS_PORT').required().asString(),
 
-  PORT: process.env.PORT || 8080,
+  // Ports.
+  PORT: get('PORT').default(8080).asPortNumber(),
 
-  SESSION_COOKIE: process.env.SESSION_COOKIE || 'attendance-sid',
+  // Session cookie name.
+  SESSION_COOKIE: get('SESSION_COOKIE').default('attendance-sid').asString(),
 
-  TOTP_ISSUER: process.env.TOTP_ISSUER || 'Attendance',
+  // Issuer of the TOTP.
+  TOTP_ISSUER: get('TOTP_ISSUER').default('Attendance').asString(),
 };
 
 export default Object.freeze(config);
