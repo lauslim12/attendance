@@ -51,6 +51,7 @@ const UserValidation = {
       phoneNumber: joi.string().trim(),
       password: joi.string(),
       fullName: joi.string().trim(),
+      role: joi.string().valid('admin', 'user'),
       isActive: joi.boolean(),
     }),
     params: joi.object().keys({

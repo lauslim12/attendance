@@ -180,28 +180,28 @@ const UserController = {
    * @param next - Express.js's next function.
    */
   updateUser: async (req: Request, res: Response, next: NextFunction) => {
-    const { email, phoneNumber, password, fullName, isActive } = req.body;
+    const { email, phoneNumber, password, fullName, role, isActive } = req.body;
     const { id } = req.params;
 
     // Validate everything via 'Promise.all' for speed.
-    const users = await Promise.all([
+    const [userByID, userByEmail, userByPhone] = await Promise.all([
       UserService.getUser({ userID: id }),
       email ? UserService.getUser({ email }) : null,
       phoneNumber ? UserService.getUser({ phoneNumber }) : null,
     ]);
 
     // Perform validations.
-    if (!users[0]) {
+    if (!userByID) {
       next(new AppError('The user with this ID does not exist!', 404));
       return;
     }
 
-    if (users[1] && users[1].userID !== users[0].userID) {
+    if (userByEmail && userByEmail.userID !== userByEmail.userID) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (users[2] && users[2].userID !== users[0].userID) {
+    if (userByPhone && userByPhone.userID !== userByPhone.userID) {
       next(new AppError('This number has been used by another user!', 400));
       return;
     }
@@ -214,6 +214,7 @@ const UserController = {
         phoneNumber,
         fullName,
         password,
+        role,
         isActive,
       }
     );
