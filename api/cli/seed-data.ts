@@ -1,8 +1,8 @@
 import { Prisma, PrismaClient } from '@prisma/client';
-import argon2 from 'argon2';
 
 import config from '../config';
 import { generateTOTP } from '../core/rfc6238';
+import { hashPassword } from '../util/passwords';
 
 const prisma = new PrismaClient();
 
@@ -15,10 +15,7 @@ async function loadData(): Promise<Prisma.UserCreateInput[]> {
       username: 'admin',
       email: 'admin@attendance.com',
       phoneNumber: '0823-1122-3344',
-      password: await argon2.hash('test1234', {
-        timeCost: 300,
-        hashLength: 50,
-      }),
+      password: await hashPassword('test1234'),
       totpSecret: '1234',
       fullName: 'Admin Attendance',
       role: 'admin',
@@ -27,10 +24,7 @@ async function loadData(): Promise<Prisma.UserCreateInput[]> {
       username: 'sayu',
       email: 'sayu@mail.co.jp',
       phoneNumber: '0811-2222-3333',
-      password: await argon2.hash('test1234', {
-        timeCost: 300,
-        hashLength: 50,
-      }),
+      password: await hashPassword('test1234'),
       totpSecret: '5678',
       fullName: 'Sayu Ogiwara',
     },
@@ -38,10 +32,7 @@ async function loadData(): Promise<Prisma.UserCreateInput[]> {
       username: 'Chizuru',
       email: 'chizuru@mail.co.jp',
       phoneNumber: '0890-4455-6677',
-      password: await argon2.hash('test1234', {
-        timeCost: 300,
-        hashLength: 50,
-      }),
+      password: await hashPassword('test1234'),
       totpSecret: 'abcd',
       fullName: 'Chizuru Ichinose',
     },
