@@ -67,6 +67,7 @@ As this research focuses on creating a secure API, below are the considerations 
 - Rate limiters and slow downs exist in order to prevent spammers. It is implemented with Redis for persistence and performance.
 - Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
 - Prevent attacks like parameter pollution, payload too large, bad JSON, and many more.
+- Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
 
 ## Documentation
 
