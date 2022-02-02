@@ -61,9 +61,9 @@ const config = {
     .asEnum(['development', 'production']),
 
   // Redis.
-  REDIS_HOST: get('REDIS_HOST').required().asString(),
+  REDIS_HOST: get('REDIS_HOST').default('localhost').asString(),
   REDIS_PASSWORD: get('REDIS_PASSWORD').default('').asString(),
-  REDIS_PORT: get('REDIS_PORT').required().asString(),
+  REDIS_PORT: get('REDIS_PORT').default(6379).asPortNumber(),
 
   // Ports.
   PORT: get('PORT').default(8080).asPortNumber(),
