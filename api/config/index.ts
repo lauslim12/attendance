@@ -5,13 +5,8 @@ import path from 'path';
 // Allow environment variables from a file for development.
 dotenv.config({ path: path.join(__dirname, '..', '.env') });
 
-/**
- * Helper function to check whether the server is in production mode or not to
- * configure the proper environment variables.
- *
- * @returns Boolean value whether the server is in production mode or not.
- */
-const isProduction = () => process.env.NODE_ENV === 'production';
+// Helper constant to check whether the server is in production mode or not.
+const isProd = process.env.NODE_ENV === 'production';
 
 /**
  * All configuration values of this application from the environment variables.
@@ -27,10 +22,10 @@ const config = {
   DATABASE: get('DATABASE_URL').required().asString(),
 
   // Emails.
-  EMAIL_FROM: get('EMAIL_FROM').required(isProduction()).asString(),
-  EMAIL_HOST: get('EMAIL_HOST').required(isProduction()).asString(),
-  EMAIL_USERNAME: get('EMAIL_USERNAME').required(isProduction()).asString(),
-  EMAIL_PASSWORD: get('EMAIL_PASSWORD').required(isProduction()).asString(),
+  EMAIL_FROM: get('EMAIL_FROM').required(isProd).asString(),
+  EMAIL_HOST: get('EMAIL_HOST').required(isProd).asString(),
+  EMAIL_USERNAME: get('EMAIL_USERNAME').required(isProd).asString(),
+  EMAIL_PASSWORD: get('EMAIL_PASSWORD').required(isProd).asString(),
   EMAIL_PORT: get('EMAIL_PORT').default(465).asPortNumber(),
 
   // JWT tokens for second session.
@@ -47,13 +42,9 @@ const config = {
     .asString(),
 
   // Mailtrap: emails for development.
-  MAILTRAP_HOST: get('MAILTRAP_HOST').required(!isProduction()).asString(),
-  MAILTRAP_USERNAME: get('MAILTRAP_USERNAME')
-    .required(!isProduction())
-    .asString(),
-  MAILTRAP_PASSWORD: get('MAILTRAP_PASSWORD')
-    .required(!isProduction())
-    .asString(),
+  MAILTRAP_HOST: get('MAILTRAP_HOST').required(!isProd).asString(),
+  MAILTRAP_USERNAME: get('MAILTRAP_USERNAME').required(!isProd).asString(),
+  MAILTRAP_PASSWORD: get('MAILTRAP_PASSWORD').required(!isProd).asString(),
 
   // Environment.
   NODE_ENV: get('NODE_ENV')
