@@ -62,6 +62,11 @@ As this research focuses on creating a secure API, below are the considerations 
 - API implementation conforms to JSON:API Standard and provides structured error messages and responses according to the best practices.
 - User can be banned by setting their `isActive` attribute to `false`. Banned users cannot access the API.
 - No cheap tricks and 'unusual' security through obscurity (double encryption, triple encoding, multiple hashing, and the like). Cryptography/security is used to serve a specific purpose and be an effective solution for that purpose. Incorrect use of said concepts will make the system to be less secure.
+- Complete request and response logging with `express-winston` and `winston` for audit purposes and debug purposes.
+- Emails are implemented with queue system (Bull) for performance and security.
+- Rate limiters and slow downs exist in order to prevent spammers. It is implemented with Redis for persistence and performance.
+- Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
+- Prevent attacks like parameter pollution, payload too large, bad JSON, and many more.
 
 ## Documentation
 
