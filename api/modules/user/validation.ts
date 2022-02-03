@@ -12,6 +12,7 @@ const UserValidation = {
       phoneNumber: joi.string().trim().required(),
       password: joi.string().required(),
       fullName: joi.string().trim().required(),
+      role: joi.string().valid('admin', 'user').default('user'),
     }),
   },
 
