@@ -69,7 +69,7 @@ const CacheRepository = {
    * @returns Asynchronous number, response returned from Redis.
    */
   blacklistOTP: async (otp: string) =>
-    redis.setex(`blacklisted-otp:${otp}`, 120, 'true'),
+    redis.setex(`blacklisted-otp:${otp}`, 120, '1'),
 
   /**
    * Deletes a single session from the cache.
@@ -124,6 +124,15 @@ const CacheRepository = {
   getOTPSession: async (jti: string) => redis.get(`otp-sess:${jti}`),
 
   /**
+   * Gets the lock used to send security alert emails.
+   *
+   * @param userID - ID of the user.
+   * @returns Value to be used.
+   */
+  getSecurityAlertEmailLock: async (userID: string) =>
+    redis.get(`security-alert-email-lock:${userID}`),
+
+  /**
    * Returns all sessions that is in this webservice.
    *
    * @returns All sessions in the webservice.
@@ -154,7 +163,7 @@ const CacheRepository = {
    * @returns Asynchronous 'OK'.
    */
   setHasAskedOTP: async (userID: string) =>
-    redis.setex(`asked-otp:${userID}`, 30, 'true'),
+    redis.setex(`asked-otp:${userID}`, 30, '1'),
 
   /**
    * Sets the number of OTP 'wrong' attempts of a single user.
@@ -181,6 +190,16 @@ const CacheRepository = {
    */
   setOTPSession: async (jti: string, value: string) =>
     redis.setex(`otp-sess:${jti}`, 900, value),
+
+  /**
+   * Sets the user to be 'email-locked', that is do not send security alert to the user in repeat
+   * to prevent SPAM.
+   *
+   * @param userID - ID of the user.
+   * @returns Asynchronous 'OK'.
+   */
+  setSecurityAlertEmailLock: async (userID: string) =>
+    redis.setex(`security-alert-email-lock:${userID}`, 900, '1'),
 };
 
 export default CacheRepository;

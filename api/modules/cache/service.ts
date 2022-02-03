@@ -66,6 +66,15 @@ const CacheService = {
   getOTPSession: async (jti: string) => CacheRepository.getOTPSession(jti),
 
   /**
+   * Gets the lock used to send security alert emails.
+   *
+   * @param userID - ID of the user.
+   * @returns Value to be used.
+   */
+  getSecurityAlertEmailLock: async (userID: string) =>
+    CacheRepository.getSecurityAlertEmailLock(userID),
+
+  /**
    * Gets all sessions from the cache, also strip cookie information.
    *
    * @returns All sessions in the cache.
@@ -122,6 +131,16 @@ const CacheService = {
    */
   setOTPSession: async (jti: string, value: string) =>
     CacheRepository.setOTPSession(jti, value),
+
+  /**
+   * Sets the user to be 'email-locked', that is do not send security alert to the user in repeat
+   * to prevent SPAM.
+   *
+   * @param userID - ID of the user.
+   * @returns Asynchronous 'OK'.
+   */
+  setSecurityAlertEmailLock: async (userID: string) =>
+    CacheRepository.setSecurityAlertEmailLock(userID),
 };
 
 export default CacheService;

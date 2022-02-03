@@ -501,8 +501,10 @@ const AuthController = {
     // TODO: should send email/sms/push notification to the relevant user
     const attempts = await CacheService.getOTPAttempts(user.userID);
     if (attempts && Number.parseInt(attempts, 10) === 3) {
-      // This will put email into the queue to be sent.
-      await new Email(user.email, user.fullName).sendNotification();
+      // If user is not 'email-locked', send security alert to prevent spam.
+      if (!(await CacheService.getSecurityAlertEmailLock(user.userID))) {
+        await new Email(user.email, user.fullName).sendNotification();
+      }
 
       next(
         new AppError(
