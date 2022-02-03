@@ -2,7 +2,7 @@ import type { Key } from 'swr';
 import useSWR from 'swr';
 
 import { fetcher } from './http';
-import type { Attendance, Session, Status } from './types';
+import type { Attendance, Session, Status, User } from './types';
 
 /**
  * Hook to call a `GET` request with Vercel's `useSWR` for performance and reactive
@@ -88,6 +88,27 @@ export const useMe = () => {
   return {
     data,
     isLoading,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
+ * A hook to get all user data. This hook will prevent automatic retrying on errors to
+ * save memory.
+ *
+ * @returns An object of users data, an error object, and a setter function.
+ */
+export const useUsers = () => {
+  const { data, error, mutate } = useSWR<User[]>('/api/v1/users', fetcher, {
+    onErrorRetry: (_, key) => {
+      if (key === '/api/v1/users') return;
+    },
+  });
+
+  return {
+    users: data,
+    isLoading: !data && !error,
     isError: error,
     mutate,
   };
