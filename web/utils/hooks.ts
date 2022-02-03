@@ -69,7 +69,9 @@ export const useMe = () => {
     error: attendanceError,
     mutate: mutateAttendance,
   } = useSWR<Attendance[]>(
-    status?.user ? `/api/v1/users/${status.user.userID}/attendance` : null,
+    status?.isAuthenticated && status.user
+      ? `/api/v1/users/${status.user.userID}/attendance`
+      : null,
     fetcher
   );
 
@@ -77,7 +79,10 @@ export const useMe = () => {
     data: sessions,
     error: sessionsError,
     mutate: mutateSession,
-  } = useSWR<Session[]>(status?.user ? '/api/v1/sessions/me' : null, fetcher);
+  } = useSWR<Session[]>(
+    status?.isAuthenticated && status.user ? '/api/v1/sessions/me' : null,
+    fetcher
+  );
 
   // Declare return values.
   const data = { status, attendance, sessions };
