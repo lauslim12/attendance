@@ -66,7 +66,7 @@ As this research focuses on creating a secure API, below are the considerations 
 - Emails are implemented with queue system (Bull) for performance and security.
 - Rate limiters and slow downs exist in order to prevent spammers. It is implemented with Redis for persistence and performance.
 - Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
-- Prevent attacks like parameter pollution, payload too large, bad JSON, and many more.
+- Prevent attacks like parameter pollution, payload too large, bad JSON, and many more with proper status codes.
 - Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
 
 ## Documentation
@@ -187,11 +187,19 @@ yarn dev
 
 - Keep in mind that your API has to be in an active state, or else it will not work.
 
+## Makefile
+
+Several helper scripts have already been set up in case you want to build and/or clean.
+
+- To clean all of the projects, use `make clean`.
+- To clean `api` of artifacts, use `make clean-api`. To clean `web` of artifacts, use `make clean-web`.
+- To build all projects, use `make build`.
+
 ## Benchmarks
 
 Some calculations are done in order to keep track of security.
 
-- You may run `yarn collision-test` in order to check out the collision probability for `nanoid`, `rfc6238`, and `Math.random()`.
+- You may run `yarn collision-test` in order to check out the collision probability for `nanoid` and `Math.random()`.
 
 ## Updates
 
