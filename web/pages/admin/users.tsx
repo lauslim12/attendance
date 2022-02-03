@@ -1,12 +1,13 @@
 import { Button, Grid, HStack, Spacer, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { FaArrowLeft, FaCheck } from 'react-icons/fa';
 
 import AdminRoute from '../../components/Admin/AdminRoute';
 import NotMFA from '../../components/Admin/NotMFA';
 import UserCard from '../../components/Admin/UserCard';
 import Layout from '../../components/Layout';
+import CreateUserModal from '../../components/Overlay/CreateUserModal';
 import Spinner from '../../components/Spinner';
 import { useUsers } from '../../utils/hooks';
 import routes from '../../utils/routes';
@@ -18,11 +19,17 @@ import routes from '../../utils/routes';
  */
 const Users = () => {
   const { users, isLoading, isError } = useUsers();
+  const [isOpenCreate, setIsOpenCreate] = useState(false);
 
   if (isLoading) return <Spinner />;
 
   return (
     <AdminRoute>
+      <CreateUserModal
+        isOpen={isOpenCreate}
+        onClose={() => setIsOpenCreate(false)}
+      />
+
       <Layout title={['Users']}>
         {isError && <NotMFA error={isError} />}
 
@@ -47,7 +54,12 @@ const Users = () => {
                   </Button>
                 </NextLink>
 
-                <Button size="sm" leftIcon={<FaCheck />} colorScheme="orange">
+                <Button
+                  size="sm"
+                  leftIcon={<FaCheck />}
+                  colorScheme="orange"
+                  onClick={() => setIsOpenCreate(true)}
+                >
                   Create User
                 </Button>
               </HStack>
