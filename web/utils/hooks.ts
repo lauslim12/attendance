@@ -30,6 +30,25 @@ export const useRequest = <T>(key: Key) => {
 };
 
 /**
+ * Fetches all attendances data.
+ *
+ * @returns An object of attendances data, a loading bar, an error, and the setter.
+ */
+export const useAttendances = () => {
+  const { data, error, mutate } = useSWR<Attendance[]>(
+    '/api/v1/attendance',
+    fetcher
+  );
+
+  return {
+    attendances: data,
+    isLoading: !data && !error,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
  * Replaces the main context of the application, used in almost all parts
  * of the web application in order to keep track of the authentication state
  * of the current user.
