@@ -89,10 +89,17 @@ const AttendanceService = {
    */
   getAttendances: async (where?: Prisma.AttendanceWhereInput) => {
     if (typeof where === 'undefined') {
-      return prisma.attendance.findMany({ select });
+      return prisma.attendance.findMany({
+        select,
+        orderBy: { timeLeave: 'desc', timeEnter: 'desc' },
+      });
     }
 
-    return prisma.attendance.findMany({ where, select });
+    return prisma.attendance.findMany({
+      where,
+      select,
+      orderBy: { timeLeave: 'desc', timeEnter: 'desc' },
+    });
   },
 
   /**
