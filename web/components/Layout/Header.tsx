@@ -24,10 +24,10 @@ import {
   FaUser,
 } from 'react-icons/fa';
 
-import { useStatusAndUser } from '../utils/hooks';
-import axios from '../utils/http';
-import routes from '../utils/routes';
-import { FailedToast, SuccessToast } from './Toast';
+import { useStatusAndUser } from '../../utils/hooks';
+import axios from '../../utils/http';
+import routes from '../../utils/routes';
+import { FailedToast, SuccessToast } from '../Toast';
 
 /**
  * Header of the whole application.
