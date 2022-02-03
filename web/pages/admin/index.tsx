@@ -11,7 +11,7 @@ import dynamic from 'next/dynamic';
 import NextLink from 'next/link';
 import { memo, useState } from 'react';
 import type { IconType } from 'react-icons';
-import { FaDatabase, FaKey } from 'react-icons/fa';
+import { FaCheckDouble, FaDatabase, FaKey } from 'react-icons/fa';
 
 import AdminRoute from '../../components/Admin/AdminRoute';
 import Layout from '../../components/Layout';
@@ -122,6 +122,16 @@ const Admin = () => {
                   gradientStart="#a5dd72"
                   gradientEnd="#83c77c"
                   href={routes.users}
+                />
+
+                <Menu
+                  header="Attendances"
+                  description="Report of all user attendances"
+                  icon={FaCheckDouble}
+                  gradientAim="to-bl"
+                  gradientStart="#f5c042"
+                  gradientEnd="#f8cc47"
+                  href={routes.attendances}
                 />
               </Grid>
             ) : (
