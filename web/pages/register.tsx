@@ -81,6 +81,7 @@ const Register = () => {
         leastDestructiveRef={leastDestructiveRef}
         code={qrCode}
         name={fullName}
+        redirect
       />
 
       <Layout title={['Register']}>
