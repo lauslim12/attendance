@@ -13,6 +13,7 @@ const routes = {
   robots: '/robots.txt',
   notFound: '/404',
   notAuthorized: '/401',
+  forbidden: '/403',
 } as const;
 
 export default routes;
