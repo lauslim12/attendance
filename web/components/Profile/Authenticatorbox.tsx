@@ -5,12 +5,12 @@ import { FaBarcode } from 'react-icons/fa';
 
 import axios from '../../utils/http';
 import type { Status, User } from '../../utils/types';
+import MFAButton from '../MFAButton';
 import { FailedToast } from '../Toast';
 
 /**
  * Dynamic import overlays.
  */
-const OTPModal = dynamic(() => import('../Overlay/OTPModal'));
 const QRDialog = dynamic(() => import('../Overlay/QRDialog'));
 
 /**
@@ -21,7 +21,6 @@ const QRDialog = dynamic(() => import('../Overlay/QRDialog'));
  */
 const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
   const [isLoading, setIsLoading] = useState(false);
-  const [isMFADialogOpen, setIsMFADialogOpen] = useState(false);
   const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
   const [qrCode, setQRCode] = useState('');
   const leastDestructiveRef = useRef(null);
@@ -52,12 +51,6 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
         name={user.fullName}
       />
 
-      <OTPModal
-        isOpen={isMFADialogOpen}
-        onClose={() => setIsMFADialogOpen(false)}
-        user={user}
-      />
-
       <VStack as="section" p={[2, 10]} spacing={5} mt={10}>
         <Heading as="p" size="lg">
           📱 Authenticator Refresh
@@ -68,15 +61,17 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
           feature.
         </Text>
 
-        <Button
-          colorScheme="green"
-          leftIcon={<FaBarcode />}
-          onClick={status.isMFA ? refreshMFA : () => setIsMFADialogOpen(true)}
-          isDisabled={isLoading}
-          isLoading={isLoading}
-        >
-          {status.isMFA ? 'Refresh MFA Authentication' : 'Verify OTP'}
-        </Button>
+        {status.isMFA ? (
+          <Button
+            colorScheme="green"
+            leftIcon={<FaBarcode />}
+            onClick={refreshMFA}
+          >
+            Refresh MFA Authentication
+          </Button>
+        ) : (
+          <MFAButton type="green" user={user} />
+        )}
       </VStack>
     </>
   );

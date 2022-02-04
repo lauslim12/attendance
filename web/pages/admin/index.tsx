@@ -1,28 +1,15 @@
-import {
-  Button,
-  Grid,
-  Heading,
-  Icon,
-  Link,
-  Text,
-  VStack,
-} from '@chakra-ui/react';
-import dynamic from 'next/dynamic';
+import { Grid, Heading, Icon, Link, Text, VStack } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import { memo, useState } from 'react';
+import { memo } from 'react';
 import type { IconType } from 'react-icons';
-import { FaCheckDouble, FaDatabase, FaKey } from 'react-icons/fa';
+import { FaCheckDouble, FaDatabase } from 'react-icons/fa';
 
 import AdminRoute from '../../components/Admin/AdminRoute';
 import Layout from '../../components/Layout';
+import MFAButton from '../../components/MFAButton';
 import Spinner from '../../components/Spinner';
 import { useStatusAndUser } from '../../utils/hooks';
 import routes from '../../utils/routes';
-
-/**
- * Dynamic import.
- */
-const OTPModal = dynamic(() => import('../../components/Overlay/OTPModal'));
 
 /**
  * Props for menu.
@@ -84,7 +71,6 @@ const Menu = ({
  */
 const Admin = () => {
   const { status, isLoading } = useStatusAndUser();
-  const [open, setOpen] = useState(false);
 
   if (isLoading) return <Spinner />;
 
@@ -92,12 +78,6 @@ const Admin = () => {
     <AdminRoute>
       {status && status.user && (
         <Layout title={['Admin']}>
-          <OTPModal
-            isOpen={open}
-            onClose={() => setOpen(false)}
-            user={status.user}
-          />
-
           <VStack as="section" spacing={3}>
             <Heading size="md">Welcome, {status.user.fullName}!</Heading>
 
@@ -135,13 +115,7 @@ const Admin = () => {
                 />
               </Grid>
             ) : (
-              <Button
-                leftIcon={<FaKey />}
-                colorScheme="twitter"
-                onClick={() => setOpen(true)}
-              >
-                Authorize yourself with MFA (OTP)
-              </Button>
+              <MFAButton type="blue" user={status.user} />
             )}
           </VStack>
         </Layout>
