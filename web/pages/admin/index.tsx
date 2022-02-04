@@ -1,68 +1,14 @@
-import { Grid, Heading, Icon, Link, Text, VStack } from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { Grid, Heading, Text, VStack } from '@chakra-ui/react';
 import { memo } from 'react';
-import type { IconType } from 'react-icons';
 import { FaCheckDouble, FaDatabase } from 'react-icons/fa';
 
 import AdminRoute from '../../components/Admin/AdminRoute';
+import MenuCard from '../../components/Card/MenuCard';
 import Layout from '../../components/Layout';
 import MFAButton from '../../components/MFAButton';
 import Spinner from '../../components/Spinner';
 import { useStatusAndUser } from '../../utils/hooks';
 import routes from '../../utils/routes';
-
-/**
- * Props for menu.
- */
-type Props = {
-  header: string;
-  description: string;
-  icon: IconType;
-  gradientStart: string;
-  gradientEnd: string;
-  gradientAim: string;
-  href: string;
-};
-
-/**
- * Menu card for admins.
- *
- * @param params - Props.
- * @returns Menu as React functional component.
- */
-const Menu = ({
-  header,
-  description,
-  icon,
-  gradientStart,
-  gradientEnd,
-  gradientAim,
-  href,
-}: Props) => (
-  <NextLink href={href} passHref>
-    <Link _hover={{ textDecoration: 'none' }}>
-      <VStack
-        bg="twitter.400"
-        py={10}
-        borderRadius="md"
-        justify="center"
-        spacing={5}
-        bgGradient={`linear(${gradientAim}, ${gradientStart}, ${gradientEnd})`}
-        _hover={{
-          opacity: 0.7,
-          transform: 'scale(1.05)',
-          transition: 'all 0.5s ease',
-        }}
-      >
-        <Text fontSize="lg" fontWeight="bold" color="black">
-          {header}
-        </Text>
-        <Text color="black">{description}</Text>
-        <Icon as={icon} boxSize="30px" color="black" />
-      </VStack>
-    </Link>
-  </NextLink>
-);
 
 /**
  * Admin panel of the website.
@@ -94,7 +40,7 @@ const Admin = () => {
                 gap={5}
                 w={['full', '60vw', '50vw']}
               >
-                <Menu
+                <MenuCard
                   header="Users"
                   description="Configuration of users"
                   icon={FaDatabase}
@@ -104,7 +50,7 @@ const Admin = () => {
                   href={routes.users}
                 />
 
-                <Menu
+                <MenuCard
                   header="Attendances"
                   description="Report of all user attendances"
                   icon={FaCheckDouble}

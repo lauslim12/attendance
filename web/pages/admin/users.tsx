@@ -5,7 +5,7 @@ import { FaArrowLeft, FaCheck } from 'react-icons/fa';
 
 import AdminRoute from '../../components/Admin/AdminRoute';
 import NotMFA from '../../components/Admin/NotMFA';
-import UserCard from '../../components/Admin/UserCard';
+import UserCard from '../../components/Card/UserCard';
 import Layout from '../../components/Layout';
 import CreateUserModal from '../../components/Overlay/CreateUserModal';
 import Spinner from '../../components/Spinner';
