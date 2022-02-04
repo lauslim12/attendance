@@ -1,16 +1,11 @@
 import { Button, Text, VStack } from '@chakra-ui/react';
-import dynamic from 'next/dynamic';
 import { memo, useEffect, useState } from 'react';
-import { FaKey, FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
+import { FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
 import type { Status } from '../../utils/types';
 import MainHeading from '../MainHeading';
+import MFAButton from '../MFAButton';
 import AttendanceModal from '../Overlay/AttendanceModal';
-
-/**
- * Dynamic import.
- */
-const OTPModal = dynamic(() => import('../Overlay/OTPModal'));
 
 /**
  * Attendance component to provide checking-in and checking-out functionalities.
@@ -19,7 +14,6 @@ const OTPModal = dynamic(() => import('../Overlay/OTPModal'));
  */
 const Attendance = ({ status }: { status: Status }) => {
   const [attendModalOpen, setAttendModalOpen] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
   const [isModalTypeIn, setIsModalTypeIn] = useState(true);
   const [time, setTime] = useState(new Date());
 
@@ -31,14 +25,6 @@ const Attendance = ({ status }: { status: Status }) => {
 
   return (
     <>
-      {status.user && (
-        <OTPModal
-          isOpen={isOpen}
-          onClose={() => setIsOpen(false)}
-          user={status.user}
-        />
-      )}
-
       {status.user && (
         <AttendanceModal
           isOpen={attendModalOpen}
@@ -117,16 +103,10 @@ const Attendance = ({ status }: { status: Status }) => {
           ) : (
             <>
               <Text>
-                Please authorize yourself by OTP before posting your attendance.
+                Please authorize yourself before posting your attendance.
               </Text>
 
-              <Button
-                leftIcon={<FaKey />}
-                colorScheme="twitter"
-                onClick={() => setIsOpen(true)}
-              >
-                Authorize yourself with MFA (OTP)
-              </Button>
+              {status.user && <MFAButton type="blue" user={status.user} />}
             </>
           )}
         </VStack>

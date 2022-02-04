@@ -18,16 +18,19 @@ import { useRouter } from 'next/router';
 import { memo } from 'react';
 import {
   FaBars,
+  FaBookmark,
+  FaCircle,
   FaDatabase,
+  FaLightbulb,
   FaMoon,
   FaSignOutAlt,
   FaUser,
 } from 'react-icons/fa';
 
-import { useStatusAndUser } from '../utils/hooks';
-import axios from '../utils/http';
-import routes from '../utils/routes';
-import { FailedToast, SuccessToast } from './Toast';
+import { useStatusAndUser } from '../../utils/hooks';
+import axios from '../../utils/http';
+import routes from '../../utils/routes';
+import { FailedToast, SuccessToast } from '../Toast';
 
 /**
  * Header of the whole application.
@@ -54,7 +57,7 @@ const Header = () => {
   };
 
   return (
-    <HStack as="nav" p={4} spacing={2}>
+    <HStack as="nav" p={4} spacing={1}>
       <Heading as="h1" size="lg" fontWeight="extrabold">
         <NextLink href={routes.home} passHref>
           <Link _hover={{ textDecor: 'none', color: 'orange.400' }}>
@@ -130,6 +133,41 @@ const Header = () => {
       )}
 
       {largerThan1280 && <Spacer />}
+
+      <Menu>
+        <MenuButton
+          as={IconButton}
+          aria-label="Authentication status"
+          icon={<FaBookmark />}
+          variant="ghost"
+        />
+        <MenuList>
+          {status?.user?.fullName ? (
+            <NextLink href={routes.profile} passHref>
+              <Link>
+                <MenuItem icon={<FaLightbulb />}>
+                  Signed in as {status.user.fullName.split(' ')[0]}
+                </MenuItem>
+              </Link>
+            </NextLink>
+          ) : (
+            <MenuItem icon={<FaLightbulb />}>Signed out</MenuItem>
+          )}
+
+          <MenuItem
+            icon={<FaCircle />}
+            color={status?.isAuthenticated ? 'green.400' : 'red.400'}
+          >
+            Authentication
+          </MenuItem>
+          <MenuItem
+            icon={<FaCircle />}
+            color={status?.isMFA ? 'green.400' : 'red.400'}
+          >
+            MFA Authorization
+          </MenuItem>
+        </MenuList>
+      </Menu>
 
       <IconButton
         onClick={toggleColorMode}
