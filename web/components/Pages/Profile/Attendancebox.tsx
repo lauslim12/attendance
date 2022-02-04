@@ -1,8 +1,8 @@
 import { Grid, Heading, Text, VStack } from '@chakra-ui/react';
 import { memo } from 'react';
 
-import type { Attendance } from '../../utils/types';
-import AttendanceCard from '../Card/AttendanceCard';
+import type { Attendance } from '../../../utils/types';
+import AttendanceCard from '../../Card/AttendanceCard';
 
 /**
  * Attendance box to show attendances.

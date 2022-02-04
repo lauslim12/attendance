@@ -11,11 +11,11 @@ import { useRouter } from 'next/router';
 import { memo, useState } from 'react';
 import { FaPassport } from 'react-icons/fa';
 
-import { useStatusAndUser } from '../../utils/hooks';
-import axios from '../../utils/http';
-import routes from '../../utils/routes';
-import TextInput from '../Input/TextInput';
-import { FailedToast, SuccessToast } from '../Toast';
+import { useStatusAndUser } from '../../../utils/hooks';
+import axios from '../../../utils/http';
+import routes from '../../../utils/routes';
+import TextInput from '../../Input/TextInput';
+import { FailedToast, SuccessToast } from '../../Toast';
 
 /**
  * Password box to edit password.
@@ -66,7 +66,7 @@ const Passwordbox = () => {
         You may edit your authentication data by changing below values.
       </Text>
 
-      <Grid as="form" w="full" gap={5}>
+      <Grid as="form" w="full" gap={5} onSubmit={updatePassword}>
         <TextInput
           label="Current password"
           placeholder="••••••••••"
