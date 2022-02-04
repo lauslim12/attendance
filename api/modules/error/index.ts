@@ -41,6 +41,7 @@ const sendErrorProduction = (err: AppError, _: Request, res: Response) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
+      statusCode: err.statusCode,
       message: err.message,
     });
 
