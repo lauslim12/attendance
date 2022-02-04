@@ -91,14 +91,22 @@ const AttendanceService = {
     if (typeof where === 'undefined') {
       return prisma.attendance.findMany({
         select,
-        orderBy: { timeLeave: 'desc', timeEnter: 'desc' },
+        orderBy: [
+          { timeLeave: 'desc' },
+          { timeEnter: 'desc' },
+          { attendancePK: 'desc' },
+        ],
       });
     }
 
     return prisma.attendance.findMany({
       where,
       select,
-      orderBy: { timeLeave: 'desc', timeEnter: 'desc' },
+      orderBy: [
+        { timeLeave: 'desc' },
+        { timeEnter: 'desc' },
+        { attendancePK: 'desc' },
+      ],
     });
   },
 
