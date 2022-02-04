@@ -3,11 +3,11 @@ import NextLink from 'next/link';
 import { memo, useState } from 'react';
 import { FaArrowLeft, FaCheck } from 'react-icons/fa';
 
-import AdminRoute from '../../components/Admin/AdminRoute';
-import NotMFA from '../../components/Admin/NotMFA';
 import UserCard from '../../components/Card/UserCard';
 import Layout from '../../components/Layout';
 import CreateUserModal from '../../components/Overlay/CreateUserModal';
+import AdminRoute from '../../components/Pages/Admin/AdminRoute';
+import NotMFA from '../../components/Pages/Admin/NotMFA';
 import Spinner from '../../components/Spinner';
 import { useUsers } from '../../utils/hooks';
 import routes from '../../utils/routes';

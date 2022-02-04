@@ -2,10 +2,10 @@ import { Grid, Heading, Text, VStack } from '@chakra-ui/react';
 import { memo } from 'react';
 import { FaCheckDouble, FaDatabase } from 'react-icons/fa';
 
-import AdminRoute from '../../components/Admin/AdminRoute';
 import MenuCard from '../../components/Card/MenuCard';
 import Layout from '../../components/Layout';
 import MFAButton from '../../components/MFAButton';
+import AdminRoute from '../../components/Pages/Admin/AdminRoute';
 import Spinner from '../../components/Spinner';
 import { useStatusAndUser } from '../../utils/hooks';
 import routes from '../../utils/routes';
@@ -24,7 +24,7 @@ const Admin = () => {
     <AdminRoute>
       {status && status.user && (
         <Layout title={['Admin']}>
-          <VStack as="section" spacing={3}>
+          <VStack as="section" spacing={3} h="full" justify="center">
             <Heading size="md">Welcome, {status.user.fullName}!</Heading>
 
             <Text>

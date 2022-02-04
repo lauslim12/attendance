@@ -3,9 +3,9 @@ import NextLink from 'next/link';
 import { memo } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
 
-import AdminRoute from '../../components/Admin/AdminRoute';
 import AttendanceCard from '../../components/Card/AttendanceCard';
 import Layout from '../../components/Layout';
+import AdminRoute from '../../components/Pages/Admin/AdminRoute';
 import Spinner from '../../components/Spinner';
 import { useAttendances } from '../../utils/hooks';
 import routes from '../../utils/routes';

@@ -2,9 +2,9 @@ import { useRouter } from 'next/router';
 import type { ReactNode } from 'react';
 import { memo, useEffect } from 'react';
 
-import { useMe } from '../../utils/hooks';
-import routes from '../../utils/routes';
-import Spinner from '../Spinner';
+import { useMe } from '../../../utils/hooks';
+import routes from '../../../utils/routes';
+import Spinner from '../../Spinner';
 
 /**
  * Props.
