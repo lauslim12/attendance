@@ -213,12 +213,11 @@ Application is licensed under MIT License. The research itself will follow the p
 
 Upcoming features to be implemented:
 
-- Implement front-end with Next.js.
-- SMS implementation.
 - Hosting, webservers, and mailservers.
 - OWASP scanning and assessment, plus using Snyk for dependency scanning.
 
 I have been thinking of adding these features as well:
 
+- SMS implementation.
 - PNPM Integration.
 - More ESLint (`security`, `requiring-type-checking`, `unicorn`, `sonarjs`) for better practices and cleaner style.
