@@ -51,6 +51,7 @@ const sendErrorProduction = (err: AppError, _: Request, res: Response) => {
   console.error(err);
   res.status(500).json({
     status: 'error',
+    statusCode: 500,
     message: 'An unknown error occured! Please try again later!',
   });
 };
