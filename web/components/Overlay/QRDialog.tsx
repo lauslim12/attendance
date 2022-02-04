@@ -26,6 +26,7 @@ type Props = {
   onClose: () => void;
   code: string;
   name: string;
+  redirect?: boolean;
 };
 
 /**
@@ -40,6 +41,7 @@ const QRDialog = ({
   onClose,
   code,
   name,
+  redirect = false,
 }: Props) => {
   // Figure out how to do this without `querySelector` later.
   const downloadQR = () => {
@@ -114,11 +116,27 @@ const QRDialog = ({
               Save Code
             </Button>
 
-            <NextLink href={routes.home} passHref replace>
-              <Button leftIcon={<FaArrowRight />} colorScheme="blue" ml={3}>
+            {redirect ? (
+              <NextLink href={routes.home} passHref replace>
+                <Button
+                  as="a"
+                  leftIcon={<FaArrowRight />}
+                  colorScheme="blue"
+                  ml={3}
+                >
+                  Continue
+                </Button>
+              </NextLink>
+            ) : (
+              <Button
+                leftIcon={<FaArrowRight />}
+                colorScheme="blue"
+                ml={3}
+                onClick={onClose}
+              >
                 Continue
               </Button>
-            </NextLink>
+            )}
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialogOverlay>

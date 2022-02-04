@@ -16,7 +16,13 @@ import {
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
 import { memo } from 'react';
-import { FaBars, FaMoon, FaSignOutAlt, FaUser } from 'react-icons/fa';
+import {
+  FaBars,
+  FaDatabase,
+  FaMoon,
+  FaSignOutAlt,
+  FaUser,
+} from 'react-icons/fa';
 
 import { useStatusAndUser } from '../utils/hooks';
 import axios from '../utils/http';
@@ -78,6 +84,14 @@ const Header = () => {
             <MenuItem icon={<FaSignOutAlt />} onClick={logout}>
               Logout
             </MenuItem>
+
+            {status.user?.role === 'admin' && (
+              <NextLink href={routes.admin} passHref>
+                <Link>
+                  <MenuItem icon={<FaDatabase />}>Admin</MenuItem>
+                </Link>
+              </NextLink>
+            )}
           </MenuList>
         </Menu>
       )}
@@ -101,6 +115,17 @@ const Header = () => {
           >
             Logout
           </Text>
+
+          {status.user?.role === 'admin' && (
+            <NextLink href={routes.admin} passHref>
+              <Link
+                fontWeight="bold"
+                _hover={{ textDecor: 'none', color: 'pink.400' }}
+              >
+                Admin
+              </Link>
+            </NextLink>
+          )}
         </HStack>
       )}
 

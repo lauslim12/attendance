@@ -2,7 +2,7 @@ import type { Key } from 'swr';
 import useSWR from 'swr';
 
 import { fetcher } from './http';
-import type { Attendance, Session, Status } from './types';
+import type { Attendance, Session, Status, User } from './types';
 
 /**
  * Hook to call a `GET` request with Vercel's `useSWR` for performance and reactive
@@ -23,6 +23,25 @@ export const useRequest = <T>(key: Key) => {
 
   return {
     data,
+    isLoading: !data && !error,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
+ * Fetches all attendances data.
+ *
+ * @returns An object of attendances data, a loading bar, an error, and the setter.
+ */
+export const useAttendances = () => {
+  const { data, error, mutate } = useSWR<Attendance[]>(
+    '/api/v1/attendance',
+    fetcher
+  );
+
+  return {
+    attendances: data,
     isLoading: !data && !error,
     isError: error,
     mutate,
@@ -69,7 +88,9 @@ export const useMe = () => {
     error: attendanceError,
     mutate: mutateAttendance,
   } = useSWR<Attendance[]>(
-    status?.user ? `/api/v1/users/${status.user.userID}/attendance` : null,
+    status?.isAuthenticated && status.user
+      ? `/api/v1/users/${status.user.userID}/attendance`
+      : null,
     fetcher
   );
 
@@ -77,7 +98,10 @@ export const useMe = () => {
     data: sessions,
     error: sessionsError,
     mutate: mutateSession,
-  } = useSWR<Session[]>(status?.user ? '/api/v1/sessions/me' : null, fetcher);
+  } = useSWR<Session[]>(
+    status?.isAuthenticated && status.user ? '/api/v1/sessions/me' : null,
+    fetcher
+  );
 
   // Declare return values.
   const data = { status, attendance, sessions };
@@ -88,6 +112,27 @@ export const useMe = () => {
   return {
     data,
     isLoading,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
+ * A hook to get all user data. This hook will prevent automatic retrying on errors to
+ * save memory.
+ *
+ * @returns An object of users data, an error object, and a setter function.
+ */
+export const useUsers = () => {
+  const { data, error, mutate } = useSWR<User[]>('/api/v1/users', fetcher, {
+    onErrorRetry: (_, key) => {
+      if (key === '/api/v1/users') return;
+    },
+  });
+
+  return {
+    users: data,
+    isLoading: !data && !error,
     isError: error,
     mutate,
   };

@@ -8,12 +8,12 @@ import MainHeading from '../components/MainHeading';
 import routes from '../utils/routes';
 
 /**
- * Renders a `401 Unauthorized` page.
+ * Renders a `403 Forbidden` page.
  *
  * @returns React functional component.
  */
-const UnauthorizedPage = () => (
-  <Layout title={['Unauthorized']}>
+const ForbiddenPage = () => (
+  <Layout title={['Forbidden']}>
     <VStack
       as="section"
       w="full"
@@ -22,11 +22,9 @@ const UnauthorizedPage = () => (
       spacing={4}
       textAlign="center"
     >
-      <MainHeading text="401 Unauthorized!" />
+      <MainHeading text="403 Forbidden!" />
 
-      <Text>
-        Oops. You are not authorized to access this page. Please log in first.
-      </Text>
+      <Text>You are not authorized to access this page.</Text>
 
       <NextLink href={routes.home} passHref>
         <Button
@@ -42,4 +40,4 @@ const UnauthorizedPage = () => (
   </Layout>
 );
 
-export default memo(UnauthorizedPage);
+export default memo(ForbiddenPage);

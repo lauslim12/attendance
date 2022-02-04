@@ -18,7 +18,7 @@ const UserController = {
    * @param next - Express.js's next function.
    */
   createUser: async (req: Request, res: Response, next: NextFunction) => {
-    const { username, email, phoneNumber, password, fullName } = req.body;
+    const { username, email, phoneNumber, password, fullName, role } = req.body;
 
     // Validates whether the username or email or phone is already used or not. Use
     // parallel processing for speed.
@@ -52,6 +52,7 @@ const UserController = {
       phoneNumber,
       password,
       totpSecret: '', // kept blank to ensure that this gets filled in the service layer
+      role, // optional, defaults to 'user'
       fullName,
     });
 

@@ -30,7 +30,12 @@ const NotFoundPage = () => (
       </Text>
 
       <NextLink href={routes.home} passHref>
-        <Button leftIcon={<FaHome />} colorScheme="green" variant="outline">
+        <Button
+          as="a"
+          leftIcon={<FaHome />}
+          colorScheme="green"
+          variant="outline"
+        >
           Back to Home
         </Button>
       </NextLink>
