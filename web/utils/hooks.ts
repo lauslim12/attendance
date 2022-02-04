@@ -51,14 +51,15 @@ export const useAttendances = () => {
 /**
  * Replaces the main context of the application, used in almost all parts
  * of the web application in order to keep track of the authentication state
- * of the current user.
+ * of the current user. Revalidates itself every 15 seconds.
  *
  * @returns An object of data, loading state, errors, and mutator function.
  */
 export const useStatusAndUser = () => {
   const { data, error, mutate } = useSWR<Status>(
     '/api/v1/auth/status',
-    fetcher
+    fetcher,
+    { refreshInterval: 15000 }
   );
 
   return {
@@ -125,8 +126,8 @@ export const useMe = () => {
  */
 export const useUsers = () => {
   const { data, error, mutate } = useSWR<User[]>('/api/v1/users', fetcher, {
-    onErrorRetry: (_, key) => {
-      if (key === '/api/v1/users') return;
+    onErrorRetry: (err) => {
+      if (err.statusCode === 401) return;
     },
   });
 
