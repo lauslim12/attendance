@@ -1,4 +1,5 @@
 import type { Server } from 'http';
+import toobusy from 'toobusy-js';
 
 import config from './config';
 import bull from './infra/bull';
@@ -15,11 +16,17 @@ import CacheService from './modules/cache/service';
  * @param code - Exit error code.
  */
 function shutdownServer(server: Server, signal: string, code: number) {
-  console.log(`Received ${signal}. Shutting down gracefully.`);
+  const stoppingInfrastructures = [
+    redis.quit(),
+    prisma.$disconnect(),
+    toobusy.shutdown(),
+    bull.close(),
+  ];
 
   // Shuts down the server, then synchronously stop the infrastructure.
+  console.log(`Received ${signal}. Shutting down gracefully.`);
   server.close(() => {
-    Promise.all([redis.quit(), prisma.$disconnect()])
+    Promise.all(stoppingInfrastructures)
       .then(() => {
         console.log(`Server has closed due to ${signal} signal.`);
         process.exit(code);
