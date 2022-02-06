@@ -69,6 +69,9 @@ const nextConfig = {
     ];
   },
 
+  // Disable `X-Powered-By` header.
+  poweredByHeader: false,
+
   // Enable minification.
   swcMinify: true,
 
