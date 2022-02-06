@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
@@ -15,7 +15,7 @@ import SessionValidation from './validation';
  * @returns Express router.
  */
 const SessionHandler = () => {
-  const handler = express.Router();
+  const handler = Router();
 
   // Allow rate limiters.
   handler.use(rateLimit(100, 'sessions'));

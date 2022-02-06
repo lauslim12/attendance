@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
@@ -15,7 +15,7 @@ import AttendanceValidation from './validation';
  * @returns Express router.
  */
 const AttendanceHandler = () => {
-  const handler = express.Router({ mergeParams: true });
+  const handler = Router({ mergeParams: true });
   const attendanceRateLimit = rateLimit(15, 'attendance-check');
 
   // Endpoints are only for authenticated users,
