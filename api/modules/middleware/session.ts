@@ -20,11 +20,17 @@ const session = () => (req: Request, res: Response, next: NextFunction) => {
     sameSite: 'strict',
     maxAge: 7200 * 1000, // 2 hours that will be refreshed every time the user hits a 'has-session' middleware.
     secure: isHTTPS(req), // Use 'secure' on production environment.
+    path: '/', // Send in every requests.
   };
+
+  // Use '__Host-' prefix on cookie name in production.
+  const cookie = isHTTPS(req)
+    ? `__Host-${config.SESSION_COOKIE}`
+    : config.SESSION_COOKIE;
 
   return expressSession({
     store: new RedisSessionStore({ client: redis.nodeRedis }),
-    name: config.SESSION_COOKIE,
+    name: cookie,
     saveUninitialized: false,
     resave: false,
     secret: config.COOKIE_SECRET,
