@@ -9,6 +9,7 @@ import AttendanceHandler from '../modules/attendance/handler';
 import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
+import busyHandler from '../modules/middleware/busy-handler';
 import favicon from '../modules/middleware/favicon';
 import { errorLogger, successLogger } from '../modules/middleware/logger';
 import notFound from '../modules/middleware/not-found';
@@ -38,6 +39,9 @@ function loadExpress() {
       },
     })
   );
+
+  // Handle if server is too busy.
+  app.use(busyHandler());
 
   // Load signed cookie parser. JSON parser is loaded in each required
   // endpoints in a case-by-case basis.
