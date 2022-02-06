@@ -1,4 +1,4 @@
-import { ConnectionOptions, Job } from 'bullmq';
+import type { ConnectionOptions, Job } from 'bullmq';
 import { Queue, Worker } from 'bullmq';
 
 import config from '../config';
