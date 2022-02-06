@@ -17,12 +17,25 @@ import CacheService from './modules/cache/service';
 function shutdownServer(server: Server, signal: string, code: number) {
   console.log(`Received ${signal}. Shutting down gracefully.`);
 
+  // Shuts down the server, then synchronously stop the infrastructure.
   server.close(() => {
-    Promise.all([redis.quit(), prisma.$disconnect()]).finally(() => {
-      console.log(`Server has closed due to ${signal} signal.`);
-      process.exit(code);
-    });
+    Promise.all([redis.quit(), prisma.$disconnect()])
+      .then(() => {
+        console.log(`Server has closed due to ${signal} signal.`);
+        process.exit(code);
+      })
+      .catch((err) => {
+        console.error('Failed to shut down infrastructures due to an error.');
+        console.error(err);
+        process.exit(1);
+      });
   });
+
+  // If fail to shut down in time (30 secs), forcefully shutdown.
+  setTimeout(() => {
+    console.error('Graceful shutdown timeout, forcing exit.');
+    process.exit(1);
+  }, 30000);
 }
 
 /**
