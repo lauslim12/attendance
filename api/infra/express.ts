@@ -14,6 +14,7 @@ import { errorLogger, successLogger } from '../modules/middleware/logger';
 import notFound from '../modules/middleware/not-found';
 import session from '../modules/middleware/session';
 import slowDown from '../modules/middleware/slow-down';
+import xPoweredBy from '../modules/middleware/x-powered-by';
 import xst from '../modules/middleware/xst';
 import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
@@ -36,6 +37,7 @@ function loadExpress() {
       frameguard: {
         action: 'deny',
       },
+      hidePoweredBy: false,
     })
   );
 
@@ -61,6 +63,9 @@ function loadExpress() {
 
   // Prepare to use Express Sessions.
   app.use(session());
+
+  // Enable special `X-Powered-By` header.
+  app.use(xPoweredBy());
 
   // Define handlers.
   const attendanceHandler = AttendanceHandler();

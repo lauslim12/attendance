@@ -1,5 +1,5 @@
 import type { Request, Response } from 'express';
-import express from 'express';
+import { Router } from 'express';
 
 import sendResponse from '../../util/send-response';
 
@@ -9,7 +9,7 @@ import sendResponse from '../../util/send-response';
  * @returns Express router.
  */
 const HealthHandler = () => {
-  const router = express();
+  const router = Router();
 
   /**
    * Checks the health of the service.

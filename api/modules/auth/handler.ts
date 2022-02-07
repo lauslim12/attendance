@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
@@ -16,7 +16,7 @@ import AuthValidation from './validation';
  * @returns Express router.
  */
 const AuthHandler = () => {
-  const handler = express.Router();
+  const handler = Router();
   const authRateLimit = rateLimit(10, 'auth');
 
   // General endpoint, (almost) no rate limit.

@@ -1,4 +1,4 @@
-import express from 'express';
+import { Router } from 'express';
 import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
@@ -18,7 +18,7 @@ import UserValidation from './validation';
  * @returns Express router.
  */
 const UserHandler = () => {
-  const handler = express.Router();
+  const handler = Router();
   const userRateLimit = rateLimit(100, 'users-me', 15);
   const adminRateLimit = rateLimit(30, 'users-admin');
 
