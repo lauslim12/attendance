@@ -29,7 +29,7 @@ const options: LoggerOptions = {
   dynamicMeta: (req) => ({ deviceInfo: getDeviceID(req) }),
 
   // Customized message attribute in logging.
-  msg: 'HTTP {{res.statusCode}} {{req.method}} {{res.responseTime}}ms {{req.url}}',
+  msg: 'HTTP {{req.method}} {{req.url}}',
 
   // Deactivate both colorization and Express Format, we have our own format.
   expressFormat: false,
