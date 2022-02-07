@@ -2,6 +2,8 @@
 
 Secure API with OTP and Basic Authorization. Implemented as a full-stack application in a unique use-case: attendance system.
 
+You may also call this project as 'Attendance as a Service' (AAAS).
+
 ## About
 
 This research will focus on creating a highly-secure API that conforms to OWASP Security Best Practices. This research is divided into two subprojects:
@@ -49,7 +51,7 @@ Legend:
 As this research focuses on creating a secure API, below are the considerations that are taken during development:
 
 - Users are divided into two roles: `admin` and `user`.
-- A special kind of authorized session: `OTPSession`, using JSON Web Tokens (RFC 7519). Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes).
+- A special kind of authorized session: `OTPSession`, using JSON Web Tokens (RFC 7519). Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes). JSON Web Tokens are powered by `Ed25519` algorithm.
 - Sessions are signed cookies, implemented with a high-entropy session secret, and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security.
 - Passwords are hashed with `Argon2` algorithm.
 - The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator), and it is different for every other users in the system. Look at `cli/collision-test.ts` for tests.
