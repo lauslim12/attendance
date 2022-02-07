@@ -10,6 +10,7 @@ const instance = axiosClient.create({
   headers: {
     Accept: 'application/vnd.nicholasdw.v1+json',
     'Content-Type': 'application/json; charset=utf-8',
+    'X-Requested-With': 'axios',
   },
 });
 
