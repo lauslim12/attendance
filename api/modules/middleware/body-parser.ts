@@ -43,7 +43,7 @@ const bodyParser = (req: Request, res: Response, next: NextFunction) => {
 
   // Quick checking: if 'Content-Length' is bigger than the specified bytes,
   // we will short circuit right away. If the 'Content-Length' is spoofed and the payload
-  // is greater than anticipated, the next `json` function will take care of it accordingly.
+  // is greater than anticipated, the next `parse` function will take care of it accordingly.
   if (length && Number.parseInt(length, 10) > 512) {
     next(
       new AppError('Request is too large! Please reduce your payload!', 413)
@@ -52,7 +52,7 @@ const bodyParser = (req: Request, res: Response, next: NextFunction) => {
   }
 
   // We have to `return` this specific middleware as this is an Express middleware, so it can go
-  // straight to the next stack. Simply calling the `json` function will not suffice.
+  // straight to the next stack. Simply calling the `parse` function will not suffice.
   return parse({ type: json, limit: 512 })(req, res, next);
 };
 
