@@ -69,6 +69,18 @@ As this research focuses on creating a secure API, below are the considerations 
 - Prevent attacks like parameter pollution, payload too large, bad JSON, and many more with proper status codes.
 - Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
 
+This application conforms to the following security guidelines:
+
+- [OWASP ASVS](https://github.com/OWASP/ASVS) (only taking several metrics, such as Session Management, Cookie Management, and others)
+- [OWASP: Authentication Testing](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/README)
+- [OWASP: Authorization Testing](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/README)
+- [OWASP: API Security](https://owasp.org/www-project-api-security/)
+
+Several OWASP best practices are also followed:
+
+- [OWASP REST Cheatsheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)
+- [OWASP MFA Cheatsheet](https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html)
+
 ## Documentation
 
 API documentation is available at Postman, and it is under construction for now. All of the codebase in the API is completely documented with TypeScript and JSDoc.
