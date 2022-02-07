@@ -176,7 +176,10 @@ const AuthController = {
       req.session.signedIn = Date.now().toString();
 
       // Remove MFA session cookie if it exists.
-      res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
+      const cookie = isHTTPS(req)
+        ? `__Host-${config.JWT_COOKIE_NAME}`
+        : config.JWT_COOKIE_NAME;
+      res.cookie(cookie, 'loggedOut', { maxAge: 10 });
 
       // Send response.
       sendResponse({
@@ -206,8 +209,14 @@ const AuthController = {
       }
 
       // Clears all session from cookie.
-      res.cookie(config.SESSION_COOKIE, 'loggedOut', { maxAge: 10 });
-      res.cookie(config.JWT_COOKIE_NAME, 'loggedOut', { maxAge: 10 });
+      const session = isHTTPS(req)
+        ? `__Host-${config.SESSION_COOKIE}`
+        : config.SESSION_COOKIE;
+      const jwt = isHTTPS(req)
+        ? `__Host-${config.JWT_COOKIE_NAME}`
+        : config.JWT_COOKIE_NAME;
+      res.cookie(session, 'loggedOut', { maxAge: 10 });
+      res.cookie(jwt, 'loggedOut', { maxAge: 10 });
 
       sendResponse({
         req,
@@ -542,13 +551,17 @@ const AuthController = {
     // Set OTP session by its JTI.
     await CacheService.setOTPSession(jti, user.userID);
 
-    // Set cookie for the JWS.
-    res.cookie(config.JWT_COOKIE_NAME, token, {
+    // Set cookie for the JWS. Use '__Host-' prefix for security in HTTPS.
+    const cookie = isHTTPS(req)
+      ? `__Host-${config.JWT_COOKIE_NAME}`
+      : config.JWT_COOKIE_NAME;
+    res.cookie(cookie, token, {
       httpOnly: true,
       secure: isHTTPS(req),
       sameSite: 'strict',
       maxAge: 900000, // 15 minutes
       signed: true,
+      path: '/',
     });
 
     // Send response.
