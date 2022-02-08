@@ -5,69 +5,39 @@ import { errors as jose } from 'jose';
 
 import config from '../../config';
 import AppError from '../../util/app-error';
+import sendError from '../../util/send-error';
 
 /**
- * Send error in the development phase. Will transform a request to conform to 'AppError'.
+ * Sends an API error response to the requesting client. In development
+ * phase, the API will send back `stack` property in the response.
  *
- * @param err - Express.js's or custom error object.
  * @param req - Express.js's request object.
  * @param res - Express.js's response object.
+ * @param err - Error object in the form of `AppError`.
  */
-const sendErrorDevelopment = (err: AppError, _: Request, res: Response) => {
-  const appError = {
-    ...err,
-    statusCode: err.statusCode || 500,
-    status: err.status || 'error',
-    message: err.message,
-    stack: err.stack,
-  };
-
-  res.status(appError.statusCode).json({
-    status: appError.status,
-    error: appError,
-    message: appError.message,
-    stack: appError.stack,
-  });
-};
-
-/**
- * Send error in the production phase.
- *
- * @param err - Express.js's or custom error object.
- * @param req - Express.js's request object.
- * @param res - Express.js's response object.
- */
-const sendErrorProduction = (err: AppError, _: Request, res: Response) => {
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      statusCode: err.statusCode,
-      message: err.message,
-    });
-
+const sendErrorResponse = (req: Request, res: Response, err: AppError) => {
+  if (config.NODE_ENV === 'development') {
+    sendError({ req, res, error: err, stack: err.stack });
     return;
   }
 
-  console.error(err);
-  res.status(500).json({
-    status: 'error',
-    statusCode: 500,
-    message: 'An unknown error occured! Please try again later!',
-  });
+  sendError({ req, res, error: err });
 };
 
 /**
- * Handles errors for production scenarios. Transforms most error objects into a readable format.
+ * Handles errors for expected errors. Transforms most error objects into a readable format
+ * which is `AppError`.
  *
- * @param err - The 'true' error which was thrown.
+ * @param err - The 'true' error which was thrown, casted to `any` as errors can take up many forms.
  * @returns A new error object that conforms to 'AppError'.
  */
-const handleProductionErrors = (err: AppError): AppError => {
+const handleOperationalErrors = (err: Error) => {
   // Handle body parser errors.
   if (err instanceof SyntaxError) {
     return new AppError('Invalid JSON! Please insert a valid one.', 400);
   }
 
+  // @ts-expect-error: Some errors may have this `type` property!
   if (err.type === 'entity.too.large') {
     return new AppError('Request too large! Please reduce your payload!', 413);
   }
@@ -112,38 +82,51 @@ const handleProductionErrors = (err: AppError): AppError => {
     return new AppError('MFA session expired. Please log in again!', 401);
   }
 
-  // Returns the AppError object.
-  return {
-    ...err,
-    statusCode: err.statusCode || 500,
-    status: err.status || 'error',
-    message: err.message,
-    stack: err.stack,
-  };
+  // If anything is not caught, then it is most likely an unknown error. We will
+  // print the error to standard output and send back a generic `500` error.
+  console.error(err);
+  return new AppError('Internal server error!', 500);
 };
 
 /**
  * Custom error handling middleware for Express.js.
  *
- * @param err - Express.js's or custom error object.
+ * @param err - Error object.
  * @param req - Express.js's request object.
  * @param res - Express.js's response object.
  * @param next - Express.js's next function.
  */
 const errorHandler = (
-  error: AppError,
+  err: unknown,
   req: Request,
   res: Response,
   next: NextFunction
 ) => {
-  if (config.NODE_ENV === 'development') {
-    sendErrorDevelopment(error, req, res);
+  // Catch expected errors.
+  if (err instanceof AppError) {
+    sendErrorResponse(req, res, err);
+    return;
   }
 
-  if (config.NODE_ENV === 'production') {
-    sendErrorProduction(handleProductionErrors(error), req, res);
+  // Fallback to this error if error is not an `AppError`. We will try
+  // to check if it is an operational error or not.
+  if (err instanceof Error) {
+    sendErrorResponse(req, res, handleOperationalErrors(err));
+    return;
   }
 
+  // Otherwise, it is unexpected and should be handled properly in both environments by
+  // transforming them into an instance of `AppError` and printing the stack trace properly.
+  const error = new AppError('Unknown error! Please try again later!', 500);
+
+  // Print both errors to standard output. This is considered a critical failure.
+  console.error(err);
+  console.error(error);
+
+  // Send stack in development, do not send stack in production.
+  sendErrorResponse(req, res, error);
+
+  // Go next.
   next();
 };
 

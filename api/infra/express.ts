@@ -34,6 +34,13 @@ function loadExpress() {
     app.enable('trust proxy');
   }
 
+  // Use logging on application.
+  if (config.NODE_ENV === 'production') {
+    app.use(morgan('combined'));
+  } else {
+    app.use(morgan('dev'));
+  }
+
   // Security headers.
   app.use(
     helmet({
@@ -62,13 +69,6 @@ function loadExpress() {
 
   // Prevent parameter pollution.
   app.use(hpp());
-
-  // Use logging on application.
-  if (config.NODE_ENV === 'production') {
-    app.use(morgan('combined'));
-  } else {
-    app.use(morgan('dev'));
-  }
 
   // Only allow the following methods: [OPTIONS, HEAD, CONNECT, GET, POST, PATCH, PUT, DELETE].
   app.use(xst());

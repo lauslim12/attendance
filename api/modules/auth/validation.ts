@@ -15,11 +15,11 @@ const AuthValidation = {
   // POST /api/v1/auth/register
   register: {
     body: joi.object().keys({
-      username: joi.string().trim().required(),
-      email: joi.string().trim().email().required(),
-      phoneNumber: joi.string().trim().required(),
-      password: joi.string().required(),
-      fullName: joi.string().trim().required(),
+      username: joi.string().trim().required().max(15),
+      email: joi.string().trim().email().required().max(50),
+      phoneNumber: joi.string().trim().required().max(30),
+      password: joi.string().required().min(8).max(64),
+      fullName: joi.string().trim().required().max(30),
     }),
   },
 
@@ -34,8 +34,8 @@ const AuthValidation = {
   updatePassword: {
     body: joi.object().keys({
       currentPassword: joi.string().required(),
-      newPassword: joi.string().required(),
-      confirmPassword: joi.string().required(),
+      newPassword: joi.string().required().min(8).max(64),
+      confirmPassword: joi.string().required().min(8).max(64),
     }),
   },
 };
