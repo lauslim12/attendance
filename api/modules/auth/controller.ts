@@ -285,8 +285,8 @@ const AuthController = {
     // Send a link to the front-end, hopefully this will not change.
     const link =
       config.NODE_ENV === 'development'
-        ? `${req.protocol}://${req.hostname}:3000${req.originalUrl}/verify-email/${confirmationCode}/${user.email}`
-        : `${req.protocol}://${req.hostname}${req.originalUrl}/verify-email/${confirmationCode}/${user.email}`;
+        ? `${req.protocol}://${req.hostname}:3000/verify-email/${confirmationCode}/${user.email}`
+        : `${req.protocol}://${req.hostname}/verify-email/${confirmationCode}/${user.email}`;
 
     // Send an email consisting of the activation codes.
     await new Email(email, username).sendConfirmation(link);
