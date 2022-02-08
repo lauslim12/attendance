@@ -11,6 +11,9 @@ import type { Dispatch, SetStateAction } from 'react';
 import { memo, useRef } from 'react';
 import { FaFire } from 'react-icons/fa';
 
+/**
+ * Props.
+ */
 type Props = {
   title: string;
   description: string;
@@ -19,6 +22,12 @@ type Props = {
   fn: () => void;
 };
 
+/**
+ * Alert Overlay component to delete a resource.
+ *
+ * @param params - Props.
+ * @returns Alert Overlay component.
+ */
 const AlertOverlay = ({ title, description, isOpen, setIsOpen, fn }: Props) => {
   const cancelRef = useRef(null);
 

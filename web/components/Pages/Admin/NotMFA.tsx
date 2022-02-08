@@ -3,8 +3,8 @@ import NextLink from 'next/link';
 import { memo } from 'react';
 import { FaBolt } from 'react-icons/fa';
 
-import routes from '../../utils/routes';
-import MainHeading from '../MainHeading';
+import routes from '../../../utils/routes';
+import MainHeading from '../../MainHeading';
 
 /**
  * NotMFA: A component to show error message if someone accesses

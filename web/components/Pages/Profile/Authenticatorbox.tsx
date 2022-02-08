@@ -3,15 +3,15 @@ import dynamic from 'next/dynamic';
 import { memo, useRef, useState } from 'react';
 import { FaBarcode } from 'react-icons/fa';
 
-import axios from '../../utils/http';
-import type { Status, User } from '../../utils/types';
-import MFAButton from '../MFAButton';
-import { FailedToast } from '../Toast';
+import axios from '../../../utils/http';
+import type { Status, User } from '../../../utils/types';
+import MFAButton from '../../MFAButton';
+import { FailedToast } from '../../Toast';
 
 /**
  * Dynamic import overlays.
  */
-const QRDialog = dynamic(() => import('../Overlay/QRDialog'));
+const QRDialog = dynamic(() => import('../../Overlay/QRDialog'));
 
 /**
  * Box to refresh TOTP secrets.
@@ -20,15 +20,12 @@ const QRDialog = dynamic(() => import('../Overlay/QRDialog'));
  * @returns React functional component.
  */
 const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const [isQRDialogOpen, setIsQRDialogOpen] = useState(false);
   const [qrCode, setQRCode] = useState('');
   const leastDestructiveRef = useRef(null);
   const toast = useToast();
 
   const refreshMFA = () => {
-    setIsLoading(true);
-
     axios<{ uri: string }>({
       method: 'PUT',
       url: '/api/v1/auth/update-mfa',
@@ -37,8 +34,7 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
         setIsQRDialogOpen(true);
         setQRCode(res.data.uri);
       })
-      .catch((err) => FailedToast(toast, err.message))
-      .finally(() => setIsLoading(false));
+      .catch((err) => FailedToast(toast, err.message));
   };
 
   return (

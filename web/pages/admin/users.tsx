@@ -3,11 +3,10 @@ import NextLink from 'next/link';
 import { memo, useState } from 'react';
 import { FaArrowLeft, FaCheck } from 'react-icons/fa';
 
-import AdminRoute from '../../components/Admin/AdminRoute';
-import NotMFA from '../../components/Admin/NotMFA';
-import UserCard from '../../components/Admin/UserCard';
+import UserCard from '../../components/Card/UserCard';
 import Layout from '../../components/Layout';
 import CreateUserModal from '../../components/Overlay/CreateUserModal';
+import NotMFA from '../../components/Pages/Admin/NotMFA';
 import Spinner from '../../components/Spinner';
 import { useUsers } from '../../utils/hooks';
 import routes from '../../utils/routes';
@@ -24,7 +23,7 @@ const Users = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <AdminRoute>
+    <>
       <CreateUserModal
         isOpen={isOpenCreate}
         onClose={() => setIsOpenCreate(false)}
@@ -80,7 +79,7 @@ const Users = () => {
           </VStack>
         )}
       </Layout>
-    </AdminRoute>
+    </>
   );
 };
 

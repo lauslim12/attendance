@@ -1,7 +1,7 @@
 import { Badge, Heading, useColorModeValue, VStack } from '@chakra-ui/react';
 import { memo } from 'react';
 
-import type { User } from '../../utils/types';
+import type { User } from '../../../utils/types';
 
 /**
  * Top part of the Profile page.

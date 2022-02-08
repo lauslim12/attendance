@@ -3,7 +3,6 @@ import NextLink from 'next/link';
 import { memo } from 'react';
 import { FaArrowLeft } from 'react-icons/fa';
 
-import AdminRoute from '../../components/Admin/AdminRoute';
 import AttendanceCard from '../../components/Card/AttendanceCard';
 import Layout from '../../components/Layout';
 import Spinner from '../../components/Spinner';
@@ -21,7 +20,7 @@ const Attendances = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <AdminRoute>
+    <>
       <Layout title={['Users']}>
         <VStack align="start" as="section">
           <HStack w="full">
@@ -60,7 +59,7 @@ const Attendances = () => {
           </Grid>
         </VStack>
       </Layout>
-    </AdminRoute>
+    </>
   );
 };
 

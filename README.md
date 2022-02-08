@@ -14,7 +14,7 @@ This research will focus on creating a highly-secure API that conforms to OWASP 
 The flow of the API (Request - Response) is as follows:
 
 ```bash
-Request -> Handler/Router -> Middleware (if applicable) -> Validations (if applicable) -> Controller -> Service -> Prisma (if applicable) -> Controller -> Response
+Request -> Handler/Router -> Middleware (if applicable) -> Validations (if applicable) -> Controller -> Service -> Prisma (if applicable) / Cache (if applicable) -> Controller -> Response
 ```
 
 - Four layer architecture: Validation and Controller, Service, and ORM (Prisma).

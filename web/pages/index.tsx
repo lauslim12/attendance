@@ -1,9 +1,13 @@
 import { VStack } from '@chakra-ui/react';
 import { memo } from 'react';
 
-import Attendance from '../components/Home/Attendance';
-import Main from '../components/Home/Main';
 import Layout from '../components/Layout';
+import Clock from '../components/Pages/Home/Clock';
+import CurrentStatus from '../components/Pages/Home/CurrentStatus';
+import Greetings from '../components/Pages/Home/Greetings';
+import Hello from '../components/Pages/Home/Hello';
+import Links from '../components/Pages/Home/Links';
+import Present from '../components/Pages/Home/Present';
 import Spinner from '../components/Spinner';
 import { useStatusAndUser } from '../utils/hooks';
 
@@ -28,7 +32,19 @@ const Home = () => {
         margin="0 auto"
         p={2}
       >
-        {status?.isAuthenticated ? <Attendance status={status} /> : <Main />}
+        {status && status.isAuthenticated && status.user ? (
+          <VStack w="full" align="center" spacing={4}>
+            <Greetings fullName={status.user.fullName} />
+            <Clock />
+            <CurrentStatus status={status} />
+            <Present status={status} />
+          </VStack>
+        ) : (
+          <VStack w="full" align="center" spacing={4}>
+            <Hello />
+            <Links />
+          </VStack>
+        )}
       </VStack>
     </Layout>
   );
