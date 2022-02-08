@@ -7,11 +7,11 @@ const UserValidation = {
   // POST /api/v1/users
   createUser: {
     body: joi.object().keys({
-      username: joi.string().trim().required(),
-      email: joi.string().trim().email().required(),
-      phoneNumber: joi.string().trim().required(),
-      password: joi.string().required(),
-      fullName: joi.string().trim().required(),
+      username: joi.string().trim().required().max(15),
+      email: joi.string().trim().email().required().max(50),
+      phoneNumber: joi.string().trim().required().max(30),
+      password: joi.string().required().min(8).max(64),
+      fullName: joi.string().trim().required().max(30),
       role: joi.string().valid('admin', 'user').default('user'),
     }),
   },
@@ -39,19 +39,19 @@ const UserValidation = {
   // PATCH /api/v1/users/me
   updateMe: {
     body: joi.object().keys({
-      email: joi.string().trim().email(),
-      phoneNumber: joi.string().trim(),
-      fullName: joi.string().trim(),
+      email: joi.string().trim().email().max(50),
+      phoneNumber: joi.string().trim().max(30),
+      fullName: joi.string().trim().max(30),
     }),
   },
 
   // PATCH /api/v1/users/:id
   updateUser: {
     body: joi.object().keys({
-      email: joi.string().trim().email(),
-      phoneNumber: joi.string().trim(),
-      password: joi.string(),
-      fullName: joi.string().trim(),
+      email: joi.string().trim().email().max(50),
+      phoneNumber: joi.string().trim().max(30),
+      password: joi.string().min(8).max(64),
+      fullName: joi.string().trim().max(30),
       role: joi.string().valid('admin', 'user'),
       isActive: joi.boolean(),
     }),
