@@ -38,6 +38,14 @@ const AuthValidation = {
       confirmPassword: joi.string().required().min(8).max(64),
     }),
   },
+
+  // PATCH /api/v1/auth/verify-email
+  verifyEmail: {
+    params: joi.object().keys({
+      code: joi.string().required(),
+      email: joi.string().trim().email().required(),
+    }),
+  },
 };
 
 export default AuthValidation;

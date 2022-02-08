@@ -51,7 +51,13 @@ const axios = <T = unknown>(cfg: AxiosRequestConfig) =>
  * @returns JSON response of the resulting request.
  */
 export const fetcher = async (url: string) => {
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: {
+      Accept: 'application/vnd.nicholasdw.v1+json',
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'Fetch API',
+    },
+  });
 
   // If the status code is not in the range 200-299,
   // we still try to parse and throw it.

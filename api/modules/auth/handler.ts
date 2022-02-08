@@ -77,6 +77,14 @@ const AuthHandler = () => {
     asyncHandler(AuthController.updatePassword)
   );
 
+  // Verifies an email.
+  handler.patch(
+    '/verify-email/:code/:email',
+    authRateLimit,
+    validate(AuthValidation.verifyEmail),
+    asyncHandler(AuthController.verifyEmail)
+  );
+
   return handler;
 };
 
