@@ -14,21 +14,7 @@ import AppError from '../../util/app-error';
  * @returns Customized instance of `express.json`, complete with preprocessing.
  */
 const bodyParser = (req: Request, res: Response, next: NextFunction) => {
-  const {
-    ['content-type']: type,
-    ['content-length']: length,
-    accept,
-  } = req.headers;
-
-  // Declare allowed 'Accept' and 'Content-Type'.
-  const json = 'application/json';
-  const vendor = 'application/vnd.nicholasdw.v1+json';
-
-  // If the request do not `Accept` available formats, deny the request.
-  if (!accept?.includes(json) && !accept?.includes(vendor)) {
-    next(new AppError('API does not accept the requested content type.', 406));
-    return;
-  }
+  const { ['content-type']: type, ['content-length']: length } = req.headers;
 
   // Ensures 'Content-Type' is 'application/json'.
   if (!type?.includes('application/json')) {
@@ -53,7 +39,7 @@ const bodyParser = (req: Request, res: Response, next: NextFunction) => {
 
   // We have to `return` this specific middleware as this is an Express middleware, so it can go
   // straight to the next stack. Simply calling the `parse` function will not suffice.
-  return parse({ type: json, limit: 512 })(req, res, next);
+  return parse({ type: 'application/json', limit: 512 })(req, res, next);
 };
 
 export default bodyParser;
