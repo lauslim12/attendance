@@ -9,6 +9,7 @@ import AttendanceHandler from '../modules/attendance/handler';
 import AuthHandler from '../modules/auth/handler';
 import errorHandler from '../modules/error';
 import HealthHandler from '../modules/health/handler';
+import accept from '../modules/middleware/accept';
 import busyHandler from '../modules/middleware/busy-handler';
 import favicon from '../modules/middleware/favicon';
 import { errorLogger, successLogger } from '../modules/middleware/logger';
@@ -42,6 +43,12 @@ function loadExpress() {
     })
   );
 
+  // Enable special `X-Powered-By` header.
+  app.use(xPoweredBy());
+
+  // Validate `Accept` header.
+  app.use(accept());
+
   // Handle if server is too busy.
   app.use(busyHandler());
 
@@ -67,9 +74,6 @@ function loadExpress() {
 
   // Prepare to use Express Sessions.
   app.use(session());
-
-  // Enable special `X-Powered-By` header.
-  app.use(xPoweredBy());
 
   // Define handlers.
   const attendanceHandler = AttendanceHandler();
