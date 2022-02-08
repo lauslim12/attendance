@@ -99,9 +99,11 @@ const QRDialog = ({
               </VStack>
 
               <Text>
-                After you are ready, feel free to click the Continue button in
-                order to start using this webservice! You will be redirected
-                into the homepage. You may have to log in again for security.
+                After you are ready, you will receive a confirmation email in
+                your email if this is the first time you are registering. Please
+                click on the validation link that is sent to your email. By
+                clicking the Continue button, you will be redirected into the
+                homepage.
               </Text>
             </VStack>
           </AlertDialogBody>
