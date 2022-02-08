@@ -6,7 +6,6 @@ import { FaArrowLeft, FaCheck } from 'react-icons/fa';
 import UserCard from '../../components/Card/UserCard';
 import Layout from '../../components/Layout';
 import CreateUserModal from '../../components/Overlay/CreateUserModal';
-import AdminRoute from '../../components/Pages/Admin/AdminRoute';
 import NotMFA from '../../components/Pages/Admin/NotMFA';
 import Spinner from '../../components/Spinner';
 import { useUsers } from '../../utils/hooks';
@@ -24,7 +23,7 @@ const Users = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <AdminRoute>
+    <>
       <CreateUserModal
         isOpen={isOpenCreate}
         onClose={() => setIsOpenCreate(false)}
@@ -80,7 +79,7 @@ const Users = () => {
           </VStack>
         )}
       </Layout>
-    </AdminRoute>
+    </>
   );
 };
 

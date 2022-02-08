@@ -5,7 +5,6 @@ import { FaArrowLeft } from 'react-icons/fa';
 
 import AttendanceCard from '../../components/Card/AttendanceCard';
 import Layout from '../../components/Layout';
-import AdminRoute from '../../components/Pages/Admin/AdminRoute';
 import Spinner from '../../components/Spinner';
 import { useAttendances } from '../../utils/hooks';
 import routes from '../../utils/routes';
@@ -21,7 +20,7 @@ const Attendances = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <AdminRoute>
+    <>
       <Layout title={['Users']}>
         <VStack align="start" as="section">
           <HStack w="full">
@@ -60,7 +59,7 @@ const Attendances = () => {
           </Grid>
         </VStack>
       </Layout>
-    </AdminRoute>
+    </>
   );
 };
 

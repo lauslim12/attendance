@@ -5,7 +5,6 @@ import { FaCheckDouble, FaDatabase } from 'react-icons/fa';
 import MenuCard from '../../components/Card/MenuCard';
 import Layout from '../../components/Layout';
 import MFAButton from '../../components/MFAButton';
-import AdminRoute from '../../components/Pages/Admin/AdminRoute';
 import Spinner from '../../components/Spinner';
 import { useStatusAndUser } from '../../utils/hooks';
 import routes from '../../utils/routes';
@@ -21,7 +20,7 @@ const Admin = () => {
   if (isLoading) return <Spinner />;
 
   return (
-    <AdminRoute>
+    <>
       {status && status.user && (
         <Layout title={['Admin']}>
           <VStack as="section" spacing={3} h="full" justify="center">
@@ -66,7 +65,7 @@ const Admin = () => {
           </VStack>
         </Layout>
       )}
-    </AdminRoute>
+    </>
   );
 };
 
