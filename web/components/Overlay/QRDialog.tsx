@@ -98,12 +98,17 @@ const QRDialog = ({
                 <QRCode id="qr-code-canvas" value={code} size={150} />
               </VStack>
 
-              <Text>
+              {/* <Text>
                 After you are ready, you will receive a confirmation email in
                 your email if this is the first time you are registering. Please
                 click on the validation link that is sent to your email. By
                 clicking the Continue button, you will be redirected into the
                 homepage.
+              </Text> */}
+
+              <Text>
+                By clicking the Continue button, you will be redirected into the
+                homepage and you have to log in for security.
               </Text>
             </VStack>
           </AlertDialogBody>
