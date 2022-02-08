@@ -11,6 +11,7 @@ import Spinner from './Spinner';
  */
 type Props = {
   children: ReactNode;
+  authRoutes: string[];
 };
 
 /**
@@ -21,17 +22,20 @@ type Props = {
  * @param params - Props.
  * @returns React Functional Component
  */
-const AuthRoute = ({ children }: Props) => {
+const AuthRoute = ({ children, authRoutes }: Props) => {
   const { data, isLoading } = useMe();
   const router = useRouter();
+  const isPathProtected = authRoutes.indexOf(router.pathname) !== -1;
 
   useEffect(() => {
-    if (!isLoading && !data.status?.isAuthenticated) {
+    const isAuthenticated = data.status?.isAuthenticated;
+
+    if (!isLoading && !isAuthenticated && isPathProtected) {
       router.replace(routes.notAuthorized);
     }
-  }, [isLoading, data.status, router]);
+  }, [isLoading, data.status, router, isPathProtected]);
 
-  if (isLoading || !data.status?.isAuthenticated) {
+  if ((isLoading || !data.status?.isAuthenticated) && isPathProtected) {
     return <Spinner />;
   }
 
