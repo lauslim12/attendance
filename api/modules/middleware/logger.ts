@@ -8,11 +8,11 @@ import getDeviceID from '../../util/device-id';
 /**
  * Options for the default loggers.
  */
-const options: LoggerOptions = {
+const options = (filename: string): LoggerOptions => ({
   // Store all logs in files. Will be created automatically as long as it does not break any permissions.
   transports: [
     new winston.transports.File({
-      filename: path.join(__dirname, '..', '..', 'logs', 'attendance.log'),
+      filename: path.join(__dirname, '..', '..', 'logs', filename),
     }),
   ],
 
@@ -54,14 +54,14 @@ const options: LoggerOptions = {
 
   // Do not log passwords.
   bodyBlacklist: ['password'],
-};
+});
 
 /**
  * Success loggers.
  */
-export const successLogger = expressWinston.logger(options);
+export const successLogger = expressWinston.logger(options('traffic.log'));
 
 /**
  * Failure loggers.
  */
-export const errorLogger = expressWinston.errorLogger(options);
+export const errorLogger = expressWinston.errorLogger(options('errors.log'));
