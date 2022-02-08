@@ -75,7 +75,7 @@ class Email {
    */
   async send(
     subject: string,
-    template: 'otp' | 'notification' | 'reminder',
+    template: 'confirmation' | 'otp' | 'notification' | 'reminder',
     vars: Record<string, unknown>
   ) {
     const html = renderFile(
@@ -89,6 +89,20 @@ class Email {
       subject,
       html,
       text: convert(html),
+    });
+  }
+
+  /**
+   * Sends a confirmation email to a user.
+   *
+   * @param url - URL to the webservice to activate the account.
+   */
+  async sendConfirmation(url: string) {
+    await bull.add(`email-confirmation-${this.to}`, {
+      task: this.send('Account Activation for Attendance', 'confirmation', {
+        name: this.name,
+        url,
+      }),
     });
   }
 
