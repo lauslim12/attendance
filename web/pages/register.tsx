@@ -103,8 +103,7 @@ const Register = () => {
 
               <Text fontSize="xs" textAlign="center" fontWeight="bold">
                 You may use disposable email addresses like 10minutemail or
-                whatever, but please DO NOT use an invalid phone number (SMS
-                charges are expensive). Thank you for understanding.
+                whatever.
               </Text>
             </VStack>
 
@@ -137,7 +136,7 @@ const Register = () => {
               placeholder="john.smith@gmail.com"
               value={email}
               setValue={setEmail}
-              helper="Your email. Feel free to use a disposable email address."
+              helper="Your email as one of the options to send an OTP."
             />
 
             <TextInput
@@ -145,7 +144,7 @@ const Register = () => {
               placeholder="+62-890-1122-3344"
               value={phoneNumber}
               setValue={setPhoneNumber}
-              helper="Your phone number. Please do not use an invalid phone number."
+              helper="Your phone number."
             />
 
             <TextInput
