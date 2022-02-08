@@ -267,22 +267,39 @@ const AuthController = {
       return;
     }
 
+    // Generate a new confirmation code unique to that user.
+    const confirmationCode = await nanoid();
+
+    // Create a new, inactive user.
     const user = await UserService.createUser({
       username,
       email,
       phoneNumber,
       password,
       totpSecret: '', // kept blank to ensure that this gets filled in the service layer
+      confirmationCode,
+      isActive: false,
       fullName,
     });
 
+    // Send a link to the front-end, hopefully this will not change.
+    const link =
+      config.NODE_ENV === 'development'
+        ? `${req.protocol}://${req.hostname}:3000${req.originalUrl}/verify-email/${confirmationCode}/${user.email}`
+        : `${req.protocol}://${req.hostname}${req.originalUrl}/verify-email/${confirmationCode}/${user.email}`;
+
+    // Send an email consisting of the activation codes.
+    await new Email(email, username).sendConfirmation(link);
+
+    // Send response.
     sendResponse({
       req,
       res,
       status: 'success',
       statusCode: 201,
       data: user,
-      message: 'Successfully registered to the webservice!',
+      message:
+        'Successfully registered! Please check your email address for verification.',
       type: 'auth',
     });
   },
@@ -464,6 +481,51 @@ const AuthController = {
         message: 'Password updated. For security, please log in again!',
         type: 'auth',
       });
+    });
+  },
+
+  /**
+   * Verifies a user's email.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  verifyEmail: async (req: Request, res: Response, next: NextFunction) => {
+    const { code, email } = req.params;
+
+    // Validate the code. We will obfuscate all error messages for obscurity.
+    const user = await UserService.getUserComplete({ email });
+    if (!user) {
+      next(new AppError('Invalid email verification code!', 400));
+      return;
+    }
+
+    if (!user.confirmationCode) {
+      next(new AppError('Invalid email verification code!', 400));
+      return;
+    }
+
+    if (code !== user.confirmationCode) {
+      next(new AppError('Invalid email verification code!', 400));
+      return;
+    }
+
+    // Set 'isActive' to true and set code to not defined.
+    const updatedUser = await UserService.updateUser(
+      { userID: user.userID },
+      { isActive: true, email, confirmationCode: null }
+    );
+
+    // Send response.
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: updatedUser,
+      message: 'Email verified! You may now use and log in to the webservice!',
+      type: 'auth',
     });
   },
 
