@@ -16,19 +16,20 @@ enum Roles {
 }
 
 model User {
-  userPK      Int          @id @default(autoincrement())
-  userID      String       @unique @default(uuid())
-  username    String       @unique
-  email       String       @unique
-  phoneNumber String       @unique
-  password    String
-  totpSecret  String
-  fullName    String
-  isActive    Boolean      @default(true)
-  updatedAt   DateTime     @updatedAt
-  createdAt   DateTime     @default(now())
-  role        Roles        @default(user)
-  Attendance  Attendance[]
+  userPK           Int          @id @default(autoincrement())
+  userID           String       @unique @default(uuid())
+  username         String       @unique
+  email            String       @unique
+  phoneNumber      String       @unique
+  password         String
+  totpSecret       String
+  fullName         String
+  confirmationCode String?      @unique
+  isActive         Boolean      @default(true)
+  updatedAt        DateTime     @updatedAt
+  createdAt        DateTime     @default(now())
+  role             Roles        @default(user)
+  Attendance       Attendance[]
 }
 
 model Attendance {
