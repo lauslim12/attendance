@@ -17,6 +17,7 @@ import notFound from '../modules/middleware/not-found';
 import session from '../modules/middleware/session';
 import slowDown from '../modules/middleware/slow-down';
 import xPoweredBy from '../modules/middleware/x-powered-by';
+import xRequestedWith from '../modules/middleware/x-requested-with';
 import xst from '../modules/middleware/xst';
 import SessionHandler from '../modules/session/handler';
 import UserHandler from '../modules/user/handler';
@@ -32,6 +33,9 @@ function loadExpress() {
   if (config.NODE_ENV === 'production') {
     app.enable('trust proxy');
   }
+
+  // Check for CSRF via the Header method.
+  app.use(xRequestedWith());
 
   // Security headers.
   app.use(
