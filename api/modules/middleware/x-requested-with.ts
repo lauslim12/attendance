@@ -20,7 +20,7 @@ const xRequestedWith =
     if (!req.headers['x-requested-with']) {
       next(
         new AppError(
-          'Access denied as the request is possibly tampered with a possible attempt to perform CSRF in the API.',
+          'This API does not accept cross-site requests with browser agents unless from an authorized source.',
           403
         )
       );
