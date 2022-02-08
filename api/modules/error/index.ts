@@ -14,7 +14,7 @@ import sendError from '../../util/send-error';
  * @param err - The 'true' error which was thrown.
  * @returns A new error object that conforms to 'AppError'.
  */
-const handleOperationalErrors = (err: AppError): AppError => {
+const handleOperationalErrors = (err: AppError) => {
   // Handle body parser errors.
   if (err instanceof SyntaxError) {
     return new AppError('Invalid JSON! Please insert a valid one.', 400);
@@ -83,8 +83,9 @@ const errorHandler = (
   next: NextFunction
 ) => {
   // `AppError` is always an expected error.
-  if (err instanceof AppError) {
-    const error = handleOperationalErrors(err);
+  if (err instanceof Error) {
+    // Force cast as this is something that we would want.
+    const error = handleOperationalErrors(err as AppError);
 
     if (config.NODE_ENV === 'development') {
       sendError({ req, res, error, stack: err.stack });
