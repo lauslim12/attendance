@@ -107,8 +107,8 @@ const QRDialog = ({
               </Text> */}
 
               <Text>
-                By clicking the Continue button, you will be redirected into the
-                homepage and you have to log in for security.
+                By clicking the Continue button, this modal will be closed and
+                you may have to log in for security.
               </Text>
             </VStack>
           </AlertDialogBody>
