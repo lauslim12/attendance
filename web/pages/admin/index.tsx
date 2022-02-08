@@ -35,9 +35,9 @@ const Admin = () => {
             {status.isMFA ? (
               <Grid
                 pt={5}
-                templateColumns={['1fr', '1fr', 'repeat(2, 1fr)']}
+                templateColumns={['1fr', '1fr', '1fr', 'repeat(2, 1fr)']}
                 gap={5}
-                w={['full', '60vw', '50vw']}
+                w={['full', '70vw', '70vw', '70vw', '50vw']}
               >
                 <MenuCard
                   header="Users"
