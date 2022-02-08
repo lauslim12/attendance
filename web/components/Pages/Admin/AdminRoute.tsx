@@ -11,36 +11,31 @@ import Spinner from '../../Spinner';
  */
 type Props = {
   children: ReactNode;
+  adminRoutes: string[];
 };
 
 /**
  * A middleware, top-level component that prevents non-admin users from accessing this route.
+ * We have to wrap this under `AuthRoute`, as it handles the authentication, this handles the
+ * authorization.
  *
  * @param params - Props.
  * @returns React Functional Component
  */
-const AdminRoute = ({ children }: Props) => {
+const AdminRoute = ({ children, adminRoutes }: Props) => {
   const { data, isLoading } = useMe();
   const router = useRouter();
+  const isPathProtected = adminRoutes.indexOf(router.pathname) !== -1;
 
   useEffect(() => {
-    const isAuthenticated = data.status?.isAuthenticated;
-    const isAuthorized = data.status?.user?.role === 'admin';
+    const isAdmin = data.status?.user?.role === 'admin';
 
-    if (!isLoading && !isAuthenticated) {
-      router.replace(routes.notAuthorized);
-    }
-
-    if (!isLoading && isAuthenticated && !isAuthorized) {
+    if (!isLoading && !isAdmin && isPathProtected) {
       router.replace(routes.forbidden);
     }
-  }, [isLoading, data.status, router]);
+  }, [data.status?.user?.role, isLoading, router, isPathProtected]);
 
-  if (
-    isLoading ||
-    !data.status?.isAuthenticated ||
-    data.status.user?.role !== 'admin'
-  ) {
+  if ((isLoading || data.status?.user?.role !== 'admin') && isPathProtected) {
     return <Spinner />;
   }
 
