@@ -34,9 +34,6 @@ function loadExpress() {
     app.enable('trust proxy');
   }
 
-  // Check for CSRF via the Header method.
-  app.use(xRequestedWith());
-
   // Security headers.
   app.use(
     helmet({
@@ -49,6 +46,9 @@ function loadExpress() {
 
   // Enable special `X-Powered-By` header.
   app.use(xPoweredBy());
+
+  // Check for CSRF via the Header method.
+  app.use(xRequestedWith());
 
   // Validate `Accept` header.
   app.use(accept());
