@@ -13,5 +13,5 @@ clean:
 
 .PHONY: build
 build:
-	cd api && yarn --frozen-lockfile && yarn build && cp .env dist
+	cd api && yarn --frozen-lockfile && yarn build && cp .env dist && cp -r modules/email/views dist/modules/email
 	cd web && yarn --frozen-lockfile && yarn build
