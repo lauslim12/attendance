@@ -21,7 +21,7 @@ const Topbox = ({ user }: { user: User }) => (
       {user.fullName}
     </Heading>
 
-    <Heading as="h2" size="md">
+    <Heading as="h2" size="sm">
       {user.email}
     </Heading>
 

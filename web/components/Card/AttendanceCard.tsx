@@ -1,4 +1,3 @@
-import type { ColorProps } from '@chakra-ui/react';
 import {
   Badge,
   Heading,
