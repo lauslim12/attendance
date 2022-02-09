@@ -8,6 +8,7 @@ import {
   Heading,
   Link,
   Text,
+  useColorModeValue,
   useToast,
   VStack,
 } from '@chakra-ui/react';
@@ -74,7 +75,7 @@ const Login = () => {
             as="form"
             borderWidth={[0, 1]}
             borderStyle="solid"
-            borderColor="gray.300"
+            borderColor={useColorModeValue('gray.800', 'gray.200')}
             borderRadius="md"
             w={['full', '80vw', '70vw', '60vw', '60vw', '40vw']}
             p={[0, 4, 10]}

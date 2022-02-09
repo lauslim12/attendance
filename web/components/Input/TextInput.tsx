@@ -3,6 +3,7 @@ import {
   FormHelperText,
   FormLabel,
   Input,
+  useColorModeValue,
 } from '@chakra-ui/react';
 import type { Dispatch, SetStateAction } from 'react';
 import { memo } from 'react';
@@ -33,11 +34,13 @@ const TextInput = ({
   <FormControl isRequired>
     <FormLabel>{label}</FormLabel>
     <Input
+      borderColor={useColorModeValue('gray.800', 'gray.200')}
       type={isPassword ? 'password' : 'text'}
       autoComplete="off"
       placeholder={placeholder}
       value={value}
       onChange={({ currentTarget: { value } }) => setValue(value)}
+      _hover={{ borderColor: 'green.400' }}
     />
     <FormHelperText fontSize="xs">{helper}</FormHelperText>
   </FormControl>
