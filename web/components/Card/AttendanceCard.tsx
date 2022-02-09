@@ -19,7 +19,6 @@ import type { Attendance } from '../../utils/types';
  */
 type Props = {
   attendance: Attendance;
-  numberColor: ColorProps['textColor'];
   withName?: boolean;
 };
 
@@ -67,24 +66,20 @@ const formatDate = (date: string, type: 'complete' | 'month' | 'day') => {
  * @param params - Props.
  * @returns React functional component.
  */
-const AttendanceCard = ({
-  attendance,
-  numberColor,
-  withName = false,
-}: Props) => {
+const AttendanceCard = ({ attendance, withName = false }: Props) => {
   const [largerThan1280] = useMediaQuery('(min-width: 1280px)');
 
   return (
     <VStack
       as="article"
       align="start"
-      border="1px dashed #bb48bf"
+      border="1px dashed #95a5a6"
       borderRadius="md"
       p={3}
     >
       <HStack align="center">
         <VStack p={2}>
-          <Heading as="p" size="lg" color={numberColor}>
+          <Heading as="p" size="lg">
             {formatDate(attendance.timeEnter, 'day')}
           </Heading>
 

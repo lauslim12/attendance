@@ -23,7 +23,6 @@ const Attendancebox = ({ attendances }: { attendances: Attendance[] }) => (
           <AttendanceCard
             key={attendance.attendanceID}
             attendance={attendance}
-            numberColor="black"
           />
         ))}
       </Grid>
