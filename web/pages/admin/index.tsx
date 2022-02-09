@@ -26,7 +26,7 @@ const Admin = () => {
           <VStack as="section" spacing={3} h="full" justify="center">
             <Heading size="md">Welcome, {status.user.fullName}!</Heading>
 
-            <Text>
+            <Text textAlign={['center', 'left']}>
               {status.isMFA
                 ? 'Check out below menu for the configurations you may need to do.'
                 : 'Please authorize yourself before performing operations.'}
