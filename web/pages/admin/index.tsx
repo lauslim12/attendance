@@ -37,7 +37,7 @@ const Admin = () => {
                 pt={5}
                 templateColumns={['1fr', '1fr', '1fr', 'repeat(2, 1fr)']}
                 gap={5}
-                w={['full', '70vw', '70vw', '70vw', '50vw']}
+                w={['full', '80vw', '80vw', '80vw', '70vw', '50vw']}
               >
                 <MenuCard
                   header="Users"
