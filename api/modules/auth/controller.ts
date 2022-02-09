@@ -142,6 +142,12 @@ const AuthController = {
       return;
     }
 
+    // MySQL is not good at case-sensitive comparisons, so we do this manually.
+    if (!safeCompare(user.username, username)) {
+      next(new AppError('Invalid username and/or password!', 401));
+      return;
+    }
+
     // Safe compare passwords.
     const passwordMatch = await verifyPassword(user.password, password);
     if (!passwordMatch) {
