@@ -15,3 +15,8 @@ clean:
 build:
 	cd api && yarn --frozen-lockfile && yarn build && cp .env dist && cp -r modules/email/views dist/modules/email
 	cd web && yarn --frozen-lockfile && yarn build
+
+.PHONY: build-production
+build-production:
+	cd api && yarn --frozen-lockfile && yarn build && cp .env dist && cp -r modules/email/views dist/modules/email
+	cd web && yarn --frozen-lockfile && NGINX=true yarn build
