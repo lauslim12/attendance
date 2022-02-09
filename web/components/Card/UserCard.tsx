@@ -107,7 +107,7 @@ const UserCard = ({ user }: Props) => {
           <Text fontSize="sm" fontWeight="bold">
             {user.fullName}
           </Text>
-          <Text fontSize="xs">{user.email}</Text>
+          <Text fontSize="xs">{`@${user.email.split('@')[1]}`}</Text>
           <Text fontSize="xs">{user.phoneNumber}</Text>
         </VStack>
 
