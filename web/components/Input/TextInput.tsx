@@ -33,6 +33,7 @@ const TextInput = ({
   <FormControl isRequired>
     <FormLabel>{label}</FormLabel>
     <Input
+      borderColor="gray.400"
       type={isPassword ? 'password' : 'text'}
       autoComplete="off"
       placeholder={placeholder}
