@@ -1,3 +1,4 @@
+import type { ColorProps } from '@chakra-ui/react';
 import {
   Badge,
   Heading,
@@ -18,6 +19,7 @@ import type { Attendance } from '../../utils/types';
  */
 type Props = {
   attendance: Attendance;
+  numberColor: ColorProps['textColor'];
   withName?: boolean;
 };
 
@@ -65,7 +67,11 @@ const formatDate = (date: string, type: 'complete' | 'month' | 'day') => {
  * @param params - Props.
  * @returns React functional component.
  */
-const AttendanceCard = ({ attendance, withName = false }: Props) => {
+const AttendanceCard = ({
+  attendance,
+  numberColor,
+  withName = false,
+}: Props) => {
   const [largerThan1280] = useMediaQuery('(min-width: 1280px)');
 
   return (
@@ -78,7 +84,7 @@ const AttendanceCard = ({ attendance, withName = false }: Props) => {
     >
       <HStack align="center">
         <VStack p={2}>
-          <Heading as="p" size="lg" color="pink.400">
+          <Heading as="p" size="lg" color={numberColor}>
             {formatDate(attendance.timeEnter, 'day')}
           </Heading>
 

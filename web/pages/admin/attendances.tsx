@@ -53,6 +53,7 @@ const Attendances = () => {
                 <AttendanceCard
                   key={attendance.attendanceID}
                   attendance={attendance}
+                  numberColor="pink.400"
                   withName
                 />
               ))}
