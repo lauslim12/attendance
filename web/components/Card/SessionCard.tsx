@@ -75,7 +75,7 @@ const SessionCard = ({ session }: { session: Session }) => {
         align="center"
         spacing={3}
         p={5}
-        border="1px solid #e1e7ec"
+        border="1px solid #7f8c8d"
         borderRadius="md"
         boxShadow="md"
         textAlign="center"

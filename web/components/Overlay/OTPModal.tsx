@@ -184,7 +184,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
                 Send OTP (Email)
               </Button>
 
-              <Button
+              {/* <Button
                 colorScheme="purple"
                 size="sm"
                 leftIcon={<FaSms />}
@@ -192,7 +192,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
                 onClick={() => sendOTP('sms')}
               >
                 Send OTP (Phone)
-              </Button>
+              </Button> */}
 
               <Button
                 colorScheme="orange"

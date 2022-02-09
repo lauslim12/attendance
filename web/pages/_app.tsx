@@ -1,6 +1,7 @@
 import 'focus-visible/dist/focus-visible';
 
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
+import { mode } from '@chakra-ui/theme-tools';
 import type { AppProps } from 'next/app';
 
 import AuthRoute from '../components/AuthRoute';
@@ -40,12 +41,17 @@ const App = ({ Component, pageProps }: AppProps) => {
       resetCSS
       theme={extendTheme({
         styles: {
-          global: {
+          global: (props: any) => ({
             '::selection': {
               backgroundColor: '#945bf170',
               color: '#fff',
             },
-          },
+
+            // Override theme colors.
+            body: {
+              bg: mode('#f3f3f3', 'gray.800')(props),
+            },
+          }),
         },
         fonts: {
           body: `Inter, ${fallbackFonts}`,

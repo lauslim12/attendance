@@ -6,6 +6,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Button,
+  LightMode,
   Text,
   VStack,
 } from '@chakra-ui/react';
@@ -59,46 +60,48 @@ const QRDialog = ({
   };
 
   return (
-    <AlertDialog
-      motionPreset="slideInBottom"
-      isOpen={isOpen}
-      leastDestructiveRef={leastDestructiveRef}
-      onClose={onClose}
-      closeOnEsc={false}
-      closeOnOverlayClick={false}
-      size="3xl"
-      isCentered
-    >
-      <AlertDialogOverlay>
-        <AlertDialogContent>
-          <AlertDialogHeader fontSize="lg" fontWeight="bold">
-            Authenticator QR Code
-          </AlertDialogHeader>
+    <LightMode>
+      <AlertDialog
+        motionPreset="slideInBottom"
+        isOpen={isOpen}
+        leastDestructiveRef={leastDestructiveRef}
+        onClose={onClose}
+        closeOnEsc={false}
+        closeOnOverlayClick={false}
+        size="3xl"
+        isCentered
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent bg="white" color="black">
+            <AlertDialogHeader fontSize="lg" fontWeight="bold">
+              Authenticator QR Code
+            </AlertDialogHeader>
 
-          <AlertDialogBody>
-            <VStack spacing={4} align="start">
-              <Text>Thanks for using Attendance, {name}!</Text>
+            <AlertDialogBody>
+              <VStack spacing={4} align="start">
+                <Text>Thanks for using Attendance, {name}!</Text>
 
-              <Text>
-                Below is your QR code to be used with Authenticator apps. Use
-                your Authenticator application and scan this QR code and/or save
-                the QR code properly. This is used to authenticate you into the
-                application. Do NOT share this with anyone, treat this like your
-                password! This code will NOT be shown again, so please save it
-                before proceeding.
-              </Text>
+                <Text>
+                  Below is your QR code to be used with Authenticator apps. Use
+                  your Authenticator application and scan this QR code and/or
+                  save the QR code properly. This is used to authenticate you
+                  into the application. Do NOT share this with anyone, treat
+                  this like your password! This code will NOT be shown again, so
+                  please save it before proceeding.
+                </Text>
 
-              <Text>
-                Without QR codes, do not worry, you can still use your email
-                and/or SMS for the multi-factor authentication part of this
-                webservice.
-              </Text>
+                <Text>
+                  Without QR codes, do not worry, you can still use your email
+                  for the multi-factor authentication part of this webservice.
+                  For your information, this modal is intentionally made to be
+                  light-colored so you can scan the QR code with ease.
+                </Text>
 
-              <VStack w="full">
-                <QRCode id="qr-code-canvas" value={code} size={150} />
-              </VStack>
+                <VStack w="full">
+                  <QRCode id="qr-code-canvas" value={code} size={150} />
+                </VStack>
 
-              {/* <Text>
+                {/* <Text>
                 After you are ready, you will receive a confirmation email in
                 your email if this is the first time you are registering. Please
                 click on the validation link that is sent to your email. By
@@ -106,48 +109,49 @@ const QRDialog = ({
                 homepage.
               </Text> */}
 
-              <Text>
-                By clicking the Continue button, this modal will be closed and
-                you may have to log in for security.
-              </Text>
-            </VStack>
-          </AlertDialogBody>
+                <Text>
+                  By clicking the Continue button, this modal will be closed and
+                  you may have to log in for security.
+                </Text>
+              </VStack>
+            </AlertDialogBody>
 
-          <AlertDialogFooter>
-            <Button
-              leftIcon={<FaCode />}
-              colorScheme="green"
-              ref={leastDestructiveRef}
-              onClick={downloadQR}
-            >
-              Save Code
-            </Button>
+            <AlertDialogFooter>
+              <Button
+                leftIcon={<FaCode />}
+                colorScheme="green"
+                ref={leastDestructiveRef}
+                onClick={downloadQR}
+              >
+                Save Code
+              </Button>
 
-            {redirect ? (
-              <NextLink href={routes.home} passHref replace>
+              {redirect ? (
+                <NextLink href={routes.home} passHref replace>
+                  <Button
+                    as="a"
+                    leftIcon={<FaArrowRight />}
+                    colorScheme="blue"
+                    ml={3}
+                  >
+                    Continue
+                  </Button>
+                </NextLink>
+              ) : (
                 <Button
-                  as="a"
                   leftIcon={<FaArrowRight />}
                   colorScheme="blue"
                   ml={3}
+                  onClick={onClose}
                 >
                   Continue
                 </Button>
-              </NextLink>
-            ) : (
-              <Button
-                leftIcon={<FaArrowRight />}
-                colorScheme="blue"
-                ml={3}
-                onClick={onClose}
-              >
-                Continue
-              </Button>
-            )}
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialogOverlay>
-    </AlertDialog>
+              )}
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
+    </LightMode>
   );
 };
 
