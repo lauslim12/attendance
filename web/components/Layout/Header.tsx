@@ -18,11 +18,11 @@ import { useRouter } from 'next/router';
 import { memo } from 'react';
 import {
   FaBars,
-  FaBookmark,
   FaCircle,
   FaDatabase,
   FaLightbulb,
   FaMoon,
+  FaShieldAlt,
   FaSignOutAlt,
   FaUser,
 } from 'react-icons/fa';
@@ -68,42 +68,11 @@ const Header = () => {
 
       <Spacer />
 
-      {status && status.isAuthenticated && !largerThan1280 && (
-        <Menu isLazy>
-          <MenuButton
-            as={IconButton}
-            aria-label="Navigation and features"
-            icon={<FaBars />}
-            variant="outline"
-          />
-
-          <MenuList>
-            <NextLink href={routes.profile} passHref>
-              <Link>
-                <MenuItem icon={<FaUser />}>Profile</MenuItem>
-              </Link>
-            </NextLink>
-
-            <MenuItem icon={<FaSignOutAlt />} onClick={logout}>
-              Logout
-            </MenuItem>
-
-            {status.user?.role === 'admin' && (
-              <NextLink href={routes.admin} passHref>
-                <Link>
-                  <MenuItem icon={<FaDatabase />}>Admin</MenuItem>
-                </Link>
-              </NextLink>
-            )}
-          </MenuList>
-        </Menu>
-      )}
-
       {status && status.isAuthenticated && largerThan1280 && (
-        <HStack>
+        <HStack spacing={10} pt={4}>
           <NextLink href={routes.profile} passHref>
             <Link
-              fontWeight="bold"
+              fontWeight="semibold"
               _hover={{ textDecor: 'none', color: 'pink.400' }}
             >
               Profile
@@ -112,7 +81,7 @@ const Header = () => {
 
           <Text
             as="button"
-            fontWeight="bold"
+            fontWeight="semibold"
             _hover={{ textDecor: 'none', color: 'pink.400' }}
             onClick={logout}
           >
@@ -122,7 +91,7 @@ const Header = () => {
           {status.user?.role === 'admin' && (
             <NextLink href={routes.admin} passHref>
               <Link
-                fontWeight="bold"
+                fontWeight="semibold"
                 _hover={{ textDecor: 'none', color: 'pink.400' }}
               >
                 Admin
@@ -138,9 +107,10 @@ const Header = () => {
         <MenuButton
           as={IconButton}
           aria-label="Authentication status"
-          icon={<FaBookmark />}
+          icon={<FaShieldAlt />}
           variant="ghost"
         />
+
         <MenuList>
           {status?.user?.fullName ? (
             <NextLink href={routes.profile} passHref>
@@ -175,6 +145,37 @@ const Header = () => {
         icon={<FaMoon />}
         variant="ghost"
       />
+
+      {status && status.isAuthenticated && !largerThan1280 && (
+        <Menu isLazy>
+          <MenuButton
+            as={IconButton}
+            aria-label="Navigation and features"
+            icon={<FaBars />}
+            variant="outline"
+          />
+
+          <MenuList>
+            <NextLink href={routes.profile} passHref>
+              <Link>
+                <MenuItem icon={<FaUser />}>Profile</MenuItem>
+              </Link>
+            </NextLink>
+
+            <MenuItem icon={<FaSignOutAlt />} onClick={logout}>
+              Logout
+            </MenuItem>
+
+            {status.user?.role === 'admin' && (
+              <NextLink href={routes.admin} passHref>
+                <Link>
+                  <MenuItem icon={<FaDatabase />}>Admin</MenuItem>
+                </Link>
+              </NextLink>
+            )}
+          </MenuList>
+        </Menu>
+      )}
     </HStack>
   );
 };
