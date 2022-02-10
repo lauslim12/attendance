@@ -7,11 +7,11 @@ import {
   useToast,
   VStack,
 } from '@chakra-ui/react';
-import axios from 'axios';
 import dynamic from 'next/dynamic';
 import { memo, useState } from 'react';
 
 import { useUsers } from '../../utils/hooks';
+import axios from '../../utils/http';
 import type { User } from '../../utils/types';
 import { FailedToast, SuccessToast } from '../Toast';
 
