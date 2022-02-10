@@ -82,7 +82,7 @@ export const validateDefaultTOTP = (token: string, secret: string) => {
     secret: otpSecret,
   });
 
-  const delta = totp.validate({ token, window: 1 });
+  const delta = totp.validate({ token, window: 2 });
   if (delta === null) {
     return false;
   }

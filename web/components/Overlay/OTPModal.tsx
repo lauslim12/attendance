@@ -169,7 +169,7 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
 
             <Text>
               Please keep in mind that OTPs are integers only and are only valid
-              for 30 seconds. Remember to not share your OTPs with anyone. We
+              for one minute. Remember to not share your OTPs with anyone. We
               will never ask for your OTP.
             </Text>
 
