@@ -12,7 +12,7 @@ import redis from '../../infra/redis';
 const slowDown = (delayAfter: number) => {
   const store = new RedisStore({
     client: redis.nodeRedis,
-    prefix: 'sd-common',
+    prefix: 'sd-common:',
   });
 
   return expressSlowDown({
