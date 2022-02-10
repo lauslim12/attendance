@@ -43,7 +43,6 @@ class Email {
         host: config.EMAIL_HOST,
         port: config.EMAIL_PORT,
         secure: true,
-        requireTLS: true,
         auth: {
           user: config.EMAIL_USERNAME,
           pass: config.EMAIL_PASSWORD,

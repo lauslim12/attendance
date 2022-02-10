@@ -7,6 +7,7 @@ import loadExpress from './infra/express';
 import prisma from './infra/prisma';
 import redis from './infra/redis';
 import CacheService from './modules/cache/service';
+import Email from './modules/email';
 
 /**
  * Gracefully shuts down the application server.
@@ -63,6 +64,16 @@ async function startServer() {
     bull.getMaxListeners(),
   ]);
   console.log(`Status of infrastructures: ${JSON.stringify(status)}.`);
+
+  // Checks whether email service is ready to send messages.
+  const transporter = new Email('', '').newTransport();
+  transporter.verify((err) => {
+    if (err) {
+      console.error(err);
+    } else {
+      console.log('Mailserver is ready to perform requests!');
+    }
+  });
 
   // Prepare server.
   const app = loadExpress();
