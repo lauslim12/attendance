@@ -72,13 +72,13 @@ const AttendanceCard = ({ attendance, withName = false }: Props) => {
     <VStack
       as="article"
       align="start"
-      border="1px dashed #bb48bf"
+      border="1px dashed #95a5a6"
       borderRadius="md"
       p={3}
     >
       <HStack align="center">
         <VStack p={2}>
-          <Heading as="p" size="lg" color="pink.400">
+          <Heading as="p" size="lg">
             {formatDate(attendance.timeEnter, 'day')}
           </Heading>
 

@@ -26,7 +26,7 @@ const Admin = () => {
           <VStack as="section" spacing={3} h="full" justify="center">
             <Heading size="md">Welcome, {status.user.fullName}!</Heading>
 
-            <Text>
+            <Text textAlign={['center', 'left']}>
               {status.isMFA
                 ? 'Check out below menu for the configurations you may need to do.'
                 : 'Please authorize yourself before performing operations.'}
@@ -37,7 +37,7 @@ const Admin = () => {
                 pt={5}
                 templateColumns={['1fr', '1fr', '1fr', 'repeat(2, 1fr)']}
                 gap={5}
-                w={['full', '70vw', '70vw', '70vw', '50vw']}
+                w={['full', '80vw', '80vw', '80vw', '70vw', '50vw']}
               >
                 <MenuCard
                   header="Users"

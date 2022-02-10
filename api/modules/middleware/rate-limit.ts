@@ -16,7 +16,7 @@ import AppError from '../../util/app-error';
 const rateLimit = (max: number, prefix = 'common', minutes = 15) => {
   const store = new RedisStore({
     client: redis.nodeRedis,
-    prefix: `rl-${prefix}`,
+    prefix: `rl-${prefix}:`,
   });
 
   return rateLimiter({

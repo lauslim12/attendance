@@ -6,12 +6,14 @@ const nextSafe = require('next-safe');
 const nextConfig = {
   // Proxy to back-end in development mode.
   async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:8080/api/:path*',
-      },
-    ];
+    return process.env.NGINX
+      ? []
+      : [
+          {
+            source: '/api/:path*',
+            destination: 'http://localhost:8080/api/:path*',
+          },
+        ];
   },
 
   // Inject secure headers like Helmet.

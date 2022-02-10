@@ -130,7 +130,7 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
 
         <Stack direction={['column', 'row']} spacing={4}>
           <Button
-            colorScheme="yellow"
+            colorScheme="facebook"
             leftIcon={<FaPencilRuler />}
             onClick={editProfile}
             isLoading={isLoading}

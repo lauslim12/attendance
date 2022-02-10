@@ -66,12 +66,15 @@ const Users = () => {
 
             <Grid
               templateColumns={[
+                '1fr',
                 'repeat(2, 1fr)',
                 'repeat(4, 1fr)',
+                'repeat(5, 1fr)',
                 'repeat(6, 1fr)',
               ]}
               gap={4}
               pt={2}
+              w="full"
             >
               {users &&
                 users.map((user) => <UserCard key={user.userID} user={user} />)}

@@ -11,7 +11,7 @@ import type { Status } from '../../../utils/types';
  */
 const CurrentStatus = ({ status }: { status: Status }) => (
   <VStack as="section">
-    <Badge colorScheme="purple">Authenticated by Session</Badge>
+    <Badge colorScheme="linkedin">Authenticated by Session</Badge>
 
     {status.isMFA ? (
       <Badge colorScheme="green">Authenticated by MFA</Badge>

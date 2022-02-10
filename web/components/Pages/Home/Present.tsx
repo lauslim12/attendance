@@ -58,7 +58,9 @@ const Present = ({ status }: { status: Status }) => {
         </VStack>
       ) : (
         <VStack>
-          <Text>Please authorize yourself before posting your attendance.</Text>
+          <Text textAlign={['center', 'left']}>
+            Please authorize yourself before posting your attendance.
+          </Text>
           {status.user && <MFAButton type="blue" user={status.user} />}
         </VStack>
       )}

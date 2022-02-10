@@ -12,7 +12,7 @@ import type { User } from '../../../utils/types';
 const Topbox = ({ user }: { user: User }) => (
   <VStack
     as="header"
-    bg={useColorModeValue('#00baff', '#bb48bf')}
+    bg={useColorModeValue('rgb(160, 174, 192, .4)', 'rgb(74, 85, 104, .4)')}
     py={7}
     rounded="md"
     spacing={3}
@@ -21,7 +21,7 @@ const Topbox = ({ user }: { user: User }) => (
       {user.fullName}
     </Heading>
 
-    <Heading as="h2" size="md">
+    <Heading as="h2" size="sm">
       {user.email}
     </Heading>
 
