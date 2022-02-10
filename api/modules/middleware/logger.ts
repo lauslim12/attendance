@@ -7,6 +7,9 @@ import getDeviceID from '../../util/device-id';
 
 /**
  * Options for the default loggers.
+ *
+ * @param filename - File name to store the logs in.
+ * @returns An object consisting of logger options.
  */
 const options = (filename: string): LoggerOptions => ({
   // Store all logs in files. Will be created automatically as long as it does not break any permissions.

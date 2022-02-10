@@ -2,6 +2,7 @@ import type { ConnectionOptions, Job } from 'bullmq';
 import { Queue, Worker } from 'bullmq';
 
 import config from '../config';
+import logger from '../util/logger';
 
 /**
  * Data type for our queue data.
@@ -50,10 +51,10 @@ const worker = new Worker(
  * Setup pub/sub listeners.
  */
 worker.on('completed', (job: Job<BullData>) =>
-  console.log(`Job ${job.id} - ${job.name} has completed.`)
+  logger.info(`Job ${job.id} - ${job.name} has completed.`)
 );
 worker.on('failed', (job: Job<BullData>) =>
-  console.log(
+  logger.error(
     `Job ${job.id} - ${job.name} has failed with reason: ${JSON.stringify(
       job.failedReason
     )}.`
