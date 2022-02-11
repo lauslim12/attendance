@@ -49,6 +49,26 @@ export const useAttendances = () => {
 };
 
 /**
+ * Hook to get the current user's attendances status.
+ *
+ * @returns An object of booleans, whether the user has checked in/out or not.
+ */
+export const useAttendanceStatus = () => {
+  const { status } = useStatusAndUser();
+  const { data, error, mutate } = useSWR<{
+    hasCheckedIn: boolean;
+    hasCheckedOut: boolean;
+  }>(status?.isAuthenticated && '/api/v1/attendance/status', fetcher);
+
+  return {
+    attendanceStatus: data,
+    isLoading: !data && !error,
+    isError: error,
+    mutate,
+  };
+};
+
+/**
  * Replaces the main context of the application, used in almost all parts
  * of the web application in order to keep track of the authentication state
  * of the current user. Revalidates itself every 15 seconds.
