@@ -92,8 +92,8 @@ const AttendanceService = {
       return prisma.attendance.findMany({
         select,
         orderBy: [
-          { timeLeave: 'desc' },
           { timeEnter: 'desc' },
+          { timeLeave: 'desc' },
           { attendancePK: 'desc' },
         ],
       });
@@ -103,8 +103,8 @@ const AttendanceService = {
       where,
       select,
       orderBy: [
-        { timeLeave: 'desc' },
         { timeEnter: 'desc' },
+        { timeLeave: 'desc' },
         { attendancePK: 'desc' },
       ],
     });
