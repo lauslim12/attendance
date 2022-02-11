@@ -56,7 +56,12 @@ const options = (filename: string): LoggerOptions => ({
   ],
 
   // Do not log passwords.
-  bodyBlacklist: ['password'],
+  bodyBlacklist: [
+    'password',
+    'currentPassword',
+    'newPassword',
+    'confirmPassword',
+  ],
 });
 
 /**
