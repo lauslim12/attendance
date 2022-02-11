@@ -9,6 +9,7 @@ You may also call this project as 'Attendance as a Service' (AAAS).
 This research will focus on creating a highly-secure API that conforms to OWASP Security Best Practices. This research is divided into two subprojects:
 
 - `api` as a Node.js (Express) API. API is a JSON API which also acts as the authorization, authentication, and resource server.
+- `server` to provide sample configuration files for `systemd` and reverse proxy.
 - `web` as a Next.js front-end.
 
 The flow of the API (Request - Response) is as follows:
@@ -52,7 +53,7 @@ As this research focuses on creating a secure API, below are the considerations 
 
 - Users are divided into two roles: `admin` and `user`.
 - A special kind of authorized session: `OTPSession`, using JSON Web Tokens (RFC 7519). Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes). JSON Web Tokens are powered by `Ed25519` algorithm.
-- Sessions are signed cookies, implemented with a high-entropy session secret, and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security.
+- Sessions are signed cookies, implemented with a high-entropy session secret, and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security. Sessions can be manually managed by the corresponding user.
 - Passwords are hashed with `Argon2` algorithm.
 - The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator), and it is different for every other users in the system. Look at `cli/collision-test.ts` for tests.
 - Conforms to RFC 6238 and RFC 7617 (TOTP, Basic Authorization).
@@ -199,7 +200,46 @@ yarn --frozen-lockfile
 yarn dev
 ```
 
-- Keep in mind that your API has to be in an active state, or else it will not work.
+- Keep in mind that your API has to be in an active state, or else it will not work. Web is automatically set to proxy requests to `localhost:8080` if `NGINX` environment variable is not set (it is set if you are running `make build-production`, which will be explained in the next part of the documentation).
+
+## Production
+
+This whole app is supposed to live inside a Linux server, supervised by `systemd` and running behind Nginx reverse proxy. Make sure you are using a 64-bit OS, and please read the instructions properly (and the sample configuration files if you are using them) to prevent any miscommunications. By reading this, you are expected to have a basic knowledge of Linux system administration.
+
+### Production: Initial Setup
+
+- SSH into your instance.
+- Install dependencies such as MariaDB (`sudo apt install mariadb-server`), Redis (`sudo apt install redis-server`), nginx (`sudo apt install nginx`), and requirements above: Node.js (you may use `nvm`), and Yarn.
+- Password protect your resources (`sudo nano /etc/redis/redis.conf` or `mysql_secure_installation` and create password), create users with least privileges for those resources, and only allow access from `localhost`.
+- Pull the code to your machine, either by `scp`, `wget`, or `git clone` (may have to install `git` and prepare tokens / SSH access).
+- Prepare environment variables as described in [API Setup](#api-setup) and perform initial setup before building the whole app by using `make build-production`.
+- **Do NOT use the sample environment variables, the development data, and the like. Development and production environments MUST be separate. Create your own secrets and the like, there is a reason why sample environment variables are provided, and it is to help with the development process, NOT for production.**
+
+### Production: App Configuration
+
+- You may create two `systemd` configurations in `/etc/systemd/system/<SERVICE_NAME>.service`. One is for `api`, and one is for the `web` project. Sample configurations are available in `server/systemd`. Do so by using `sudo nano /etc/systemd/system/<SERVICE_NAME>.service`. Default names for services: `attendance-web.service` and `attendance-api.service`.
+- Refresh daemons by `sudo systemctl daemon-reload`.
+- Enable and activate on restart: `sudo systemctl enable <SERVICE_NAME>` and `sudo systemctl start <SERVICE_NAME>` for both services.
+- Copy the web server configurations in `/etc/nginx`. You may use my Nginx configuration (`server/nginx`, at the `nginx.conf` part of the document) and copy it in `/etc/nginx/nginx.conf`, and also use my server configuration (`server/nginx`, at the `sites-available` part of the document.) in `/etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT>`.
+- Symlink it by using `sudo ln -s /etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT> /etc/nginx/sites-enabled`. Test the configuration by running `sudo nginx -t`.
+- If everything goes well, do `sudo systemctl restart nginx` and access it on your machine. It may take a few seconds for it to run on your machine properly. Done!
+- (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet.
+
+### Production: Updates
+
+- If you want to update the production version, it is necessary to refresh the services and the webserver:
+
+```bash
+make build-production
+sudo systemctl restart attendance-api
+sudo systemctl restart attendance-web
+sudo systemctl restart nginx
+```
+
+### Production: Emails
+
+- You may have to set `rejectUnauthorized: false` in email in order to use several mailservers. Some mailservers use self-signed certificates, and it will not pass the Node.js TLS check. It is recommended that you fix those at the server-level though, not by using that line of code.
+- If you want to use Gmail, [this guide about using App Password with Gmail](https://gist.github.com/lauslim12/df25e3d0e6f2ca563977dfa05563aae7) may help you.
 
 ## Makefile
 
@@ -208,6 +248,7 @@ Several helper scripts have already been set up in case you want to build and/or
 - To clean all of the projects, use `make clean`.
 - To clean `api` of artifacts, use `make clean-api`. To clean `web` of artifacts, use `make clean-web`.
 - To build all projects, use `make build`.
+- To build all projects to prepare them to be placed behind a reverse proxy, use `make build-production`.
 
 ## Benchmarks
 
