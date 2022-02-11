@@ -17,6 +17,7 @@ import {
 } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
 import { FaBolt, FaCube } from 'react-icons/fa';
+import type { KeyedMutator } from 'swr';
 
 import axios from '../../utils/http';
 import { SuccessToast } from '../Toast';
@@ -28,6 +29,10 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   isIn: boolean;
+  setAttendanceStatus: KeyedMutator<{
+    hasCheckedIn: boolean;
+    hasCheckedOut: boolean;
+  }>;
 };
 
 /**
@@ -36,7 +41,12 @@ type Props = {
  * @param params- Props.
  * @returns React functional component.
  */
-const AttendanceModal = ({ isOpen, onClose, isIn }: Props) => {
+const AttendanceModal = ({
+  isOpen,
+  onClose,
+  isIn,
+  setAttendanceStatus,
+}: Props) => {
   const [error, setError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [remarks, setRemarks] = useState('');
@@ -64,8 +74,24 @@ const AttendanceModal = ({ isOpen, onClose, isIn }: Props) => {
       url: `/api/v1/attendance/${isIn ? 'in' : 'out'}`,
       data,
     })
-      .then((res) => SuccessToast(toast, res.message))
-      .then(onClose)
+      .then((res) => {
+        // Spawns a success toast.
+        SuccessToast(toast, res.message);
+
+        // Set attendance status accordingly.
+        const status = {
+          hasCheckedIn: true,
+          hasCheckedOut: isIn ? false : true,
+        };
+        if (isIn) {
+          setAttendanceStatus(status, false);
+        } else {
+          setAttendanceStatus(status, false);
+        }
+
+        // Close the modal.
+        onClose();
+      })
       .catch((err) => setError(err.message))
       .finally(() => setIsLoading(false));
   };

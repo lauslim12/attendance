@@ -1,10 +1,12 @@
-import { Button, Text, VStack } from '@chakra-ui/react';
+import { Button, Text, useToast, VStack } from '@chakra-ui/react';
 import { memo, useState } from 'react';
 import { FaRegGrinAlt, FaRegGrinBeam } from 'react-icons/fa';
 
+import { useAttendanceStatus } from '../../../utils/hooks';
 import type { Status } from '../../../utils/types';
 import MFAButton from '../../MFAButton';
 import AttendanceModal from '../../Overlay/AttendanceModal';
+import { FailedToast } from '../../Toast';
 
 /**
  * Present component.
@@ -13,8 +15,10 @@ import AttendanceModal from '../../Overlay/AttendanceModal';
  * @returns Present component.
  */
 const Present = ({ status }: { status: Status }) => {
+  const { attendanceStatus, mutate } = useAttendanceStatus();
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isModalTypeIn, setIsModalTypeIn] = useState(false);
+  const toast = useToast();
 
   return (
     <VStack as="section">
@@ -22,6 +26,7 @@ const Present = ({ status }: { status: Status }) => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         isIn={isModalTypeIn}
+        setAttendanceStatus={mutate}
       />
 
       {status.isMFA ? (
@@ -36,6 +41,11 @@ const Present = ({ status }: { status: Status }) => {
             variant="outline"
             isFullWidth
             onClick={() => {
+              if (attendanceStatus?.hasCheckedIn) {
+                FailedToast(toast, 'You have checked in for today!');
+                return;
+              }
+
               setIsModalTypeIn(true);
               setIsModalOpen(true);
             }}
@@ -49,6 +59,11 @@ const Present = ({ status }: { status: Status }) => {
             variant="outline"
             isFullWidth
             onClick={() => {
+              if (attendanceStatus?.hasCheckedOut) {
+                FailedToast(toast, 'You have checked in for today!');
+                return;
+              }
+
               setIsModalTypeIn(false);
               setIsModalOpen(true);
             }}
