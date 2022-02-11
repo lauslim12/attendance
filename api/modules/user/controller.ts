@@ -197,12 +197,12 @@ const UserController = {
       return;
     }
 
-    if (userByEmail && userByEmail.userID !== userByEmail.userID) {
+    if (userByEmail && userByEmail.userID !== id) {
       next(new AppError('This email has been used by another user!', 400));
       return;
     }
 
-    if (userByPhone && userByPhone.userID !== userByPhone.userID) {
+    if (userByPhone && userByPhone.userID !== id) {
       next(new AppError('This number has been used by another user!', 400));
       return;
     }
