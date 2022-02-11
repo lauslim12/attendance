@@ -15,7 +15,7 @@ import {
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
 import { useRouter } from 'next/router';
-import { memo } from 'react';
+import { memo, useEffect, useState } from 'react';
 import {
   FaBars,
   FaCircle,
@@ -43,6 +43,12 @@ const Header = () => {
   const [largerThan1280] = useMediaQuery('(min-width: 1280px)');
   const toast = useToast();
   const router = useRouter();
+
+  // Redundant, to prevent 'did not expect server HTML to contain' error.
+  const [isWidescreen, setIsWidescreen] = useState(false);
+  useEffect(() => {
+    setIsWidescreen(largerThan1280);
+  }, [largerThan1280]);
 
   const logout = () => {
     // Does not need revalidation as it's definitely resetting its state.
@@ -101,7 +107,7 @@ const Header = () => {
         </HStack>
       )}
 
-      {largerThan1280 && <Spacer />}
+      {isWidescreen && <Spacer />}
 
       <Menu>
         <MenuButton
