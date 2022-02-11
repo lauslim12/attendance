@@ -60,7 +60,7 @@ const Present = ({ status }: { status: Status }) => {
             isFullWidth
             onClick={() => {
               if (attendanceStatus?.hasCheckedOut) {
-                FailedToast(toast, 'You have checked in for today!');
+                FailedToast(toast, 'You have checked out for today!');
                 return;
               }
 
