@@ -48,6 +48,16 @@ class Email {
           user: config.EMAIL_USERNAME,
           pass: config.EMAIL_PASSWORD,
         },
+
+        // We may have to force the connection, this means
+        // something is perhaps wrong with the SMTP SSL certificates. If emails are
+        // not sent, probably the culprit is this line, as this is disabled.
+        //
+        // TODO: Find a way to mitigate this without using `rejectUnauthorized`
+        // on Indonesian mailservers.
+        // tls: {
+        //   rejectUnauthorized: false,
+        // },
       });
     }
 
