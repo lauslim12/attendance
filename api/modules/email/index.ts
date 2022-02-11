@@ -32,8 +32,10 @@ class Email {
 
   /**
    * Creates a new transport that is used to send emails.
-   * Production version will use Webmail/CPanel, while development version
-   * will use Mailtrap.
+   * Production version will use Webmail/CPanel/Gmail, while development version
+   * will use Mailtrap. In production, we will let Nodemailer handle all secure
+   * connections, and we will not try to configure anything strange to prevent
+   * failures.
    *
    * @returns Nodemailer transport.
    */
@@ -42,7 +44,6 @@ class Email {
       return nodemailer.createTransport({
         host: config.EMAIL_HOST,
         port: config.EMAIL_PORT,
-        secure: true,
         auth: {
           user: config.EMAIL_USERNAME,
           pass: config.EMAIL_PASSWORD,
