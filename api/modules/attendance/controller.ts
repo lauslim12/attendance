@@ -66,6 +66,41 @@ const AttendanceController = {
   },
 
   /**
+   * Gets all attendances of a single user by their session ID.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  getMyAttendances: async (req: Request, res: Response, next: NextFunction) => {
+    const { userID } = req.session;
+
+    if (!userID) {
+      next(new AppError('No session detected. Please log in again!', 401));
+      return;
+    }
+
+    const user = await UserService.getUserComplete({ userID });
+    if (!user) {
+      next(new AppError('User with this ID is not found.', 404));
+      return;
+    }
+
+    const attendances = await AttendanceService.getAttendances({
+      userPK: user.userPK,
+    });
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: attendances,
+      message: 'Successfully fetched attendance data for a single user!',
+      type: 'attendance',
+    });
+  },
+
+  /**
    * Gets the attendance status of the current user.
    *
    * @param req - Express.js's request object.
