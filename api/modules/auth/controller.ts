@@ -194,7 +194,7 @@ const AuthController = {
         res,
         status: 'success',
         statusCode: 200,
-        data: { ...filteredUser, sid: req.sessionID },
+        data: filteredUser,
         message: 'Logged in successfully!',
         type: 'auth',
       });
