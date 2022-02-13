@@ -167,6 +167,7 @@ const AuthController = {
     delete filteredUser.totpSecret;
     delete filteredUser.password;
     delete filteredUser.userPK;
+    delete filteredUser.confirmationCode;
 
     // Re-generate session to prevent multiple users sharing one session ID.
     req.session.regenerate((err) => {
@@ -193,7 +194,7 @@ const AuthController = {
         res,
         status: 'success',
         statusCode: 200,
-        data: filteredUser,
+        data: { ...filteredUser, sid: req.sessionID },
         message: 'Logged in successfully!',
         type: 'auth',
       });
