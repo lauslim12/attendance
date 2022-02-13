@@ -36,7 +36,7 @@ export const useRequest = <T>(key: Key) => {
  */
 export const useAttendances = () => {
   const { data, error, mutate } = useSWR<Attendance[]>(
-    '/api/v1/attendance',
+    '/api/v1/attendances',
     fetcher
   );
 
@@ -58,7 +58,7 @@ export const useAttendanceStatus = () => {
   const { data, error, mutate } = useSWR<{
     hasCheckedIn: boolean;
     hasCheckedOut: boolean;
-  }>(status?.isAuthenticated && '/api/v1/attendance/status', fetcher);
+  }>(status?.isAuthenticated && '/api/v1/attendances/status', fetcher);
 
   return {
     attendanceStatus: data,
@@ -110,7 +110,7 @@ export const useMe = () => {
     mutate: mutateAttendance,
   } = useSWR<Attendance[]>(
     status?.isAuthenticated && status.user
-      ? `/api/v1/users/${status.user.userID}/attendance`
+      ? `/api/v1/users/${status.user.userID}/attendances`
       : null,
     fetcher
   );

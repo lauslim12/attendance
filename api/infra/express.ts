@@ -92,7 +92,7 @@ function loadExpress() {
   // Define API routes. Throttle '/api' route to prevent spammers.
   app.use('/api', slowDown(75));
   app.use('/api/v1', healthHandler);
-  app.use('/api/v1/attendance', attendanceHandler);
+  app.use('/api/v1/attendances', attendanceHandler);
   app.use('/api/v1/auth', authHandler);
   app.use('/api/v1/sessions', sessionHandler);
   app.use('/api/v1/users', userHandler);

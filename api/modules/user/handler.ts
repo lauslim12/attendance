@@ -23,7 +23,7 @@ const UserHandler = () => {
   const adminRateLimit = rateLimit(30, 'users-admin');
 
   // Route to 'Attendance' entity based on the current user for better REST-ful experience.
-  handler.use('/:id/attendance', AttendanceHandler());
+  handler.use('/:id/attendances', AttendanceHandler());
 
   // Below endpoints are allowed for only authenticated users.
   handler.use(asyncHandler(hasSession));

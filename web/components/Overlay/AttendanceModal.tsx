@@ -71,7 +71,7 @@ const AttendanceModal = ({
     setIsLoading(true);
     axios({
       method: isIn ? 'POST' : 'PATCH',
-      url: `/api/v1/attendance/${isIn ? 'in' : 'out'}`,
+      url: `/api/v1/attendances/${isIn ? 'in' : 'out'}`,
       data,
     })
       .then((res) => {
