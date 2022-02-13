@@ -1,6 +1,7 @@
 import type { NextFunction, Request, Response } from 'express';
 
 import AppError from '../../util/app-error';
+import UserService from '../user/service';
 
 /**
  * Checks whether a user does have sufficient privileges / roles to access this endpoint.
@@ -9,13 +10,19 @@ import AppError from '../../util/app-error';
  */
 const hasRole =
   (...roles: string[]) =>
-  (req: Request, _: Response, next: NextFunction) => {
-    if (!req.session.userID || !req.session.userRole) {
+  async (req: Request, _: Response, next: NextFunction) => {
+    if (!req.session.userID) {
       next(new AppError('Session not found. Please log in again!', 401));
       return;
     }
 
-    if (!roles.includes(req.session.userRole)) {
+    const user = await UserService.getUser({ userID: req.session.userID });
+    if (!user) {
+      next(new AppError('User with that ID is not found.', 404));
+      return;
+    }
+
+    if (!roles.includes(user.role)) {
       next(
         new AppError('You are not authorized to access this endpoint!', 403)
       );

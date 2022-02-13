@@ -60,7 +60,6 @@ export type Status = {
  */
 export type Session = {
   userID: string;
-  userRole: 'admin' | 'user';
   lastActive: string;
   sessionInfo: {
     device: string;
