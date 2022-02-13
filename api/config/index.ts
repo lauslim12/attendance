@@ -14,9 +14,7 @@ const isProd = process.env.NODE_ENV === 'production';
  */
 const config = {
   // Cookie.
-  COOKIE_SECRET: get('COOKIE_SECRET')
-    .default('attendance-secret-cookie')
-    .asString(),
+  COOKIE_SECRET: get('COOKIE_SECRET').default('secretvalue').asString(),
 
   // Databases.
   DATABASE: get('DATABASE_URL').required().asString(),
@@ -29,9 +27,9 @@ const config = {
   EMAIL_PORT: get('EMAIL_PORT').default(465).asPortNumber(),
 
   // JWT tokens for second session.
-  JWT_AUDIENCE: get('JWT_AUDIENCE').default('attendance-users').asString(),
-  JWT_COOKIE_NAME: get('JWT_COOKIE_NAME').default('attendance-jws').asString(),
-  JWT_ISSUER: get('JWT_ISSUER').default('attendance-api').asString(),
+  JWT_AUDIENCE: get('JWT_AUDIENCE').default('users').asString(),
+  JWT_COOKIE_NAME: get('JWT_COOKIE_NAME').default('jwt').asString(),
+  JWT_ISSUER: get('JWT_ISSUER').default('api').asString(),
   JWT_PRIVATE_KEY: get('JWT_PRIVATE_KEY')
     .required()
     .convertFromBase64()
@@ -60,10 +58,10 @@ const config = {
   PORT: get('PORT').default(8080).asPortNumber(),
 
   // Session cookie name.
-  SESSION_COOKIE: get('SESSION_COOKIE').default('attendance-sid').asString(),
+  SESSION_COOKIE: get('SESSION_COOKIE').default('connect.sid').asString(),
 
   // Issuer of the TOTP.
-  TOTP_ISSUER: get('TOTP_ISSUER').default('Attendance').asString(),
+  TOTP_ISSUER: get('TOTP_ISSUER').default('Dev').asString(),
 };
 
 export default Object.freeze(config);
