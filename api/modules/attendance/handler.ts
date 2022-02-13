@@ -56,7 +56,7 @@ const AttendanceHandler = () => {
   // Gets all attendances data.
   handler.get(
     '/',
-    hasRole('admin'),
+    asyncHandler(hasRole('admin')),
     validate(AttendanceValidation.getAttendances),
     asyncHandler(AttendanceController.getAttendances)
   );

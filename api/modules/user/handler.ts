@@ -42,7 +42,11 @@ const UserHandler = () => {
     .delete(getMe, asyncHandler(UserController.deactivateUser));
 
   // Restrict endpoints for admins who are logged in and authenticated with MFA.
-  handler.use(adminRateLimit, hasRole('admin'), asyncHandler(hasJWT));
+  handler.use(
+    adminRateLimit,
+    asyncHandler(hasRole('admin')),
+    asyncHandler(hasJWT)
+  );
 
   // Perform get and create operations on the general entity.
   handler
