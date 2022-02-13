@@ -109,9 +109,7 @@ export const useMe = () => {
     error: attendanceError,
     mutate: mutateAttendance,
   } = useSWR<Attendance[]>(
-    status?.isAuthenticated && status.user
-      ? `/api/v1/users/${status.user.userID}/attendances`
-      : null,
+    status?.isAuthenticated && status.user ? `/api/v1/attendances/me` : null,
     fetcher
   );
 
