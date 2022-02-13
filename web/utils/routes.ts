@@ -14,7 +14,6 @@ const routes = {
   users: '/admin/users',
 
   // Utility routes.
-  sitemap: '/sitemap.xml',
   robots: '/robots.txt',
   notFound: '/404',
   notAuthorized: '/401',

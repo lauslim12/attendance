@@ -82,7 +82,7 @@ export const validateDefaultTOTP = (token: string, secret: string) => {
     secret: otpSecret,
   });
 
-  // Allow delta up to 2 (technically 120 seconds) in time drift.
+  // Allow delta up to 2 (technically 90 seconds) in time drift.
   const delta = totp.validate({ token, window: 2 });
   if (delta === null) {
     return false;

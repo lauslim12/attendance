@@ -177,7 +177,6 @@ const AuthController = {
 
       // Set signed cookies with session information.
       req.session.userID = user.userID;
-      req.session.userRole = user.role;
       req.session.lastActive = Date.now().toString();
       req.session.sessionInfo = getDeviceID(req);
       req.session.signedIn = Date.now().toString();

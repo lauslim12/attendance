@@ -2,7 +2,13 @@ import type { Key } from 'swr';
 import useSWR from 'swr';
 
 import { fetcher } from './http';
-import type { Attendance, Session, Status, User } from './types';
+import type {
+  Attendance,
+  AttendanceStatus,
+  Session,
+  Status,
+  User,
+} from './types';
 
 /**
  * Hook to call a `GET` request with Vercel's `useSWR` for performance and reactive
@@ -36,7 +42,7 @@ export const useRequest = <T>(key: Key) => {
  */
 export const useAttendances = () => {
   const { data, error, mutate } = useSWR<Attendance[]>(
-    '/api/v1/attendance',
+    '/api/v1/attendances',
     fetcher
   );
 
@@ -55,10 +61,10 @@ export const useAttendances = () => {
  */
 export const useAttendanceStatus = () => {
   const { status } = useStatusAndUser();
-  const { data, error, mutate } = useSWR<{
-    hasCheckedIn: boolean;
-    hasCheckedOut: boolean;
-  }>(status?.isAuthenticated && '/api/v1/attendance/status', fetcher);
+  const { data, error, mutate } = useSWR<AttendanceStatus>(
+    status?.isAuthenticated && '/api/v1/attendances/status',
+    fetcher
+  );
 
   return {
     attendanceStatus: data,
@@ -109,9 +115,7 @@ export const useMe = () => {
     error: attendanceError,
     mutate: mutateAttendance,
   } = useSWR<Attendance[]>(
-    status?.isAuthenticated && status.user
-      ? `/api/v1/users/${status.user.userID}/attendance`
-      : null,
+    status?.isAuthenticated && status.user ? `/api/v1/attendances/me` : null,
     fetcher
   );
 

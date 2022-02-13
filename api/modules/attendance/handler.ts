@@ -4,6 +4,7 @@ import { validate } from 'express-validation';
 import asyncHandler from '../../util/async-handler';
 import bodyParser from '../middleware/body-parser';
 import hasJWT from '../middleware/has-jwt';
+import hasRole from '../middleware/has-role';
 import hasSession from '../middleware/has-session';
 import rateLimit from '../middleware/rate-limit';
 import AttendanceController from './controller';
@@ -16,6 +17,7 @@ import AttendanceValidation from './validation';
  */
 const AttendanceHandler = () => {
   const handler = Router({ mergeParams: true });
+  const userAttendanceRateLimit = rateLimit(100, 'attendance-me');
   const attendanceRateLimit = rateLimit(15, 'attendance-check');
 
   // Endpoints are only for authenticated users,
@@ -44,9 +46,17 @@ const AttendanceHandler = () => {
     asyncHandler(AttendanceController.out)
   );
 
+  // Get personal attendance data.
+  handler.get(
+    '/me',
+    userAttendanceRateLimit,
+    asyncHandler(AttendanceController.getMyAttendances)
+  );
+
   // Gets all attendances data.
   handler.get(
     '/',
+    asyncHandler(hasRole('admin')),
     validate(AttendanceValidation.getAttendances),
     asyncHandler(AttendanceController.getAttendances)
   );

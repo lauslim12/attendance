@@ -23,7 +23,7 @@ const UserHandler = () => {
   const adminRateLimit = rateLimit(30, 'users-admin');
 
   // Route to 'Attendance' entity based on the current user for better REST-ful experience.
-  handler.use('/:id/attendance', AttendanceHandler());
+  handler.use('/:id/attendances', AttendanceHandler());
 
   // Below endpoints are allowed for only authenticated users.
   handler.use(asyncHandler(hasSession));
@@ -42,7 +42,11 @@ const UserHandler = () => {
     .delete(getMe, asyncHandler(UserController.deactivateUser));
 
   // Restrict endpoints for admins who are logged in and authenticated with MFA.
-  handler.use(adminRateLimit, hasRole('admin'), asyncHandler(hasJWT));
+  handler.use(
+    adminRateLimit,
+    asyncHandler(hasRole('admin')),
+    asyncHandler(hasJWT)
+  );
 
   // Perform get and create operations on the general entity.
   handler

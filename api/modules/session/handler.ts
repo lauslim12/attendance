@@ -37,7 +37,7 @@ const SessionHandler = () => {
     );
 
   // Only allow administrators.
-  handler.use(hasRole('admin'));
+  handler.use(asyncHandler(hasRole('admin')));
 
   // Only allow session checking and session invalidation (admins).
   handler.route('/').get(asyncHandler(SessionController.getAllSessions));

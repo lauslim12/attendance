@@ -42,7 +42,7 @@ const options = (filename: string): LoggerOptions => ({
   headerBlacklist: ['authorization', 'cookie'],
 
   // Ignore frequently called routes via SWR.
-  ignoredRoutes: ['/api/v1/auth/status', '/api/v1/attendance/status'],
+  ignoredRoutes: ['/api/v1/auth/status', '/api/v1/attendances/status'],
 
   // Log everything.
   requestWhitelist: [
