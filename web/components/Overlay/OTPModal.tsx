@@ -18,7 +18,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import { memo, useEffect, useState } from 'react';
-import { FaGoogle, FaMagic, FaMailBulk, FaSms, FaTimes } from 'react-icons/fa';
+import { FaGoogle, FaMagic, FaMailBulk, FaTimes } from 'react-icons/fa';
 
 import { useStatusAndUser } from '../../utils/hooks';
 import axios from '../../utils/http';
@@ -54,14 +54,15 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
   useEffect(() => {
     const ctrUpdate = setInterval(() => {
       if (counter === 0) {
-        clearInterval(ctrUpdate);
-        return;
+        return () => clearInterval(ctrUpdate);
       }
 
       setCounter((ctr) => ctr - 1);
     }, 1000);
 
-    return () => clearInterval(ctrUpdate);
+    return () => {
+      clearInterval(ctrUpdate);
+    };
   }, [counter]);
 
   // Sends an OTP.
@@ -102,7 +103,6 @@ const OTPModal = ({ isOpen, onClose, user }: Props) => {
         // Mutate the data without revalidation.
         mutate({ isAuthenticated: true, isMFA: true, user }, false);
       })
-      .then(onClose)
       .catch((err) => {
         setFlash({ type: 'error', message: err.message });
         setIsVerifyLoading(false);
