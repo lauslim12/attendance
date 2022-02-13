@@ -27,7 +27,7 @@ const Authenticatorbox = ({ status, user }: { status: Status; user: User }) => {
 
   const refreshMFA = () => {
     axios<{ uri: string }>({
-      method: 'PUT',
+      method: 'PATCH',
       url: '/api/v1/auth/update-mfa',
     })
       .then((res) => {
