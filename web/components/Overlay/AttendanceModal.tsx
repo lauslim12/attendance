@@ -20,6 +20,7 @@ import { FaBolt, FaCube } from 'react-icons/fa';
 import type { KeyedMutator } from 'swr';
 
 import axios from '../../utils/http';
+import type { AttendanceStatus } from '../../utils/types';
 import { SuccessToast } from '../Toast';
 
 /**
@@ -29,10 +30,7 @@ type Props = {
   isOpen: boolean;
   onClose: () => void;
   isIn: boolean;
-  setAttendanceStatus: KeyedMutator<{
-    hasCheckedIn: boolean;
-    hasCheckedOut: boolean;
-  }>;
+  setAttendanceStatus: KeyedMutator<AttendanceStatus>;
 };
 
 /**
