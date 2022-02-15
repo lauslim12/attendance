@@ -223,7 +223,8 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 - Copy the web server configurations in `/etc/nginx`. You may use my Nginx configuration (`server/nginx`, at the `nginx.conf` part of the document) and copy it in `/etc/nginx/nginx.conf`, and also use my server configuration (`server/nginx`, at the `sites-available` part of the document.) in `/etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT>`.
 - Symlink it by using `sudo ln -s /etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT> /etc/nginx/sites-enabled`. Test the configuration by running `sudo nginx -t`.
 - If everything goes well, do `sudo systemctl restart nginx` and access it on your machine. It may take a few seconds for it to run on your machine properly. Done!
-- (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet.
+- (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet. I recommend you to use `sudo apt install python3-certbot-nginx` as it automates most of the process.
+- (Optional) To improve your SSL rating after enabling HTTPS, please feel free to refer to my [HTTPS nginx configurations](./server/nginx.md).
 
 ### Production: Updates
 
