@@ -4,6 +4,8 @@ Secure API with OTP and Basic Authorization. Implemented as a full-stack applica
 
 You may also call this project as 'Attendance as a Service' (AAAS).
 
+[![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=1383571bd620&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
+
 ## About
 
 This research will focus on creating a highly-secure API that conforms to OWASP Security Best Practices. This research is divided into two subprojects:
