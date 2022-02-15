@@ -67,7 +67,7 @@ export const extractJWT = (req: Request) => {
 
   // If using signed cookies, then add `__Host' prefix if applicable.
   if (isHTTPS(req)) {
-    const cookie = `_Host-${config.JWT_COOKIE_NAME}`;
+    const cookie = `__Host-${config.JWT_COOKIE_NAME}`;
     return req.signedCookies[cookie];
   }
 
