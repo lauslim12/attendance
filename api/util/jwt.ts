@@ -3,6 +3,7 @@ import type { JWTHeaderParameters, JWTPayload, JWTVerifyOptions } from 'jose';
 import { importPKCS8, importSPKI, jwtVerify, SignJWT } from 'jose';
 
 import config from '../config';
+import isHTTPS from './is-https';
 
 /**
  * Signs a JWT token with EdDSA algorithm, will transform the JWT into JWS.
@@ -62,6 +63,12 @@ export const extractJWT = (req: Request) => {
 
   if (authorization?.startsWith('Bearer ')) {
     return authorization.split(' ')[1];
+  }
+
+  // If using signed cookies, then add `__Host' prefix if applicable.
+  if (isHTTPS(req)) {
+    const cookie = `_Host-${config.JWT_COOKIE_NAME}`;
+    return req.signedCookies[cookie];
   }
 
   return req.signedCookies[config.JWT_COOKIE_NAME];
