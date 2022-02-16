@@ -214,8 +214,10 @@ server {
   include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
   ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
   ssl_trusted_certificate /etc/letsencrypt/live/<YOUR_DOMAIN_NAME>/chain.pem;
-}
 
+  # Turn off GZIP with HTTP/2.
+  gzip off;
+}
 
 server {
     if ($host = <YOUR_DOMAIN_NAME>) {
@@ -223,7 +225,7 @@ server {
     } # managed by Certbot
 
 
-    if ($host = <YOUR_DOMAIN_NAME>) {
+    if ($host = www.<YOUR_DOMAIN_NAME>) {
         return 301 https://$host$request_uri;
     } # managed by Certbot
 
@@ -244,11 +246,13 @@ ssl_session_cache shared:le_nginx_SSL:1m;
 ssl_session_timeout 1d;
 ssl_session_tickets off;
 
-ssl_protocols TLSv1.2;
+ssl_protocols TLSv1.2 TLSv1.3;
 ssl_prefer_server_ciphers on;
 ssl_ciphers "EECDH+AESGCM:EDH+AESGCM:AES256+EECDH:AES256+EDH";
 ssl_ecdh_curve secp384r1;
 
 ssl_stapling on;
 ssl_stapling_verify on;
+
+add_header Strict-Transport-Security "max-age=15768000; includeSubdomains; preload;";
 ```
