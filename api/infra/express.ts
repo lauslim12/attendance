@@ -36,7 +36,11 @@ function loadExpress() {
 
   // Use logging on application.
   if (config.NODE_ENV === 'production') {
-    app.use(morgan('combined'));
+    app.use(
+      morgan(
+        ':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" :response-time ms'
+      )
+    );
   } else {
     app.use(morgan('dev'));
   }
