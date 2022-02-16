@@ -5,8 +5,8 @@ import config from '../../config';
 import { generateDefaultTOTP, validateDefaultTOTP } from '../../core/rfc6238';
 import { parseBasicAuth } from '../../core/rfc7617';
 import AppError from '../../util/app-error';
+import setCookie from '../../util/cookies';
 import getDeviceID from '../../util/device-id';
-import isHTTPS from '../../util/is-https';
 import { extractJWT, signJWS, verifyToken } from '../../util/jwt';
 import { verifyPassword } from '../../util/passwords';
 import safeCompare from '../../util/safe-compare';
@@ -182,10 +182,13 @@ const AuthController = {
       req.session.signedIn = Date.now().toString();
 
       // Remove MFA session cookie if it exists.
-      const cookie = isHTTPS(req)
-        ? `__Host-${config.JWT_COOKIE_NAME}`
-        : config.JWT_COOKIE_NAME;
-      res.cookie(cookie, 'loggedOut', { maxAge: 10 });
+      setCookie({
+        req,
+        res,
+        name: config.JWT_COOKIE_NAME,
+        value: 'loggedOut',
+        maxAge: 10,
+      });
 
       // Send response.
       sendResponse({
@@ -215,14 +218,20 @@ const AuthController = {
       }
 
       // Clears all session from cookie.
-      const session = isHTTPS(req)
-        ? `__Host-${config.SESSION_COOKIE}`
-        : config.SESSION_COOKIE;
-      const jwt = isHTTPS(req)
-        ? `__Host-${config.JWT_COOKIE_NAME}`
-        : config.JWT_COOKIE_NAME;
-      res.cookie(session, 'loggedOut', { maxAge: 10 });
-      res.cookie(jwt, 'loggedOut', { maxAge: 10 });
+      setCookie({
+        req,
+        res,
+        name: config.SESSION_COOKIE,
+        value: 'loggedOut',
+        maxAge: 10,
+      });
+      setCookie({
+        req,
+        res,
+        name: config.JWT_COOKIE_NAME,
+        value: 'loggedOut',
+        maxAge: 10,
+      });
 
       sendResponse({
         req,
@@ -623,17 +632,13 @@ const AuthController = {
     // Set OTP session by its JTI.
     await CacheService.setOTPSession(jti, user.userID);
 
-    // Set cookie for the JWS. Use '__Host-' prefix for security in HTTPS.
-    const cookie = isHTTPS(req)
-      ? `__Host-${config.JWT_COOKIE_NAME}`
-      : config.JWT_COOKIE_NAME;
-    res.cookie(cookie, token, {
-      httpOnly: true,
-      secure: isHTTPS(req),
-      sameSite: 'strict',
+    // Set cookie for the JWS.
+    setCookie({
+      req,
+      res,
+      name: config.JWT_COOKIE_NAME,
+      value: token,
       maxAge: 900000, // 15 minutes
-      signed: true,
-      path: '/',
     });
 
     // Send response.
