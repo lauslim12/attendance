@@ -23,6 +23,8 @@ const rateLimit = (max: number, prefix = 'common', minutes = 15) => {
     store,
     max, // max requests in 'windowMs'
     windowMs: minutes * 60 * 1000, // `minutes` number of minutes
+    standardHeaders: true, // use `RateLimit-*` headers
+    legacyHeaders: false, // Disable `X-Rate-Limit` headers
     handler(_: Request, __: Response, next: NextFunction) {
       next(
         new AppError(
