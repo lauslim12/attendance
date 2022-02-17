@@ -86,6 +86,8 @@ Several OWASP best practices are also followed:
 - [OWASP REST Cheatsheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)
 - [OWASP MFA Cheatsheet](https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html)
 
+In addition, [Snyk](https://snyk.io/) is also used to ensure that the dependencies used are secure.
+
 ## Documentation
 
 API documentation is available at Postman, and it is under construction for now. All of the codebase in the API is completely documented with TypeScript and JSDoc.
@@ -225,7 +227,7 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 - Copy the web server configurations in `/etc/nginx`. You may use my Nginx configuration (`server/nginx`, at the `nginx.conf` part of the document) and copy it in `/etc/nginx/nginx.conf`, and also use my server configuration (`server/nginx`, at the `sites-available` part of the document.) in `/etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT>`.
 - Symlink it by using `sudo ln -s /etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT> /etc/nginx/sites-enabled`. Test the configuration by running `sudo nginx -t`.
 - If everything goes well, do `sudo systemctl restart nginx` and access it on your machine. It may take a few seconds for it to run on your machine properly. Done!
-- (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet. I recommend you to use `sudo apt install python3-certbot-nginx` as it automates most of the process.
+- (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet. I recommend you to use `sudo apt install python3-certbot-nginx` as it automates most of the process and it allows you to perform automatic renewals.
 - (Optional) To improve your SSL rating after enabling HTTPS, please feel free to refer to my [HTTPS nginx configurations](./server/nginx.md).
 
 ### Production: Updates
@@ -255,27 +257,13 @@ Several helper scripts have already been set up in case you want to build and/or
 
 ## Benchmarks
 
-Some calculations are done in order to keep track of security.
+Several evaluations/calculations are done in order to keep track of security are performed as follows:
 
 - You may run `yarn collision-test` in order to check out the collision probability for `nanoid` and `Math.random()`.
-
-## Updates
-
-You may run `yarn upgrade-interactive --latest` to upgrade dependencies. Make sure there are no breaking changes that might break the application.
+- You may use [OWASP ZAP Baseline](https://www.zaproxy.org/docs/docker/baseline-scan/) in order to perform automated penetration tests on the application.
+- If you have Snyk CLI installed, you can run `snyk test --all-projects` to find vulnerable dependencies, and/or `snyk code test` to perform static code analysis.
+- If you need to update dependencies, you can use `yarn upgrade-interactive --latest` to do so. Please make sure there are no breaking changes that might break the application.
 
 ## License
 
 Application is licensed under MIT License. The research itself will follow the publisher's license after it has been published.
-
-## Upcoming
-
-Upcoming features to be implemented:
-
-- Hosting, webservers, and mailservers.
-- OWASP scanning and assessment, plus using Snyk for dependency scanning.
-
-I have been thinking of adding these features as well:
-
-- SMS implementation.
-- PNPM Integration.
-- More ESLint (`security`, `requiring-type-checking`, `unicorn`, `sonarjs`) for better practices and cleaner style.
