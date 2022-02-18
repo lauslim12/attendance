@@ -101,11 +101,6 @@ const Register = () => {
             <VStack spacing={1}>
               <Heading size="lg">Register</Heading>
               <Text>To use this webservice</Text>
-
-              <Text fontSize="xs" textAlign="center" fontWeight="bold">
-                You may use disposable email addresses like 10minutemail or
-                whatever.
-              </Text>
             </VStack>
 
             {error.trim() !== '' && (

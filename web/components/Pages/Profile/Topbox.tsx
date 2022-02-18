@@ -29,10 +29,6 @@ const Topbox = ({ user }: { user: User }) => (
       {user.phoneNumber}
     </Heading>
 
-    <Heading as="h4" size="xs">
-      {user.username}
-    </Heading>
-
     {user.role === 'admin' ? (
       <Badge colorScheme="green">{user.role}</Badge>
     ) : (
