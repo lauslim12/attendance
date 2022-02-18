@@ -30,12 +30,6 @@ const Layout = ({ children, title }: Props) => (
       <meta name="msapplication-navbutton-color" content="#f67e4d" />
       <meta name="apple-mobile-web-app-status-bar-style" content="#f67e4d" />
 
-      <meta
-        name="description"
-        content="Attendance web frontend, a proof of concept to show the security of a REST API."
-      />
-      <meta name="robots" content="noindex, nofollow" />
-
       <title>
         {[...title.map((x) => x?.trim()).filter((x) => x), 'Attendance'].join(
           ' · '

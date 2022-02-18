@@ -15,6 +15,16 @@ class AppDocument extends Document {
     return { ...initialProps };
   }
 
+  /**
+   * Method to render the main document part of the app.
+   * Meta tags in order:
+   * - Google Fonts
+   * - Favicon
+   * - Normal Meta Tags
+   * - OpenGraph Tags
+   *
+   * @returns Next.js document.
+   */
   render() {
     return (
       <Html lang="en">
@@ -29,7 +39,26 @@ class AppDocument extends Document {
             href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
             rel="stylesheet"
           />
+
           <link rel="shortcut icon" href="favicon.png" type="image/png" />
+
+          <meta
+            name="description"
+            content="The front-end implementation of Attendance, a proof of concept to show the security of a REST API that conforms to JSON:API and OWASP specifications."
+          />
+
+          <meta property="og:title" content="Fumi-no" />
+          <meta
+            property="og:description"
+            content="The front-end implementation of Attendance, a proof of concept to show the security of a REST API that conforms to JSON:API and OWASP specifications."
+          />
+          <meta property="og:url" content="https://www.fumi-no.com" />
+          <meta property="og:image" content="https://www.fumi-no.com/seo.jpg" />
+          <meta property="og:image:alt" content="Icon for the website" />
+          <meta property="og:image:width" content="512" />
+          <meta property="og:image:height" content="512" />
+          <meta property="og:locale" content="en_US" />
+          <meta property="og:site_name" content="Fumi-no" />
         </Head>
         <body>
           <Main />
