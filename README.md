@@ -264,6 +264,11 @@ Several evaluations/calculations are done in order to keep track of security are
 - If you have Snyk CLI installed, you can run `snyk test --all-projects` to find vulnerable dependencies, and/or `snyk code test` to perform static code analysis.
 - If you need to update dependencies, you can use `yarn upgrade-interactive --latest` to do so. Please make sure there are no breaking changes that might break the application.
 
+## Credits
+
+- [Icons8.com](https://icons8.com/) for the API Favicon.
+- [Wesson Wang](https://unsplash.com/@wesson) for the SEO image.
+
 ## License
 
 Application is licensed under MIT License. The research itself will follow the publisher's license after it has been published.
