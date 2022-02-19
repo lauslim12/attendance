@@ -47,7 +47,7 @@ class AppDocument extends Document {
             content="The front-end implementation of Attendance, a proof of concept to show the security of a REST API that conforms to JSON:API and OWASP specifications."
           />
 
-          <meta property="og:title" content="Fumi-no" />
+          <meta property="og:title" content="Attendance" />
           <meta
             property="og:description"
             content="The front-end implementation of Attendance, a proof of concept to show the security of a REST API that conforms to JSON:API and OWASP specifications."
@@ -58,7 +58,7 @@ class AppDocument extends Document {
           <meta property="og:image:width" content="512" />
           <meta property="og:image:height" content="512" />
           <meta property="og:locale" content="en_US" />
-          <meta property="og:site_name" content="Fumi-no" />
+          <meta property="og:site_name" content="Attendance" />
         </Head>
         <body>
           <Main />
