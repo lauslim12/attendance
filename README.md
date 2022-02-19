@@ -42,6 +42,8 @@ Below is the list of main features that this system have:
 - (**A B**) Admins can see all sessions and can invalidate them manually.
 - (**A B C**) Admins can perform CRUD operations on the `User` entity.
 - When set up, this system can remind people to log out at a certain time.
+- The whole application is responsive and naturally supports HTTPS.
+- OpenGraph tags are already set up for SEO purposes.
 
 Legend:
 
@@ -73,24 +75,23 @@ As this research focuses on creating a secure API, below are the considerations 
 - Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
 - Prevent attacks like parameter pollution, payload too large, bad JSON, and many more with proper status codes.
 - Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
+- Powered by strong HTTPS ciphers and protected Linux processes (guidelines included).
 
-This application conforms to the following security guidelines:
+## Standards
 
-- [OWASP ASVS](https://github.com/OWASP/ASVS) (only taking several metrics, such as Session Management, Cookie Management, and others)
-- [OWASP: Authentication Testing](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/README)
-- [OWASP: Authorization Testing](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/README)
-- [OWASP: API Security](https://owasp.org/www-project-api-security/)
+This application conforms to the following security standards:
 
-Several OWASP best practices are also followed:
-
-- [OWASP REST Cheatsheet](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html)
-- [OWASP MFA Cheatsheet](https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html)
-
-In addition, [Snyk](https://snyk.io/) is also used to ensure that the dependencies used are secure.
+- [OWASP ASVS](https://github.com/OWASP/ASVS) (Session Security, OTP Security)
+- [OWASP WSTG: Authentication Testing](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/04-Authentication_Testing/README)
+- [OWASP WSTG: Authorization Testing](https://owasp.org/www-project-web-security-testing-guide/latest/4-Web_Application_Security_Testing/05-Authorization_Testing/README)
+- [OWASP API: Top 10 API Security](https://owasp.org/www-project-api-security/)
+- [OWASP ZAP: Baseline](https://www.zaproxy.org/docs/docker/baseline-scan/)
+- [Snyk: Dependencies and Code Security](https://snyk.io)
+- OWASP Security Cheatsheet: [REST](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html), [Node.js](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html), [MFA](https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html).
 
 ## Documentation
 
-API documentation is available at Postman, and it is under construction for now. All of the codebase in the API is completely documented with TypeScript and JSDoc.
+API documentation is available at Postman, and it is under construction for now. The whole codebase in this repository is completely documented with TypeScript and JSDoc.
 
 ## Requirements
 
@@ -103,6 +104,15 @@ For development, you need the following technologies installed on your machine:
 - [Mailtrap](https://mailtrap.io/) to test emails in development environment
 - Unix-based systems or MacOS
 - Authenticators, such as Google Authenticator, Microsoft Authenticator, etc.
+
+For production, you need the following technologies:
+
+- Debian OS is recommended (latest)
+- Node.js and Yarn (NVM is recommended)
+- MariaDB, Redis, Nginx
+- Mailservers (you may use Gmail with App Passwords)
+
+Docker is only used for development. Production will use an ordinary Linux server.
 
 ## Development
 
@@ -179,7 +189,7 @@ yarn dev
 ```bash
 crontab -l
 crontab -e
-00 18 * * * cd "~/attendance" && yarn reminder
+00 18 * * * cd "~/attendance/api" && yarn reminder
 ```
 
 - If you have already set up everything above and are coming back to develop after a while, then the steps to run this quickly are: `cd attendance`, `docker-compose up -d`, `cd api`, `yarn migrate`, and finally `yarn dev`.
@@ -208,12 +218,13 @@ yarn dev
 
 ## Production
 
-This whole app is supposed to live inside a Linux server, supervised by `systemd` and running behind Nginx reverse proxy. Make sure you are using a 64-bit OS, and please read the instructions properly (and the sample configuration files if you are using them) to prevent any miscommunications. By reading this, you are expected to have a basic knowledge of Linux system administration.
+This whole app is supposed to live inside a Linux server, supervised by `systemd` and running behind Nginx reverse proxy. Make sure you are using a 64-bit OS, and please read the instructions properly (and the sample configuration files if you are using them) to prevent any miscommunications. By reading this, you are expected to have a basic knowledge of Linux system administration. This guide assumes that you are using Debian-based OS.
 
 ### Production: Initial Setup
 
-- SSH into your instance.
-- Install dependencies such as MariaDB (`sudo apt install mariadb-server`), Redis (`sudo apt install redis-server`), nginx (`sudo apt install nginx`), and requirements above: Node.js (you may use `nvm`), and Yarn.
+- SSH into your instance. It is recommended that you disallow login with password to your instance.
+- Remember not to install this application as the `root` user. Change it to someone else for security.
+- Install dependencies such as MariaDB (`sudo apt install mariadb-server`), Redis (`sudo apt install redis-server`), nginx (`sudo apt install nginx`), and requirements above: Node.js (you may use `nvm` for convenient version management), and Yarn.
 - Password protect your resources (`sudo nano /etc/redis/redis.conf` or `mysql_secure_installation` and create password), create users with least privileges for those resources, and only allow access from `localhost`.
 - Pull the code to your machine, either by `scp`, `wget`, or `git clone` (may have to install `git` and prepare tokens / SSH access).
 - Prepare environment variables as described in [API Setup](#api-setup) and perform initial setup before building the whole app by using `make build-production`.
