@@ -148,7 +148,7 @@ const Register = () => {
               placeholder="••••••••••"
               value={password}
               setValue={setPassword}
-              helper="Your preferred password."
+              helper="Your preferred password. Minimum is 8 characters."
               isPassword={!showPassword}
             />
 

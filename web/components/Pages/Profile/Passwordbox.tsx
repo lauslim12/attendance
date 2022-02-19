@@ -83,7 +83,7 @@ const Passwordbox = () => {
           placeholder="••••••••••"
           value={newPassword}
           setValue={setNewPassword}
-          helper="Your new password"
+          helper="Your new password. Minimum is 8 characters"
           isPassword={!showPassword}
         />
 
