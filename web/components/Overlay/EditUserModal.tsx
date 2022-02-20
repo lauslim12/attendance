@@ -19,6 +19,7 @@ import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { useStatusAndUser, useUsers } from '../../utils/hooks';
 import axios from '../../utils/http';
 import type { User } from '../../utils/types';
+import EmailInput from '../Input/EmailInput';
 import PhoneInput from '../Input/PhoneInput';
 import SelectInput from '../Input/SelectInput';
 import TextInput from '../Input/TextInput';
@@ -98,7 +99,7 @@ const EditUserModal = ({ isOpen, onClose, user }: Props) => {
               helper="The full name to be used."
             />
 
-            <TextInput
+            <EmailInput
               label="Email"
               placeholder="john.smith@gmail.com"
               value={email}

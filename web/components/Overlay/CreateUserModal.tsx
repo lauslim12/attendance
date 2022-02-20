@@ -19,6 +19,7 @@ import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { useUsers } from '../../utils/hooks';
 import axios from '../../utils/http';
 import type { User } from '../../utils/types';
+import EmailInput from '../Input/EmailInput';
 import PhoneInput from '../Input/PhoneInput';
 import SelectInput from '../Input/SelectInput';
 import TextInput from '../Input/TextInput';
@@ -122,7 +123,7 @@ const CreateUserModal = ({ isOpen, onClose }: Props) => {
                 helper="The full name to be used."
               />
 
-              <TextInput
+              <EmailInput
                 label="Email"
                 placeholder="john.smith@gmail.com"
                 value={email}

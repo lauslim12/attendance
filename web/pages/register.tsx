@@ -17,6 +17,7 @@ import type { FormEvent } from 'react';
 import { memo, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
+import EmailInput from '../components/Input/EmailInput';
 import PhoneInput from '../components/Input/PhoneInput';
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
@@ -128,7 +129,7 @@ const Register = () => {
               helper="Your preferred username."
             />
 
-            <TextInput
+            <EmailInput
               label="Email"
               placeholder="john.smith@gmail.com"
               value={email}
