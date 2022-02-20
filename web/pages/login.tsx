@@ -128,6 +128,12 @@ const Login = () => {
                   Not yet registered? Create an account!
                 </Link>
               </NextLink>
+
+              <NextLink href={routes.resetPassword} passHref>
+                <Link fontSize="xs" color="red.400" fontWeight="bold">
+                  Forgot your password? Click here to restore!
+                </Link>
+              </NextLink>
             </VStack>
 
             <Button
