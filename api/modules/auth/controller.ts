@@ -9,6 +9,7 @@ import setCookie from '../../util/cookies';
 import getDeviceID from '../../util/device-id';
 import { extractJWT, signJWS, verifyToken } from '../../util/jwt';
 import { verifyPassword } from '../../util/passwords';
+import randomBytes from '../../util/random-bytes';
 import safeCompare from '../../util/safe-compare';
 import sendResponse from '../../util/send-response';
 import CacheService from '../cache/service';
@@ -126,6 +127,81 @@ const AuthController = {
   },
 
   /**
+   * A user can securely reset their password by using this handler.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  forgotPassword: async (req: Request, res: Response, next: NextFunction) => {
+    const { email, username } = req.body;
+
+    // Try to find user by both attributes.
+    const [userByUsername, userByEmail] = await Promise.all([
+      UserService.getUser({ email }),
+      UserService.getUser({ username }),
+    ]);
+
+    if (!userByUsername || !userByEmail) {
+      next(new AppError('User with those identifiers is not found!', 404));
+      return;
+    }
+
+    // If username is not paired with the email, then short circuit.
+    if (userByUsername.email !== email || userByEmail.username !== username) {
+      next(new AppError('Incorrect username and/or email!', 401));
+      return;
+    }
+
+    // Ensure that the cache is not filled yet.
+    const attempts = await CacheService.getForgotPasswordAttempts(
+      userByUsername.userID
+    );
+    if (attempts && Number.parseInt(attempts, 10) === 2) {
+      next(
+        new AppError(
+          'You have recently asked for a password reset twice. Please wait for two hours before retrying.',
+          429
+        )
+      );
+      return;
+    }
+
+    // Generate a random reset token and a password reset URL. In development, set the URL
+    // to port 3000 as well.
+    const token = await randomBytes();
+    const url = `${req.protocol}://${req.hostname}${
+      config.NODE_ENV === 'production' ? undefined : ':3000'
+    }/reset-password?token=${token}&action=reset`;
+
+    // Insert token to that user.
+    await UserService.updateUser(
+      { userID: userByUsername.userID },
+      { forgotPasswordCode: token }
+    );
+
+    // Send to email.
+    await new Email(
+      userByUsername.email,
+      userByUsername.fullName
+    ).sendForgotPassword(url);
+
+    // Increment cache.
+    await CacheService.setForgotPasswordAttempts(userByUsername.userID);
+
+    // Send response.
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 202,
+      data: [],
+      message: 'Reset password request has been sent to the email!',
+      type: 'auth',
+    });
+  },
+
+  /**
    * Logs in a user into the webservice.
    *
    * @param req - Express.js's request object.
@@ -168,6 +244,7 @@ const AuthController = {
     delete filteredUser.password;
     delete filteredUser.userPK;
     delete filteredUser.confirmationCode;
+    delete filteredUser.forgotPasswordCode;
 
     // Re-generate session to prevent multiple users sharing one session ID.
     req.session.regenerate((err) => {
@@ -319,6 +396,53 @@ const AuthController = {
       data: user,
       message:
         'Successfully registered! Please check your email address for verification.',
+      type: 'auth',
+    });
+  },
+
+  /**
+   * Resets a user password. Should be the flow after 'forgotPassword' is called and the
+   * user clicks on that link.
+   *
+   * @param req - Express.js's request object.
+   * @param res - Express.js's response object.
+   * @param next - Express.js's next function.
+   */
+  resetPassword: async (req: Request, res: Response, next: NextFunction) => {
+    const { newPassword, confirmPassword } = req.body;
+    const { token } = req.params;
+
+    // Validates whether the passwords are the same or not.
+    if (!safeCompare(newPassword, confirmPassword)) {
+      next(new AppError('Your passwords do not match!', 400));
+      return;
+    }
+
+    // Validates whether the token is the same or not.
+    const user = await UserService.getUser({ forgotPasswordCode: token });
+    if (!user) {
+      next(new AppError('There is no user associated with the token.', 404));
+      return;
+    }
+
+    // If passwords are the same, we update them.
+    await UserService.updateUser(
+      { userID: user.userID },
+      { password: newPassword, forgotPasswordCode: null }
+    );
+
+    // Destroy all sessions related to this user.
+    await CacheService.deleteUserSessions(user.userID);
+
+    // Send response.
+    sendResponse({
+      req,
+      res,
+      status: 'success',
+      statusCode: 200,
+      data: [],
+      message:
+        'Password has been successfully reset. Please try logging in again!',
       type: 'auth',
     });
   },

@@ -34,6 +34,15 @@ const AuthHandler = () => {
   // Logs out a single user.
   handler.post('/logout', AuthController.logout);
 
+  // Allow user to forgot their own password.
+  handler.post(
+    '/forgot-password',
+    authRateLimit,
+    bodyParser,
+    validate(AuthValidation.forgotPassword),
+    asyncHandler(AuthController.forgotPassword)
+  );
+
   // Sends and verifies OTP.
   handler
     .route('/otp')
@@ -56,6 +65,15 @@ const AuthHandler = () => {
     bodyParser,
     validate(AuthValidation.register),
     asyncHandler(AuthController.register)
+  );
+
+  // Allows a user to reset their own password.
+  handler.patch(
+    '/reset-password/:token',
+    authRateLimit,
+    bodyParser,
+    validate(AuthValidation.resetPassword),
+    asyncHandler(AuthController.resetPassword)
   );
 
   // Updates MFA for the currently logged in user.
