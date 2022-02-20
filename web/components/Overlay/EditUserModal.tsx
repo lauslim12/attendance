@@ -19,6 +19,7 @@ import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { useStatusAndUser, useUsers } from '../../utils/hooks';
 import axios from '../../utils/http';
 import type { User } from '../../utils/types';
+import PhoneInput from '../Input/PhoneInput';
 import SelectInput from '../Input/SelectInput';
 import TextInput from '../Input/TextInput';
 import { FailedToast, SuccessToast } from '../Toast';
@@ -105,7 +106,7 @@ const EditUserModal = ({ isOpen, onClose, user }: Props) => {
               helper="The email to be used."
             />
 
-            <TextInput
+            <PhoneInput
               label="Phone number"
               placeholder="+62-890-1122-3344"
               value={phoneNumber}

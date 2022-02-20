@@ -17,6 +17,7 @@ import type { FormEvent } from 'react';
 import { memo, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
+import PhoneInput from '../components/Input/PhoneInput';
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
 import axios from '../utils/http';
@@ -135,7 +136,7 @@ const Register = () => {
               helper="Your email as one of the options to send an OTP."
             />
 
-            <TextInput
+            <PhoneInput
               label="Phone Number"
               placeholder="+62-890-1122-3344"
               value={phoneNumber}
