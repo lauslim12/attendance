@@ -19,8 +19,6 @@ import { FaPencilAlt, FaTimes } from 'react-icons/fa';
 import { useStatusAndUser, useUsers } from '../../utils/hooks';
 import axios from '../../utils/http';
 import type { User } from '../../utils/types';
-import EmailInput from '../Input/EmailInput';
-import PhoneInput from '../Input/PhoneInput';
 import SelectInput from '../Input/SelectInput';
 import TextInput from '../Input/TextInput';
 import { FailedToast, SuccessToast } from '../Toast';
@@ -97,22 +95,25 @@ const EditUserModal = ({ isOpen, onClose, user }: Props) => {
               value={fullName}
               setValue={setFullName}
               helper="The full name to be used."
+              type="text"
             />
 
-            <EmailInput
+            <TextInput
               label="Email"
               placeholder="john.smith@gmail.com"
               value={email}
               setValue={setEmail}
               helper="The email to be used."
+              type="text"
             />
 
-            <PhoneInput
+            <TextInput
               label="Phone number"
               placeholder="081219204571"
               value={phoneNumber}
               setValue={setPhoneNumber}
               helper="The phone number to be used in Indonesian format (with or without +62)."
+              type="tel"
             />
 
             <SelectInput

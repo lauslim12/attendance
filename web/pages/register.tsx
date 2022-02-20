@@ -17,8 +17,6 @@ import type { FormEvent } from 'react';
 import { memo, useRef, useState } from 'react';
 import { FaKey } from 'react-icons/fa';
 
-import EmailInput from '../components/Input/EmailInput';
-import PhoneInput from '../components/Input/PhoneInput';
 import TextInput from '../components/Input/TextInput';
 import Layout from '../components/Layout';
 import axios from '../utils/http';
@@ -115,34 +113,38 @@ const Register = () => {
 
             <TextInput
               label="Name"
-              placeholder="John Smith"
+              placeholder="Ran"
               value={fullName}
               setValue={setFullName}
               helper="Your name to identify yourself."
+              type="text"
             />
 
             <TextInput
               label="Username"
-              placeholder="john-smith"
+              placeholder="kharansyah"
               value={username}
               setValue={setUsername}
-              helper="Your preferred username."
+              helper="Your preferred username to be used to login."
+              type="text"
             />
 
-            <EmailInput
+            <TextInput
               label="Email"
-              placeholder="john.smith@gmail.com"
+              placeholder="ran@gmail.com"
               value={email}
               setValue={setEmail}
               helper="Your email as one of the options to send an OTP."
+              type="email"
             />
 
-            <PhoneInput
+            <TextInput
               label="Phone number"
               placeholder="081219204571"
               value={phoneNumber}
               setValue={setPhoneNumber}
               helper="The phone number to be used in Indonesian format (with or without +62)."
+              type="tel"
             />
 
             <TextInput
@@ -151,7 +153,7 @@ const Register = () => {
               value={password}
               setValue={setPassword}
               helper="Your preferred password. Minimum is 8 characters."
-              isPassword={!showPassword}
+              type={showPassword ? 'text' : 'password'}
             />
 
             <TextInput
@@ -160,7 +162,7 @@ const Register = () => {
               value={confirmPassword}
               setValue={setConfirmPassword}
               helper="Confirm your password."
-              isPassword={!showPassword}
+              type={showPassword ? 'text' : 'password'}
             />
 
             <Checkbox
