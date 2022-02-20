@@ -184,14 +184,6 @@ yarn dev
 
 - There are two modes available: `development`, and `production`. The difference is that `development` shows the full error stack trace when the app throws an error, and `production` shows the proper, appropriate error messages.
 
-- You may set up cronjobs in order to activate a Cloud Function to send reminders to people have checked in who have not yet checked out at a certain time. You have to install all dependencies (`yarn --frozen-lockfile`) in order to use this script (`ts-node-dev` is essential). The one that I usually use is:
-
-```bash
-crontab -l
-crontab -e
-00 18 * * * cd "~/attendance/api" && yarn reminder
-```
-
 - If you have already set up everything above and are coming back to develop after a while, then the steps to run this quickly are: `cd attendance`, `docker-compose up -d`, `cd api`, `yarn migrate`, and finally `yarn dev`.
 
 ### Web Setup
@@ -223,7 +215,7 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 ### Production: Initial Setup
 
 - SSH into your instance. It is recommended that you disallow login with password to your instance.
-- Remember not to install this application as the `root` user. Change it to someone else for security.
+- Remember not to install this application as the `root` user. Change it to someone else for security. You can create a new user just for this own app by using `sudo adduser <NEW_USER>` and `sudo usermod -aG sudo <NEW_USER>`.
 - Install dependencies such as MariaDB (`sudo apt install mariadb-server`), Redis (`sudo apt install redis-server`), nginx (`sudo apt install nginx`), and requirements above: Node.js (you may use `nvm` for convenient version management), and Yarn.
 - Password protect your resources (`sudo nano /etc/redis/redis.conf` or `mysql_secure_installation` and create password), create users with least privileges for those resources, and only allow access from `localhost`.
 - Pull the code to your machine, either by `scp`, `wget`, or `git clone` (may have to install `git` and prepare tokens / SSH access).
@@ -240,6 +232,7 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 - If everything goes well, do `sudo systemctl restart nginx` and access it on your machine. It may take a few seconds for it to run on your machine properly. Done!
 - (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet. I recommend you to use `sudo apt install python3-certbot-nginx` as it automates most of the process and it allows you to perform automatic renewals.
 - (Optional) To improve your SSL rating after enabling HTTPS, please feel free to refer to my [HTTPS nginx configurations](./server/nginx.md).
+- (Optional) You may want to use cronjobs to automate message reminders and database backups. If you want to do so, please refer to my [cron configurations](./server/cron.md). Note that the complete dependencies have to be installed (`yarn --frozen-lockfile`)!
 
 ### Production: Updates
 

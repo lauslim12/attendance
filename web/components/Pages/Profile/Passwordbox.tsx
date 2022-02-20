@@ -75,7 +75,7 @@ const Passwordbox = () => {
           value={currentPassword}
           setValue={setCurrentPassword}
           helper="Your current password"
-          isPassword={!showPassword}
+          type={showPassword ? 'text' : 'password'}
         />
 
         <TextInput
@@ -84,7 +84,7 @@ const Passwordbox = () => {
           value={newPassword}
           setValue={setNewPassword}
           helper="Your new password. Minimum is 8 characters"
-          isPassword={!showPassword}
+          type={showPassword ? 'text' : 'password'}
         />
 
         <TextInput
@@ -93,7 +93,7 @@ const Passwordbox = () => {
           value={confirmPassword}
           setValue={setConfirmPassword}
           helper="Confirm your new password"
-          isPassword={!showPassword}
+          type={showPassword ? 'text' : 'password'}
         />
 
         <Checkbox

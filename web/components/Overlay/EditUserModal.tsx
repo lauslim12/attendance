@@ -95,6 +95,7 @@ const EditUserModal = ({ isOpen, onClose, user }: Props) => {
               value={fullName}
               setValue={setFullName}
               helper="The full name to be used."
+              type="text"
             />
 
             <TextInput
@@ -103,14 +104,16 @@ const EditUserModal = ({ isOpen, onClose, user }: Props) => {
               value={email}
               setValue={setEmail}
               helper="The email to be used."
+              type="text"
             />
 
             <TextInput
               label="Phone number"
-              placeholder="+62-890-1122-3344"
+              placeholder="081219204571"
               value={phoneNumber}
               setValue={setPhoneNumber}
-              helper="The phone number to be used."
+              helper="The phone number to be used in Indonesian format (with or without +62)."
+              type="tel"
             />
 
             <SelectInput

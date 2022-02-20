@@ -109,6 +109,7 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
             value={fullName}
             setValue={setFullName}
             helper="Your full name for this website"
+            type="text"
           />
 
           <TextInput
@@ -117,6 +118,7 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
             value={email}
             setValue={setEmail}
             helper="Your email to receive OTPs"
+            type="email"
           />
 
           <TextInput
@@ -124,7 +126,8 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
             placeholder="Your phone number"
             value={phoneNumber}
             setValue={setPhoneNumber}
-            helper="Your phone number to receive OTPs"
+            helper="Your phone number to receive OTPs (coming soon)"
+            type="tel"
           />
         </Grid>
 

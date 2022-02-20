@@ -97,10 +97,11 @@ const Login = () => {
 
             <TextInput
               label="Username"
-              placeholder="my-username"
+              placeholder="Username"
               value={username}
               setValue={setUsername}
               helper="The username that you used to register"
+              type="text"
             />
 
             <TextInput
@@ -109,7 +110,7 @@ const Login = () => {
               value={password}
               setValue={setPassword}
               helper="The password that you used to register"
-              isPassword={!showPassword}
+              type={showPassword ? 'text' : 'password'}
             />
 
             <Checkbox

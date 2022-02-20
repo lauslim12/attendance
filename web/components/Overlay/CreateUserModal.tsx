@@ -111,6 +111,7 @@ const CreateUserModal = ({ isOpen, onClose }: Props) => {
                 value={username}
                 setValue={setUsername}
                 helper="The username to be used."
+                type="text"
               />
 
               <TextInput
@@ -119,6 +120,7 @@ const CreateUserModal = ({ isOpen, onClose }: Props) => {
                 value={fullName}
                 setValue={setFullName}
                 helper="The full name to be used."
+                type="text"
               />
 
               <TextInput
@@ -127,14 +129,16 @@ const CreateUserModal = ({ isOpen, onClose }: Props) => {
                 value={email}
                 setValue={setEmail}
                 helper="The email to be used."
+                type="email"
               />
 
               <TextInput
                 label="Phone number"
-                placeholder="+62-890-1122-3344"
+                placeholder="081219204571"
                 value={phoneNumber}
                 setValue={setPhoneNumber}
-                helper="The phone number to be used."
+                helper="The phone number to be used in Indonesian format (with or without +62)."
+                type="tel"
               />
 
               <TextInput
@@ -143,7 +147,7 @@ const CreateUserModal = ({ isOpen, onClose }: Props) => {
                 value={password}
                 setValue={setPassword}
                 helper="Password of this user"
-                isPassword
+                type="password"
               />
 
               <SelectInput
