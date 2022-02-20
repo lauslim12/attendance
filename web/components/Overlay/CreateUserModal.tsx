@@ -133,10 +133,10 @@ const CreateUserModal = ({ isOpen, onClose }: Props) => {
 
               <PhoneInput
                 label="Phone number"
-                placeholder="+62-890-1122-3344"
+                placeholder="081219204571"
                 value={phoneNumber}
                 setValue={setPhoneNumber}
-                helper="The phone number to be used."
+                helper="The phone number to be used in Indonesian format (with or without +62)."
               />
 
               <TextInput
