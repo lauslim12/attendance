@@ -104,7 +104,7 @@ const UserCard = ({ user }: Props) => {
         transition=".2s"
       >
         <VStack spacing={1}>
-          <Text fontSize="sm" fontWeight="bold">
+          <Text fontSize="sm" textAlign="center" fontWeight="bold">
             {user.fullName}
           </Text>
           <Text fontSize="xs">{`@${user.email.split('@')[1]}`}</Text>
