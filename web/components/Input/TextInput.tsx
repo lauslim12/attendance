@@ -72,7 +72,7 @@ const TextInput = ({
         placeholder={placeholder}
         value={value}
         onChange={({ currentTarget: { value } }) => setValue(value)}
-        pattern={type === 'tel' ? '/^[-+0-9]+$/' : undefined}
+        pattern={type === 'tel' ? '[-+0-9]+' : undefined}
       />
     </InputGroup>
 
