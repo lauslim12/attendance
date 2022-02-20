@@ -4,6 +4,14 @@ import joi from '../../util/joi';
  * Special auth validations to sanitize and analyze request bodies and parameters.
  */
 const AuthValidation = {
+  // POST /api/v1/auth/forgot-password
+  forgotPassword: {
+    body: joi.object().keys({
+      email: joi.string().trim().email().lowercase().required().max(50),
+      username: joi.string().trim().required().max(15),
+    }),
+  },
+
   // POST /api/v1/auth/login
   login: {
     body: joi.object().keys({
@@ -25,6 +33,17 @@ const AuthValidation = {
         .pattern(/^[-+0-9]+$/, { name: 'phone' }),
       password: joi.string().required().min(8).max(64),
       fullName: joi.string().trim().required().max(30),
+    }),
+  },
+
+  // PATCH /api/v1/auth/reset-password/:token
+  resetPassword: {
+    params: joi.object().keys({
+      token: joi.string().required(),
+    }),
+    body: joi.object().keys({
+      newPassword: joi.string().required().min(8).max(64),
+      confirmPassword: joi.string().required().min(8).max(64),
     }),
   },
 

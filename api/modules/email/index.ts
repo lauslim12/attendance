@@ -85,7 +85,12 @@ class Email {
    */
   async send(
     subject: string,
-    template: 'confirmation' | 'otp' | 'notification' | 'reminder',
+    template:
+      | 'confirmation'
+      | 'otp'
+      | 'notification'
+      | 'reminder'
+      | 'forgot-password',
     vars: Record<string, unknown>
   ) {
     const html = renderFile(
@@ -110,6 +115,20 @@ class Email {
   async sendConfirmation(url: string) {
     await bull.add(`email-confirmation-${this.to}`, {
       task: this.send('Account Activation for Attendance', 'confirmation', {
+        name: this.name,
+        url,
+      }),
+    });
+  }
+
+  /**
+   * Sends a mail for a user to reset their password.
+   *
+   * @param url - URL to the webservice to reset the user's password.
+   */
+  async sendForgotPassword(url: string) {
+    await bull.add(`email-forgot-password-${this.to}`, {
+      task: this.send('Password Reset for Attendance', 'forgot-password', {
         name: this.name,
         url,
       }),
@@ -148,9 +167,10 @@ class Email {
    * not supposed to be used in the API, but it is used in Cloud Functions
    * or cronjobs. Use a different Bull queue if need be.
    */
-  async sendReminder() {
+  async sendReminder(url: string) {
     await this.send('Reminder to check out for today', 'reminder', {
       name: this.name,
+      url,
     });
   }
 }

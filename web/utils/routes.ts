@@ -7,6 +7,7 @@ const routes = {
   login: '/login',
   register: '/register',
   profile: '/profile',
+  resetPassword: '/reset-password',
 
   // Admin routes.
   admin: '/admin',

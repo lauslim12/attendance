@@ -17,6 +17,7 @@ async function main() {
   console.log('Reminder Cloud Function starting...');
 
   // Declare needed variables.
+  const url = process.env.URL ? process.env.URL : '#';
   const today = new Date();
   const users = await UserService.getUsers();
 
@@ -50,7 +51,7 @@ async function main() {
     reminders.map(async (reminder) => {
       if (!reminder) return;
 
-      await new Email(reminder.email, reminder.name).sendReminder();
+      await new Email(reminder.email, reminder.name).sendReminder(url);
     })
   );
 }
