@@ -40,7 +40,11 @@ const UserValidation = {
   updateMe: {
     body: joi.object().keys({
       email: joi.string().trim().lowercase().email().max(50),
-      phoneNumber: joi.string().trim().max(20),
+      phoneNumber: joi
+        .string()
+        .trim()
+        .pattern(/^[-+0-9]+$/)
+        .max(20),
       fullName: joi.string().trim().max(30),
     }),
   },
@@ -49,7 +53,11 @@ const UserValidation = {
   updateUser: {
     body: joi.object().keys({
       email: joi.string().trim().lowercase().email().max(50),
-      phoneNumber: joi.string().trim().max(20),
+      phoneNumber: joi
+        .string()
+        .trim()
+        .pattern(/^[-+0-9]+$/)
+        .max(20),
       password: joi.string().min(8).max(64),
       fullName: joi.string().trim().max(30),
       role: joi.string().valid('admin', 'user'),
