@@ -40,6 +40,15 @@ const CacheService = {
     CacheRepository.getBlacklistedOTP(otp),
 
   /**
+   * Gets the total number of times the user tries to reset their password.
+   *
+   * @param userID - User ID.
+   * @returns Number of attempts the user tried to reset their password.
+   */
+  getForgotPasswordAttempts: async (userID: string) =>
+    CacheRepository.getForgotPasswordAttempts(userID),
+
+  /**
    * Gets whether the user has asked OTP or not.
    *
    * @param userID - A user's ID
@@ -103,6 +112,16 @@ const CacheService = {
    * @returns Asynchronous 'PONG' string.
    */
   ping: async () => CacheRepository.ping(),
+
+  /**
+   * Sets or increments the number of attempts of a password reset of a user. Default
+   * TTL is set to 7200 seconds to 2 hours before one can ask to reset password again.
+   *
+   * @param userID - User ID.
+   * @returns Asynchronous 'OK'.
+   */
+  setForgotPasswordAttempts: async (userID: string) =>
+    CacheRepository.setForgotPasswordAttempts(userID),
 
   /**
    * Sets in the cache whether the user has asked for OTP or not.

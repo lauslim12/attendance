@@ -100,6 +100,15 @@ const CacheRepository = {
   getBlacklistedOTP: async (otp: string) => redis.get(`blacklisted-otp:${otp}`),
 
   /**
+   * Gets the total number of times the user tries to reset their password.
+   *
+   * @param userID - User ID.
+   * @returns Number of attempts the user tried to reset their password.
+   */
+  getForgotPasswordAttempts: async (userID: string) =>
+    redis.get(`forgot-password-attempts:${userID}`),
+
+  /**
    * Gets whether the user has asked OTP or not.
    *
    * @param userID - A user's ID
@@ -154,6 +163,24 @@ const CacheRepository = {
    * @returns An asynchronous 'PONG' string.
    */
   ping: async () => redis.ping(),
+
+  /**
+   * Sets or increments the number of attempts of a password reset of a user. Default
+   * TTL is set to 7200 seconds to 2 hours before one can ask to reset password again.
+   *
+   * @param userID - User ID.
+   * @returns Asynchronous 'OK'.
+   */
+  setForgotPasswordAttempts: async (userID: string) => {
+    const currentAttempts = await redis.get(
+      `forgot-password-attempts:${userID}`
+    );
+    if (currentAttempts === null) {
+      return redis.setex(`forgot-password-attempts:${userID}`, 7200, '1');
+    }
+
+    return redis.incr(`forgot-password-attempts:${userID}`);
+  },
 
   /**
    * Sets in the cache whether the user has asked for OTP or not.
