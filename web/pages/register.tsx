@@ -125,7 +125,7 @@ const Register = () => {
               placeholder="kharansyah"
               value={username}
               setValue={setUsername}
-              helper="Your preferred username to be used to login."
+              helper="Your preferred username to be used to login. Trailing whitespaces will be trimmed automatically."
               type="text"
             />
 
