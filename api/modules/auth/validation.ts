@@ -20,9 +20,9 @@ const AuthValidation = {
       phoneNumber: joi
         .string()
         .trim()
-        .pattern(/^[-+0-9]+$/)
         .required()
-        .max(20),
+        .max(20)
+        .pattern(/^[-+0-9]+$/, { name: 'phone' }),
       password: joi.string().required().min(8).max(64),
       fullName: joi.string().trim().required().max(30),
     }),

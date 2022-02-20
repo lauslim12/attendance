@@ -9,7 +9,12 @@ const UserValidation = {
     body: joi.object().keys({
       username: joi.string().trim().required().max(15),
       email: joi.string().trim().email().lowercase().required().max(50),
-      phoneNumber: joi.string().trim().required().max(20),
+      phoneNumber: joi
+        .string()
+        .trim()
+        .required()
+        .max(20)
+        .pattern(/^[-+0-9]+$/, { name: 'phone' }),
       password: joi.string().required().min(8).max(64),
       fullName: joi.string().trim().required().max(30),
       role: joi.string().valid('admin', 'user').default('user'),
@@ -43,8 +48,8 @@ const UserValidation = {
       phoneNumber: joi
         .string()
         .trim()
-        .pattern(/^[-+0-9]+$/)
-        .max(20),
+        .max(20)
+        .pattern(/^[-+0-9]+$/, { name: 'phone' }),
       fullName: joi.string().trim().max(30),
     }),
   },
@@ -56,8 +61,8 @@ const UserValidation = {
       phoneNumber: joi
         .string()
         .trim()
-        .pattern(/^[-+0-9]+$/)
-        .max(20),
+        .max(20)
+        .pattern(/^[-+0-9]+$/, { name: 'phone' }),
       password: joi.string().min(8).max(64),
       fullName: joi.string().trim().max(30),
       role: joi.string().valid('admin', 'user'),
