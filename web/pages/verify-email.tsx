@@ -4,36 +4,37 @@ import { useRouter } from 'next/router';
 import { memo, useEffect, useState } from 'react';
 import { FaHome } from 'react-icons/fa';
 
-import Layout from '../../../../components/Layout';
-import Spinner from '../../../../components/Spinner';
-import axios from '../../../../utils/http';
-import routes from '../../../../utils/routes';
+import Layout from '../components/Layout';
+import Spinner from '../components/Spinner';
+import axios from '../utils/http';
+import routes from '../utils/routes';
 
 /**
  * Page to verify someone's email.
  *
  * @returns Verification email page.
  */
-const VerifyEmailPage = () => {
+const VerifyEmail = () => {
   const [result, setResult] = useState('');
   const router = useRouter();
+  const { code, email } = router.query;
 
   useEffect(() => {
-    if (!router.query.code || !router.query.email) {
+    if (!code || !email) {
       return;
     }
 
     axios({
       method: 'PATCH',
-      url: `/api/v1/auth/verify-email/${router.query.code}/${router.query.email}`,
+      url: `/api/v1/auth/verify-email/${code}/${email}`,
     })
       .then((res) => setResult(res.message))
       .catch((err) => setResult(err.message));
-  }, [router.query]);
+  }, [code, email]);
 
   return (
     <>
-      {router.query.code && router.query.email ? (
+      {code && email ? (
         <Layout title={['Verify Email']}>
           <VStack as="section" justify="center" h="full" spacing={4}>
             <Heading size="lg" textAlign="center">
@@ -54,4 +55,4 @@ const VerifyEmailPage = () => {
   );
 };
 
-export default memo(VerifyEmailPage);
+export default memo(VerifyEmail);
