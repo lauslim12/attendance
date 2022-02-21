@@ -69,7 +69,6 @@ const QRDialog = ({
         closeOnEsc={false}
         closeOnOverlayClick={false}
         size="3xl"
-        isCentered
       >
         <AlertDialogOverlay>
           <AlertDialogContent bg="white" color="black">
