@@ -217,7 +217,7 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 ### Production: Initial Setup
 
 - SSH into your instance. It is recommended that you disallow login with password to your instance.
-- Remember not to install this application as the `root` user. Change it to someone else for security. You can create a new user just for this own app by using `sudo adduser <NEW_USER>` and `sudo usermod -aG sudo <NEW_USER>`.
+- Remember not to install this application as the `root` user. Change it to someone else for security. You can create a new user just for this own app by using `sudo adduser <NEW_USER>` and `sudo usermod -aG sudo <NEW_USER>`. Copy your SSH keys if applicable and log in again as that less-privileged user.
 - Install dependencies such as MariaDB (`sudo apt install mariadb-server`), Redis (`sudo apt install redis-server`), nginx (`sudo apt install nginx`), and requirements above: Node.js (you may use `nvm` for convenient version management), and Yarn.
 - Password protect your resources (`sudo nano /etc/redis/redis.conf` or `mysql_secure_installation` and create password), create users with least privileges for those resources, and only allow access from `localhost`.
 - Pull the code to your machine, either by `scp`, `wget`, or `git clone` (may have to install `git` and prepare tokens / SSH access).

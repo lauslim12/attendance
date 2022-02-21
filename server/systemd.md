@@ -1,6 +1,6 @@
 # Server `systemd` Configuration
 
-Two default service names: `attendance-api.service` and `attendance-web.service`. Be sure to replace the `ophelia` with your username. `ophelia` is a random name and it means nothing. Configurations are adapted from [Raspberry IoT Dashboard](https://github.com/lauslim12/raspberry-iot-dashboard).
+Two default service names: `attendance-api.service` and `attendance-web.service`. Be sure to replace the `<YOUR_LINUX_USERNAME>` with your username and do not copy-paste this. Configurations are adapted from [Raspberry IoT Dashboard](https://github.com/lauslim12/raspberry-iot-dashboard).
 
 ## `attendance-api.service`
 
@@ -13,12 +13,12 @@ After=network.target
 [Service]
 Type=simple
 Restart=on-failure
-User=ophelia
-Group=ophelia
-WorkingDirectory=/home/ophelia/attendance/api
+User=<YOUR_LINUX_USERNAME>
+Group=<YOUR_LINUX_USER_GROUP>
+WorkingDirectory=/home/<YOUR_LINUX_USERNAME>/attendance/api
 Environment=NODE_VERSION=16
-EnvironmentFile=/home/ophelia/attendance/api/.env
-ExecStart=/home/ophelia/.nvm/nvm-exec yarn start
+EnvironmentFile=/home/<YOUR_LINUX_USERNAME>/attendance/api/.env
+ExecStart=/home/<YOUR_LINUX_USERNAME>/.nvm/nvm-exec yarn start
 
 [Install]
 WantedBy=multi-user.target
@@ -35,11 +35,11 @@ After=network.target
 [Service]
 Type=simple
 Restart=on-failure
-User=ophelia
-Group=ophelia
-WorkingDirectory=/home/ophelia/attendance/web
+User=<YOUR_LINUX_USERNAME>
+Group=<YOUR_LINUX_USER_GROUP>
+WorkingDirectory=/home/<YOUR_LINUX_USERNAME>/attendance/web
 Environment=NODE_VERSION=16
-ExecStart=/home/ophelia/.nvm/nvm-exec yarn start
+ExecStart=/home/<YOUR_LINUX_USERNAME>/.nvm/nvm-exec yarn start
 
 [Install]
 WantedBy=multi-user.target
