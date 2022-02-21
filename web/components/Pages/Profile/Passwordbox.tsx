@@ -44,14 +44,19 @@ const Passwordbox = () => {
         // Set is loading to false.
         setIsLoading(false);
 
-        // Mutate session and force user to log out.
-        mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
-
         // Spawn modal.
         SuccessToast(toast, res.message);
 
-        // Replace router with login.
-        router.replace(routes.login);
+        // I really want for this to mutate the SWR first before pushing the router,
+        // but apparently SWR is basically too fast so it makes the app render 401
+        // and essentially abandons the home router. In order to mitigate this, we reverse
+        // the order, so it will be replaced first before mutating the state. There is no
+        // memory leak this way, as SWR basically runs in the background.
+        router
+          .replace(routes.home)
+          .then(() =>
+            mutate({ isAuthenticated: false, isMFA: false, user: null }, false)
+          );
       })
       .catch((err) => {
         FailedToast(toast, err.message);

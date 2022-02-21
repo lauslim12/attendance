@@ -63,14 +63,16 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
         setIsLoading(false);
         setIsOpen(false);
 
-        // Mutate.
-        mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
-
         // Send back toast.
         SuccessToast(toast, 'Successfully deleted the user.');
 
-        // Redirect to homepage.
-        router.replace(routes.home);
+        // Redirect to homepage and mutate. Please refer to
+        // `Passwordbox.tsx` to see why it was like this.
+        router
+          .replace(routes.home)
+          .then(() =>
+            mutate({ isAuthenticated: false, isMFA: false, user: null }, false)
+          );
       })
       .catch((err) => {
         setIsLoading(false);
