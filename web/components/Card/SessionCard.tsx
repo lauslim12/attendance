@@ -45,8 +45,11 @@ const SessionCard = ({ session }: { session: Session }) => {
       .then(() => {
         SuccessToast(toast, 'Successfully invalidated a session.');
 
-        // Mutate all states for security. Redirect if happen to delete
-        // self data.
+        // Mutate all states for security. Redirect if one happens to delete
+        // own session. Sometimes this will flash `401 Unauthorized` for a second before
+        // rendering the correct page as we have no knowledge about which session is currently
+        // running in the front-end (is it currently the same one being deleted?), so the best
+        // way to perform automatic logout is to have it flash 401 for a second, and then push the router to the homepage.
         Promise.all([mutateMe.mutateSession(), mutateMe.mutateStatus()]).then(
           () => {
             mutateStatus().then((res) => {
