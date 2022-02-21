@@ -74,7 +74,7 @@ As this research focuses on creating a secure API, below are the considerations 
 - Rate limiters and slow downs exist in order to prevent spammers. It is implemented with Redis for persistence and performance.
 - Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
 - Prevent attacks like parameter pollution, payload too large, bad JSON, and many more with proper status codes.
-- Implements secure authentiation flows: login, logout, registration, email verification, password updates, password forgots, password resets, and 2FA.
+- Implements secure authentiation flows: login, logout, registration, email verification, password updates, password forgots, password resets, session management, user management, and 2FA.
 - Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
 - Powered by strong HTTPS ciphers and protected Linux processes (guidelines included).
 
@@ -231,6 +231,9 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 - Copy the web server configurations in `/etc/nginx`. You may use my Nginx configuration (`server/nginx`, at the `nginx.conf` part of the document) and copy it in `/etc/nginx/nginx.conf`, and also use my server configuration (`server/nginx`, at the `sites-available` part of the document.) in `/etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT>`.
 - Symlink it by using `sudo ln -s /etc/nginx/sites-available/<YOUR_SERVER_DOMAIN_NAME_OR_DEFAULT> /etc/nginx/sites-enabled`. Test the configuration by running `sudo nginx -t`.
 - If everything goes well, do `sudo systemctl restart nginx` and access it on your machine. It may take a few seconds for it to run on your machine properly. Done!
+
+### Production: Security Hardening
+
 - (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet. I recommend you to use `sudo apt install python3-certbot-nginx` as it automates most of the process and it allows you to perform automatic renewals.
 - (Optional) To improve your SSL rating after enabling HTTPS, please feel free to refer to my [HTTPS nginx configurations](./server/nginx.md).
 - (Optional) You may want to use cronjobs to automate message reminders and database backups. If you want to do so, please refer to my [cron configurations](./server/cron.md). Note that the complete dependencies have to be installed (`yarn --frozen-lockfile`)!
