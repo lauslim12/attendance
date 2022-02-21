@@ -181,7 +181,7 @@ const AuthController = {
     // Generate a random reset token and a password reset URL. In development, set the URL
     // to port 3000 as well.
     const token = await randomBytes();
-    const withPort = config.NODE_ENV === 'production' ? undefined : ':3000';
+    const withPort = config.NODE_ENV === 'production' ? '' : ':3000';
     const url = `${req.protocol}://${req.hostname}${withPort}/reset-password?token=${token}&action=reset`;
 
     // Insert token to that user.
@@ -387,7 +387,7 @@ const AuthController = {
     });
 
     // Send a link to the front-end, this will not change.
-    // const withPort = config.NODE_ENV === 'production' ? undefined : ':3000';
+    // const withPort = config.NODE_ENV === 'production' ? '' : ':3000';
     // const link = `${req.protocol}://${req.hostname}${withPort}/verify-email?code=${confirmationCode}&email=${email}`;
 
     // Send an email consisting of the activation codes.
