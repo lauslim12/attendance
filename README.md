@@ -31,11 +31,12 @@ Below is the list of main features that this system have:
 - Users can check the health of the API.
 - Users can log in and register.
 - Users can get their own authentication status.
+- Users can forget and reset their own passwords.
 - (**A**) Users can see their own profile, modify it (except password), and delete it.
 - (**A**) Users can modify their own password.
 - (**A**) Users can get all of their own sessions and can invalidate them if necessary.
 - (**A**) Users can get their own attendance data.
-- (**A**) Users can request OTP from the API via Email, SMS, or Authenticator apps.
+- (**A**) Users can request OTP from the API via Email or Authenticator apps.
 - (**A**) Users can receive a special MFA authorization by verifying the OTP.
 - (**A C**) Users can update their own MFA secrets in Authenticator apps.
 - (**A C**) Users can check in and check out their attendance.
