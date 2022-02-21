@@ -254,5 +254,5 @@ ssl_ecdh_curve secp384r1;
 ssl_stapling on;
 ssl_stapling_verify on;
 
-add_header Strict-Transport-Security "max-age=15768000; includeSubdomains; preload;";
+add_header Strict-Transport-Security "max-age=15768000; includeSubDomains; preload;";
 ```
