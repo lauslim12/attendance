@@ -1,23 +1,13 @@
-import {
-  Alert,
-  AlertDescription,
-  AlertIcon,
-  AlertTitle,
-  Button,
-  Heading,
-  Link,
-  Text,
-  useColorModeValue,
-  useToast,
-  VStack,
-} from '@chakra-ui/react';
-import NextLink from 'next/link';
+import { useToast } from '@chakra-ui/react';
 import type { FormEvent } from 'react';
 import { memo, useState } from 'react';
 import { FaLockOpen } from 'react-icons/fa';
 
 import axios from '../../../utils/http';
 import routes from '../../../utils/routes';
+import Form from '../../Form';
+import FormLinks from '../../Form/FormLinks';
+import SubmitButton from '../../Form/SubmitButton';
 import TextInput from '../../Input/TextInput';
 import { SuccessToast } from '../../Toast';
 
@@ -43,81 +33,61 @@ const ForgotPasswordForm = () => {
       data: { username, email },
     })
       .then((res) => SuccessToast(toast, res.message))
-      .catch((err) => setError(err.message))
+      .catch((err) =>
+        setError(
+          err.message ? err.message : 'Internal error! Please try again later!'
+        )
+      )
       .finally(() => setIsLoading(false));
   };
 
   return (
-    <VStack as="section" h="full" justify={['start', 'center']} p={1}>
-      <VStack
-        as="form"
-        borderWidth={[0, 1]}
-        borderStyle="solid"
-        borderColor={useColorModeValue('gray.800', 'gray.200')}
-        borderRadius="md"
-        w={['full', '80vw', '70vw', '60vw', '60vw', '40vw']}
-        p={[0, 4, 10]}
-        spacing={4}
-        onSubmit={resetPassword}
-      >
-        <VStack spacing={1}>
-          <Heading size="lg">Forgot Password</Heading>
-          <Text>Reset your Attendance Account</Text>
-        </VStack>
+    <Form
+      title="Forgot Password"
+      description="Reset your Attendance Account"
+      error={error}
+      onSubmit={resetPassword}
+    >
+      <TextInput
+        label="Username"
+        placeholder="Username"
+        value={username}
+        setValue={setUsername}
+        helper="The username that you used to register"
+        type="text"
+      />
 
-        {error.trim() !== '' && (
-          <Alert status="error" variant="left-accent">
-            <AlertIcon />
-            <AlertTitle>Error!</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
+      <TextInput
+        label="Email"
+        placeholder="ran@gmail.com"
+        value={email}
+        setValue={setEmail}
+        helper="The email associated with that username"
+        type="email"
+      />
 
-        <TextInput
-          label="Username"
-          placeholder="Username"
-          value={username}
-          setValue={setUsername}
-          helper="The username that you used to register"
-          type="text"
-        />
+      <FormLinks
+        routes={[
+          {
+            href: routes.register,
+            text: 'Not yet registered? Create an account!',
+            color: 'orange.400',
+          },
+          {
+            href: routes.login,
+            text: 'Remembered your password? Log in!',
+            color: 'blue.400',
+          },
+        ]}
+      />
 
-        <TextInput
-          label="Email"
-          placeholder="ran@gmail.com"
-          value={email}
-          setValue={setEmail}
-          helper="Your email associated with that username"
-          type="email"
-        />
-
-        <VStack align="start" w="full">
-          <NextLink href={routes.register} passHref>
-            <Link fontSize="xs" color="orange.400" fontWeight="bold">
-              Not yet registered? Create an account!
-            </Link>
-          </NextLink>
-
-          <NextLink href={routes.login} passHref>
-            <Link fontSize="xs" color="blue.400" fontWeight="bold">
-              Remembered your password? Login!
-            </Link>
-          </NextLink>
-        </VStack>
-
-        <Button
-          type="submit"
-          alignSelf={['end', 'center']}
-          leftIcon={<FaLockOpen />}
-          colorScheme="blue"
-          disabled={username.trim() === '' || email.trim() === '' || isLoading}
-          w="50%"
-          isLoading={isLoading}
-        >
-          Reset password
-        </Button>
-      </VStack>
-    </VStack>
+      <SubmitButton
+        Icon={FaLockOpen}
+        inputs={[username, email]}
+        isLoading={isLoading}
+        text="Reset password"
+      />
+    </Form>
   );
 };
 

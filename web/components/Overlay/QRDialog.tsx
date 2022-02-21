@@ -91,6 +91,13 @@ const QRDialog = ({
                 </Text>
 
                 <Text>
+                  Examples of authenticator applications are Google
+                  Authenticator, Microsoft Authenticator, LastPass
+                  Authenticator, Authy, andOTP, and many more. You can just use
+                  one of them!
+                </Text>
+
+                <Text>
                   Without QR codes, do not worry, you can still use your email
                   for the multi-factor authentication part of this webservice.
                   For your information, this modal is intentionally made to be

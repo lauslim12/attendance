@@ -167,12 +167,22 @@ const AuthController = {
       return;
     }
 
+    // Deny request if the user is not active.
+    if (!userByUsername.isActive) {
+      next(
+        new AppError(
+          'This account is disabled. Please contact the admin for reactivation.',
+          403
+        )
+      );
+      return;
+    }
+
     // Generate a random reset token and a password reset URL. In development, set the URL
     // to port 3000 as well.
     const token = await randomBytes();
-    const url = `${req.protocol}://${req.hostname}${
-      config.NODE_ENV === 'production' ? undefined : ':3000'
-    }/reset-password?token=${token}&action=reset`;
+    const withPort = config.NODE_ENV === 'production' ? undefined : ':3000';
+    const url = `${req.protocol}://${req.hostname}${withPort}/reset-password?token=${token}&action=reset`;
 
     // Insert token to that user.
     await UserService.updateUser(
@@ -363,10 +373,7 @@ const AuthController = {
      * Note: Email verification is currently disabled and commented
      * for convenience (this is not the core of the research).
      */
-    // Generate a new confirmation code unique to that user.
-    // const confirmationCode = await nanoid();
-
-    // Create a new, inactive user.
+    // const confirmationCode = await randomBytes();
     const user = await UserService.createUser({
       username,
       email,
@@ -374,15 +381,14 @@ const AuthController = {
       password,
       totpSecret: '', // kept blank to ensure that this gets filled in the service layer
       confirmationCode: null, // currently disabled
+      forgotPasswordCode: null,
       isActive: true,
       fullName,
     });
 
     // Send a link to the front-end, this will not change.
-    // const link =
-    //   config.NODE_ENV === 'development'
-    //     ? `${req.protocol}://${req.hostname}:3000/verify-email/${confirmationCode}/${user.email}`
-    //     : `${req.protocol}://${req.hostname}/verify-email/${confirmationCode}/${user.email}`;
+    // const withPort = config.NODE_ENV === 'production' ? undefined : ':3000';
+    // const link = `${req.protocol}://${req.hostname}${withPort}/verify-email?code=${confirmationCode}&email=${email}`;
 
     // Send an email consisting of the activation codes.
     // await new Email(email, username).sendConfirmation(link);
@@ -422,6 +428,17 @@ const AuthController = {
     const user = await UserService.getUser({ forgotPasswordCode: token });
     if (!user) {
       next(new AppError('There is no user associated with the token.', 404));
+      return;
+    }
+
+    // If user is not active, deny request.
+    if (!user.isActive) {
+      next(
+        new AppError(
+          'This user is not active. Please contact the administrator for reactivation.',
+          403
+        )
+      );
       return;
     }
 

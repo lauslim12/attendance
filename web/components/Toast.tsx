@@ -1,7 +1,9 @@
 import type { UseToastOptions } from '@chakra-ui/react';
 
 /**
- * Displays a failed toast, if, for a reason, a request fails.
+ * Displays a failed toast, if, for a reason, a request fails. In this toast,
+ * sometimes `message` is of the type 'any'. For this reason, we place a default value
+ * just in case `message` also fails.
  *
  * @param toast - ChakraUI's toast object.
  * @param message - Message to be shown in the toast.
@@ -9,7 +11,7 @@ import type { UseToastOptions } from '@chakra-ui/react';
  */
 export const FailedToast = (
   toast: (options?: UseToastOptions | undefined) => string | number | undefined,
-  message: string
+  message = 'Internal server error occured, please try again later!'
 ) =>
   toast({
     title: 'Error!',
