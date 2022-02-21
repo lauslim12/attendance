@@ -363,10 +363,7 @@ const AuthController = {
      * Note: Email verification is currently disabled and commented
      * for convenience (this is not the core of the research).
      */
-    // Generate a new confirmation code unique to that user.
-    // const confirmationCode = await nanoid();
-
-    // Create a new, inactive user.
+    // const confirmationCode = await randomBytes();
     const user = await UserService.createUser({
       username,
       email,
@@ -374,15 +371,14 @@ const AuthController = {
       password,
       totpSecret: '', // kept blank to ensure that this gets filled in the service layer
       confirmationCode: null, // currently disabled
+      forgotPasswordCode: null,
       isActive: true,
       fullName,
     });
 
     // Send a link to the front-end, this will not change.
-    // const link =
-    //   config.NODE_ENV === 'development'
-    //     ? `${req.protocol}://${req.hostname}:3000/verify-email/${confirmationCode}/${user.email}`
-    //     : `${req.protocol}://${req.hostname}/verify-email/${confirmationCode}/${user.email}`;
+    // const withPort = config.NODE_ENV === 'production' ? undefined : ':3000';
+    // const link = `${req.protocol}://${req.hostname}${withPort}/verify-email?code=${confirmationCode}&email=${email}`;
 
     // Send an email consisting of the activation codes.
     // await new Email(email, username).sendConfirmation(link);
