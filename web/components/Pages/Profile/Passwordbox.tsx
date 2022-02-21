@@ -44,14 +44,14 @@ const Passwordbox = () => {
         // Set is loading to false.
         setIsLoading(false);
 
-        // Replace router with login.
-        router.replace(routes.login);
-
         // Mutate session and force user to log out.
         mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
 
         // Spawn modal.
         SuccessToast(toast, res.message);
+
+        // Replace router with login.
+        router.replace(routes.login);
       })
       .catch((err) => {
         FailedToast(toast, err.message);
