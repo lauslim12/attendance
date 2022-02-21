@@ -90,7 +90,11 @@ const AttendanceModal = ({
         // Close the modal.
         onClose();
       })
-      .catch((err) => setError(err.message))
+      .catch((err) =>
+        setError(
+          err.message ? err.message : 'Internal error! Please try again later!'
+        )
+      )
       .finally(() => setIsLoading(false));
   };
 

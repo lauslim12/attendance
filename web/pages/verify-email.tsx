@@ -29,7 +29,13 @@ const VerifyEmail = () => {
       url: `/api/v1/auth/verify-email/${code}/${email}`,
     })
       .then((res) => setResult(res.message))
-      .catch((err) => setResult(err.message));
+      .catch((err) =>
+        setResult(
+          err.message
+            ? err.message
+            : 'Internal error occured. Please try again later.'
+        )
+      );
   }, [code, email]);
 
   return (
