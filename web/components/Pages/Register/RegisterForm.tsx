@@ -84,7 +84,7 @@ const RegisterForm = ({ setQRCode, setOpenDialog, setDialogName }: Props) => {
         placeholder="kharansyah"
         value={username}
         setValue={setUsername}
-        helper="Your preferred username to be used to login."
+        helper="Your preferred username to be used to login. Trailing whitespaces will be removed automatically."
         type="text"
       />
 
