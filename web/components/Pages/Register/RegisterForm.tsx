@@ -127,7 +127,7 @@ const RegisterForm = ({ setQRCode, setOpenDialog, setDialogName }: Props) => {
       <Checkbox
         colorScheme="blue"
         alignSelf="start"
-        onChange={() => setShowPassword(!showPassword)}
+        onChange={(e) => setShowPassword(e.target.checked)}
         isChecked={showPassword}
       >
         <Text fontSize="sm">Show password</Text>
