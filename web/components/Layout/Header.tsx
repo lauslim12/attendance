@@ -51,15 +51,17 @@ const Header = () => {
   }, [largerThan1280]);
 
   const logout = () => {
-    // Does not need revalidation as it's definitely resetting its state.
-    mutate({ isAuthenticated: false, isMFA: false, user: null }, false);
-
     axios({ method: 'POST', url: '/api/v1/auth/logout' })
-      .then((res) => {
-        SuccessToast(toast, res.message);
-        router.replace(routes.home);
-      })
-      .catch((err) => FailedToast(toast, err.message));
+      .then((res) => SuccessToast(toast, res.message))
+      .catch((err) => FailedToast(toast, err.message))
+      .finally(() =>
+        // After done pushing the URL stack, we mutate our state
+        // regardless of the results of the log out request.
+        router.push(routes.home).then(() =>
+          // Does not need revalidation as it is resetting its state.
+          mutate({ isAuthenticated: false, isMFA: false, user: null }, false)
+        )
+      );
   };
 
   return (
