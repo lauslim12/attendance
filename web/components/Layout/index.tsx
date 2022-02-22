@@ -1,8 +1,8 @@
 import { chakra, Flex } from '@chakra-ui/react';
-import Head from 'next/head';
 import { memo, ReactNode } from 'react';
 
 import Footer from './Footer';
+import Head from './Head';
 import Header from './Header';
 
 /**
@@ -23,19 +23,7 @@ type Props = {
  */
 const Layout = ({ children, title }: Props) => (
   <>
-    <Head>
-      <meta charSet="UTF-8" />
-      <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-      <meta name="theme-color" content="#f67e4d" />
-      <meta name="msapplication-navbutton-color" content="#f67e4d" />
-      <meta name="apple-mobile-web-app-status-bar-style" content="#f67e4d" />
-
-      <title>
-        {[...title.map((x) => x?.trim()).filter((x) => x), 'Attendance'].join(
-          ' · '
-        )}
-      </title>
-    </Head>
+    <Head title={title} />
 
     <Flex h="100vh" direction="column" maxW="1700px" mx="auto">
       <Header />
