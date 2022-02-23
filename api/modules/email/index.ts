@@ -181,9 +181,13 @@ class Email {
    */
   async sendResetPassword() {
     await bull.add(`email-reset-password-${this.to}`, {
-      task: this.send('Password reset for Attendance', 'reset-password', {
-        name: this.name,
-      }),
+      task: this.send(
+        'Password Reset Confirmation for Attendance',
+        'reset-password',
+        {
+          name: this.name,
+        }
+      ),
     });
   }
 }
