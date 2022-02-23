@@ -87,10 +87,11 @@ class Email {
     subject: string,
     template:
       | 'confirmation'
-      | 'otp'
+      | 'forgot-password'
       | 'notification'
+      | 'otp'
       | 'reminder'
-      | 'forgot-password',
+      | 'reset-password',
     vars: Record<string, unknown>
   ) {
     const html = renderFile(
@@ -171,6 +172,18 @@ class Email {
     await this.send('Reminder to check out for today', 'reminder', {
       name: this.name,
       url,
+    });
+  }
+
+  /**
+   * Sends an email in order to notify a user that they have successfully reset
+   * their password. This is pushed into a Bull queue.
+   */
+  async sendResetPassword() {
+    await bull.add(`email-reset-password-${this.to}`, {
+      task: this.send('Password reset for Attendance', 'reset-password', {
+        name: this.name,
+      }),
     });
   }
 }
