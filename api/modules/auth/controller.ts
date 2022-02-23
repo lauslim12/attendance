@@ -451,6 +451,9 @@ const AuthController = {
     // Destroy all sessions related to this user.
     await CacheService.deleteUserSessions(user.userID);
 
+    // Send email to that user notifying that their password has been reset.
+    await new Email(user.email, user.fullName).sendResetPassword();
+
     // Send response.
     sendResponse({
       req,
