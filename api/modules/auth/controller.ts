@@ -451,6 +451,9 @@ const AuthController = {
     // Destroy all sessions related to this user.
     await CacheService.deleteUserSessions(user.userID);
 
+    // Send email to that user notifying that their password has been reset.
+    await new Email(user.email, user.fullName).sendResetPassword();
+
     // Send response.
     sendResponse({
       req,
@@ -734,6 +737,7 @@ const AuthController = {
     if (attempts && Number.parseInt(attempts, 10) === 3) {
       // If user is not 'email-locked', send security alert to prevent spam.
       if (!(await CacheService.getSecurityAlertEmailLock(user.userID))) {
+        await CacheService.setSecurityAlertEmailLock(user.userID);
         await new Email(user.email, user.fullName).sendNotification();
       }
 

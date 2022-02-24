@@ -23,7 +23,7 @@ const AuthValidation = {
   // POST /api/v1/auth/register
   register: {
     body: joi.object().keys({
-      username: joi.string().trim().required().max(15),
+      username: joi.string().trim().required().max(25),
       email: joi.string().trim().email().lowercase().required().max(50),
       phoneNumber: joi
         .string()

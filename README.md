@@ -76,6 +76,7 @@ As this research focuses on creating a secure API, below are the considerations 
 - Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
 - Prevent attacks like parameter pollution, payload too large, bad JSON, and many more with proper status codes.
 - Implements secure authentiation flows: login, logout, registration, email verification, password updates, password forgots, password resets, session management, user management, and 2FA.
+- All algorithms conforms to Kerckhoff's Principle: open design with the only secret being its key, and the key itself must not be able to be cracked should it fall in the hands of an attacker.
 - Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
 - Powered by strong HTTPS ciphers and protected Linux processes (guidelines included).
 
@@ -89,7 +90,9 @@ This application conforms to the following security standards:
 - [OWASP API: Top 10 API Security](https://owasp.org/www-project-api-security/)
 - [OWASP ZAP: Baseline](https://www.zaproxy.org/docs/docker/baseline-scan/)
 - [Snyk: Dependencies and Code Security](https://snyk.io)
-- OWASP Security Cheatsheet: [REST](https://cheatsheetseries.owasp.org/cheatsheets/REST_Security_Cheat_Sheet.html), [Node.js](https://cheatsheetseries.owasp.org/cheatsheets/Nodejs_Security_Cheat_Sheet.html), [MFA](https://cheatsheetseries.owasp.org/cheatsheets/Multifactor_Authentication_Cheat_Sheet.html).
+- [OWASP: Security Cheatsheets](https://cheatsheetseries.owasp.org/): Include but not limited to Authentication, Authorization, CSP, CSRF, Database, Forgot Password, MFA, Node.js, Password Storage, REST, and more.
+
+To note, some error messages are made explicit ('code has been sent to your email if it exists in our database' vs 'code has been sent to your email') to the user because of usability concerns. A user would get annoyed if the system only provides an obscure error message that nobody can guess what is going on. It's always a trade off, and for this application, I'm leaning a bit towards the 'usability' part in terms of error messages.
 
 ## Documentation
 
