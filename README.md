@@ -241,6 +241,7 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 - (Optional) You may want to use Let's Encrypt in order to get free SSL if you are running the production version on the Internet. I recommend you to use `sudo apt install python3-certbot-nginx` as it automates most of the process and it allows you to perform automatic renewals.
 - (Optional) To improve your SSL rating after enabling HTTPS, please feel free to refer to my [HTTPS nginx configurations](./server/nginx.md).
 - (Optional) You may want to use cronjobs to automate message reminders and database backups. If you want to do so, please refer to my [cron configurations](./server/cron.md). Note that the complete dependencies have to be installed (`yarn --frozen-lockfile`)!
+- (Optional) Enable Firewall by checking my [Firewall configurations](./server/ufw.md).
 
 ### Production: Updates
 
