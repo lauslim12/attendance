@@ -7,15 +7,15 @@ const AuthValidation = {
   // POST /api/v1/auth/forgot-password
   forgotPassword: {
     body: joi.object().keys({
-      email: joi.string().trim().email().lowercase().required().max(50),
-      username: joi.string().trim().required().max(15),
+      email: joi.string().trim().email().lowercase().required(),
+      username: joi.string().normalize().trim().required(),
     }),
   },
 
   // POST /api/v1/auth/login
   login: {
     body: joi.object().keys({
-      username: joi.string().trim().required(),
+      username: joi.string().normalize().trim().required(),
       password: joi.string().required(),
     }),
   },
@@ -23,7 +23,7 @@ const AuthValidation = {
   // POST /api/v1/auth/register
   register: {
     body: joi.object().keys({
-      username: joi.string().trim().required().max(25),
+      username: joi.string().normalize().trim().required().max(25),
       email: joi.string().trim().email().lowercase().required().max(50),
       phoneNumber: joi
         .string()

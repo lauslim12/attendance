@@ -7,7 +7,7 @@ const UserValidation = {
   // POST /api/v1/users
   createUser: {
     body: joi.object().keys({
-      username: joi.string().trim().required().max(25),
+      username: joi.string().normalize().trim().required().max(25),
       email: joi.string().trim().email().lowercase().required().max(50),
       phoneNumber: joi
         .string()
