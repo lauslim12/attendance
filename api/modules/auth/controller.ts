@@ -138,8 +138,8 @@ const AuthController = {
 
     // Try to find user by both attributes.
     const [userByUsername, userByEmail] = await Promise.all([
-      UserService.getUser({ email }),
-      UserService.getUser({ username }),
+      UserService.getUserComplete({ email }),
+      UserService.getUserComplete({ username }),
     ]);
 
     if (!userByUsername || !userByEmail) {
