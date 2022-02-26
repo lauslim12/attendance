@@ -221,15 +221,9 @@ const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
 
-    // Safe compare usernames.
+    // Safe compare usernames. Usernames are case-insensitive.
     const user = await UserService.getUserComplete({ username });
     if (!user) {
-      next(new AppError('Invalid username and/or password!', 401));
-      return;
-    }
-
-    // MySQL is not good at case-sensitive comparisons, so we do this manually.
-    if (!safeCompare(user.username, username)) {
       next(new AppError('Invalid username and/or password!', 401));
       return;
     }
