@@ -148,7 +148,11 @@ const AuthController = {
     }
 
     // If username is not paired with the email, then short circuit.
-    if (userByUsername.email !== email || userByEmail.username !== username) {
+    // We transform them to lower case for easier usability.
+    if (
+      userByUsername.email.toLowerCase() !== email ||
+      userByEmail.username.toLowerCase() !== username
+    ) {
       next(new AppError('Incorrect username and/or email!', 401));
       return;
     }

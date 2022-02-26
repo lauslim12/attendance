@@ -17,7 +17,7 @@ import AuthValidation from './validation';
  */
 const AuthHandler = () => {
   const handler = Router();
-  const authRateLimit = rateLimit(10, 'auth');
+  const authRateLimit = rateLimit(15, 'auth');
 
   // General endpoint, (almost) no rate limit.
   handler.get('/status', AuthController.getStatus);
@@ -61,7 +61,7 @@ const AuthHandler = () => {
   // Registers a single user.
   handler.post(
     '/register',
-    rateLimit(3, 'auth-register', 30),
+    rateLimit(5, 'auth-register', 30),
     bodyParser,
     validate(AuthValidation.register),
     asyncHandler(AuthController.register)

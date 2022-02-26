@@ -8,7 +8,7 @@ const AuthValidation = {
   forgotPassword: {
     body: joi.object().keys({
       email: joi.string().trim().email().lowercase().required(),
-      username: joi.string().normalize().trim().required(),
+      username: joi.string().normalize().lowercase().trim().required(),
     }),
   },
 
@@ -57,9 +57,9 @@ const AuthValidation = {
   // PATCH /api/v1/auth/update-password
   updatePassword: {
     body: joi.object().keys({
-      currentPassword: joi.string().required(),
-      newPassword: joi.string().required().min(8).max(64),
-      confirmPassword: joi.string().required().min(8).max(64),
+      currentPassword: joi.string().normalize().required(),
+      newPassword: joi.string().normalize().required().min(8).max(64),
+      confirmPassword: joi.string().normalize().required().min(8).max(64),
     }),
   },
 
