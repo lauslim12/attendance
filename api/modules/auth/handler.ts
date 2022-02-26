@@ -1,7 +1,7 @@
 import { Router } from 'express';
-import { validate } from 'express-validation';
 
 import asyncHandler from '../../util/async-handler';
+import validate from '../../util/validate';
 import bodyParser from '../middleware/body-parser';
 import hasJWT from '../middleware/has-jwt';
 import hasSession from '../middleware/has-session';
