@@ -138,8 +138,8 @@ const AuthController = {
 
     // Try to find user by both attributes.
     const [userByUsername, userByEmail] = await Promise.all([
-      UserService.getUser({ email }),
-      UserService.getUser({ username }),
+      UserService.getUserComplete({ email }),
+      UserService.getUserComplete({ username }),
     ]);
 
     if (!userByUsername || !userByEmail) {
@@ -221,15 +221,9 @@ const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
 
-    // Safe compare usernames.
+    // Safe compare usernames. Usernames are case-insensitive.
     const user = await UserService.getUserComplete({ username });
     if (!user) {
-      next(new AppError('Invalid username and/or password!', 401));
-      return;
-    }
-
-    // MySQL is not good at case-sensitive comparisons, so we do this manually.
-    if (!safeCompare(user.username, username)) {
       next(new AppError('Invalid username and/or password!', 401));
       return;
     }

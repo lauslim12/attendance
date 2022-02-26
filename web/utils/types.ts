@@ -74,7 +74,6 @@ export type Session = {
  */
 export type User = {
   userID: string;
-  username: string;
   email: string;
   phoneNumber: string;
   fullName: string;
