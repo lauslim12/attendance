@@ -11,7 +11,6 @@ import { hashPassword } from '../../util/passwords';
  */
 const select = Prisma.validator<Prisma.UserSelect>()({
   userID: true,
-  username: true,
   email: true,
   phoneNumber: true,
   fullName: true,
