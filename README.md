@@ -76,6 +76,7 @@ As this research focuses on creating a secure API, below are the considerations 
 - Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
 - Prevent attacks like parameter pollution, payload too large, bad JSON, and many more with proper status codes.
 - Implements secure authentiation flows: login, logout, registration, email verification, password updates, password forgots, password resets, session management, user management, and 2FA.
+- Implements email notifications: on password resets, specific times without checking out, MFA session blocks after OTP failures, and more.
 - All algorithms conforms to Kerckhoff's Principle: open design with the only secret being its key, and the key itself must not be able to be cracked should it fall in the hands of an attacker.
 - Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
 - Powered by strong HTTPS ciphers and protected Linux processes (guidelines included).
