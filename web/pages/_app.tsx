@@ -1,3 +1,8 @@
+import '@fontsource/inter/400.css';
+import '@fontsource/inter/700.css';
+import '@fontsource/nunito/400.css';
+import '@fontsource/nunito/700.css';
+import '@fontsource/nunito/800.css';
 import 'focus-visible/dist/focus-visible';
 
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
