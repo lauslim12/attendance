@@ -274,6 +274,7 @@ Several helper scripts have already been set up in case you want to build and/or
 Several evaluations/calculations are done in order to keep track of security are performed as follows:
 
 - You may run `yarn collision-test` in order to check out the collision probability for `nanoid` and `Math.random()`.
+- You may run `yarn otp-speed` to get the average processing time of the algorithms. Your logs have to be populated before doing this operation. Instructions are available in `api/cli/otp-speed.ts`.
 - You may use [OWASP ZAP Baseline](https://www.zaproxy.org/docs/docker/baseline-scan/) in order to perform automated penetration tests on the application.
 - If you have Snyk CLI installed, you can run `snyk test --all-projects` to find vulnerable dependencies, and/or `snyk code test` to perform static code analysis.
 - If you need to update dependencies, you can use `yarn upgrade-interactive --latest` to do so. Please make sure there are no breaking changes that might break the application.
