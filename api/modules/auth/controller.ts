@@ -248,6 +248,7 @@ const AuthController = {
     // Clone object and delete sensitive data, prevent leaking confidential information. Do
     // not perform DB calls here - it is unnecessary overhead.
     const filteredUser = { ...user } as Partial<typeof user>;
+    delete filteredUser.username;
     delete filteredUser.totpSecret;
     delete filteredUser.password;
     delete filteredUser.userPK;
