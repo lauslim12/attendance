@@ -181,19 +181,27 @@ const UserController = {
    * @param next - Express.js's next function.
    */
   updateUser: async (req: Request, res: Response, next: NextFunction) => {
-    const { email, phoneNumber, password, fullName, role, isActive } = req.body;
+    const { username, email, phoneNumber, password, fullName, role, isActive } =
+      req.body;
     const { id } = req.params;
 
     // Validate everything via 'Promise.all' for speed.
-    const [userByID, userByEmail, userByPhone] = await Promise.all([
-      UserService.getUser({ userID: id }),
-      email ? UserService.getUser({ email }) : null,
-      phoneNumber ? UserService.getUser({ phoneNumber }) : null,
-    ]);
+    const [userByID, userByUsername, userByEmail, userByPhone] =
+      await Promise.all([
+        UserService.getUser({ userID: id }),
+        username ? UserService.getUser({ username }) : null,
+        email ? UserService.getUser({ email }) : null,
+        phoneNumber ? UserService.getUser({ phoneNumber }) : null,
+      ]);
 
     // Perform validations.
     if (!userByID) {
       next(new AppError('The user with this ID does not exist!', 404));
+      return;
+    }
+
+    if (userByUsername && userByUsername.userID !== id) {
+      next(new AppError('This username has been used by another user!', 400));
       return;
     }
 
@@ -211,6 +219,7 @@ const UserController = {
     const user = await UserService.updateUser(
       { userID: id },
       {
+        username,
         email,
         phoneNumber,
         fullName,
