@@ -47,12 +47,7 @@ const nextConfig = {
             // Allowing `'unsafe-inline'` in `style-src` in production is not a security issue.
             // Only allow from Google Fonts and styles injected from Emotion.
             contentSecurityPolicy: {
-              'font-src': ["'self'", 'https://fonts.gstatic.com'],
-              'style-src': [
-                "'self'",
-                "'unsafe-inline'",
-                'https://fonts.googleapis.com',
-              ],
+              'style-src': ["'self'", "'unsafe-inline'"],
             },
 
             // `Permissions-Policy` CSP is still experimental.
