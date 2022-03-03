@@ -248,6 +248,7 @@ const AuthController = {
     // Clone object and delete sensitive data, prevent leaking confidential information. Do
     // not perform DB calls here - it is unnecessary overhead.
     const filteredUser = { ...user } as Partial<typeof user>;
+    delete filteredUser.username;
     delete filteredUser.totpSecret;
     delete filteredUser.password;
     delete filteredUser.userPK;
@@ -753,7 +754,7 @@ const AuthController = {
     const usedOTP = await CacheService.getBlacklistedOTP(password);
     if (usedOTP) {
       await CacheService.setOTPAttempts(user.userID);
-      next(new AppError('This OTP has expired.', 410));
+      next(new AppError('This OTP has expired. Please request it again in 30 seconds!', 410));
       return;
     }
 

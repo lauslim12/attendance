@@ -18,7 +18,6 @@ class AppDocument extends Document {
   /**
    * Method to render the main document part of the app.
    * Meta tags in order:
-   * - Google Fonts
    * - Favicon
    * - Normal Meta Tags
    * - OpenGraph Tags
@@ -29,17 +28,6 @@ class AppDocument extends Document {
     return (
       <Html lang="en">
         <Head>
-          <link rel="preconnect" href="https://fonts.googleapis.com" />
-          <link rel="preconnect" href="https://fonts.gstatic.com" />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800&display=swap"
-            rel="stylesheet"
-          />
-          <link
-            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap"
-            rel="stylesheet"
-          />
-
           <link rel="shortcut icon" href="favicon.png" type="image/png" />
 
           <meta

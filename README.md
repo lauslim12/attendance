@@ -54,23 +54,22 @@ Legend:
 
 ## Security
 
-As this research focuses on creating a secure API, below are the considerations that are taken during development:
+As this research focuses on creating a secure API, below are the considerations (white paper) that are taken during development:
 
-- Users are divided into two roles: `admin` and `user`.
-- A special kind of authorized session: `OTPSession`, using JSON Web Tokens (RFC 7519). Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes). JSON Web Tokens are powered by `Ed25519` algorithm.
-- Sessions are signed cookies, implemented with a high-entropy session secret, and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security. Sessions can be manually managed by the corresponding user.
-- Passwords are hashed with `Argon2` algorithm.
-- The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator), and it is different for every other users in the system. Look at `cli/collision-test.ts` for tests.
-- Conforms to RFC 6238 and RFC 7617 (TOTP, Basic Authorization).
+- Users are divided into two roles: `admin` and `user` for clear separation of roles.
+- A special kind of authorized session: `OTPSession`, using JSON Web Tokens (RFC 7519). Having this token means that the user is MFA authenticated. The JSON Web Tokens have a very small lifetime (only about 15 minutes). JSON Web Tokens are powered by `Ed25519` asymmetric algorithm.
+- Sessions are signed cookies with `SHA-1`, implemented with a high-entropy session secret (`genuuid`), and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security. Sessions can be manually managed by the corresponding user.
+- Passwords are hashed with `Argon2` algorithm. This means that passwords are not stored in plaintext and in an event the database is stolen, hackers would not be able to look at the plaintext passwords without the knowledge of the real passwords.
+- The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator, taking its entropy from the system's hardware noise), and it is different for every other users in the system. Look at `cli/collision-test.ts` for tests.
+- Conforms to RFC 6238 and RFC 7617 (Time-Based One-Time Passwords and Basic Authorization).
 - OTP is time-based and it is generated with RFC 6238 algorithm with `SHA-1` hash function and a high-entropy secret (above). OTP is verified with the `userID` via RFC 7617 algorithm. OTPs are for one-time use only (in a certain timeframe).
 - User identification generator is based on `uuidv4` algorithm for low-collision user IDs.
-- Secure API protection middlewares (`helmet`, `hpp`, JSON-only API with a secure parser, slow downs, rate limiters, XST prevention, XSS prevention, and many more).
+- Secure API protection middlewares (`helmet`, `hpp`, JSON-only API with a secure parser, slow downs, rate limiters, XST prevention, XSS prevention, and more).
 - Secure API authorization (session authorization, role-based access control, MFA with JWT/JWS).
-- API logging is performed using `morgan`.
-- API implementation conforms to JSON:API Standard and provides structured error messages and responses according to the best practices.
+- API logging is performed using `morgan`, and complete request and response logging with `express-winston` and `winston` for audit purposes and debug purposes.
+- API implementation conforms to JSON:API Standard and provides structured error messages and responses according to that standard.
 - User can be banned by setting their `isActive` attribute to `false`. Banned users cannot access the API.
 - No cheap tricks and 'unusual' security through obscurity (double encryption, triple encoding, multiple hashing, and the like). Cryptography/security is used to serve a specific purpose and be an effective solution for that purpose. Incorrect use of said concepts will make the system to be less secure.
-- Complete request and response logging with `express-winston` and `winston` for audit purposes and debug purposes.
 - Emails are implemented with queue system (Bull) for performance and security.
 - Rate limiters and slow downs exist in order to prevent spammers. It is implemented with Redis for persistence and performance.
 - Body parser is implemented with a secure option, as it has a definitive limit and has a checker in the form of `Content-Type` and `Content-Length`.
@@ -78,8 +77,8 @@ As this research focuses on creating a secure API, below are the considerations 
 - Implements secure authentiation flows: login, logout, registration, email verification, password updates, password forgots, password resets, session management, user management, and 2FA.
 - Implements email notifications: on password resets, specific times without checking out, MFA session blocks after OTP failures, and more.
 - All algorithms conforms to Kerckhoff's Principle: open design with the only secret being its key, and the key itself must not be able to be cracked should it fall in the hands of an attacker.
-- Secure headers are placed in both API and Web. Examples: `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
-- Powered by strong HTTPS ciphers and protected Linux processes (guidelines included).
+- Secure headers are placed in both API and Web. Examples: `Strict-Transport-Security` (HSTS), `Content-Security-Policy`, `X-XSS-Protection`, `X-Content-Type-Options`, and more.
+- Powered by strong HTTPS ciphers, protected Linux processes, and a firewall (guidelines included).
 
 ## Standards
 
@@ -274,6 +273,7 @@ Several helper scripts have already been set up in case you want to build and/or
 Several evaluations/calculations are done in order to keep track of security are performed as follows:
 
 - You may run `yarn collision-test` in order to check out the collision probability for `nanoid` and `Math.random()`.
+- You may run `yarn otp-speed` to get the average processing time of the algorithms. Your logs have to be populated before doing this operation. Instructions are available in `api/cli/otp-speed.ts`.
 - You may use [OWASP ZAP Baseline](https://www.zaproxy.org/docs/docker/baseline-scan/) in order to perform automated penetration tests on the application.
 - If you have Snyk CLI installed, you can run `snyk test --all-projects` to find vulnerable dependencies, and/or `snyk code test` to perform static code analysis.
 - If you need to update dependencies, you can use `yarn upgrade-interactive --latest` to do so. Please make sure there are no breaking changes that might break the application.

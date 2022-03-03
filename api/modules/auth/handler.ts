@@ -25,7 +25,7 @@ const AuthHandler = () => {
   // Logs in a single user.
   handler.post(
     '/login',
-    authRateLimit,
+    rateLimit(10, 'auth-login'),
     bodyParser,
     validate(AuthValidation.login),
     asyncHandler(AuthController.login)
