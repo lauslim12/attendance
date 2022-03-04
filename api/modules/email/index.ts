@@ -91,7 +91,8 @@ class Email {
       | 'notification'
       | 'otp'
       | 'reminder'
-      | 'reset-password',
+      | 'reset-password'
+      | 'update-password',
     vars: Record<string, unknown>
   ) {
     const html = renderFile(
@@ -187,6 +188,20 @@ class Email {
         {
           name: this.name,
         }
+      ),
+    });
+  }
+
+  /**
+   * Sends an email to notify a user that he/she have update their password
+   * to a new one.
+   */
+  async sendUpdatePassword() {
+    await bull.add(`email-update-password-${this.to}`, {
+      task: this.send(
+        'Your Attendance password has been changed',
+        'update-password',
+        { name: this.name }
       ),
     });
   }

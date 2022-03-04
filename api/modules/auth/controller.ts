@@ -620,6 +620,9 @@ const AuthController = {
     // Update new password.
     await UserService.updateUser({ userID }, { password: newPassword });
 
+    // Send a confirmation email that the user has successfully changed their password.
+    await new Email(user.email, user.fullName).sendUpdatePassword();
+
     // Destroy all sessons for this current user.
     req.session.destroy(async (err) => {
       if (err) {
@@ -754,7 +757,12 @@ const AuthController = {
     const usedOTP = await CacheService.getBlacklistedOTP(password);
     if (usedOTP) {
       await CacheService.setOTPAttempts(user.userID);
-      next(new AppError('This OTP has expired. Please request it again in 30 seconds!', 410));
+      next(
+        new AppError(
+          'This OTP has expired. Please request it again in 30 seconds!',
+          410
+        )
+      );
       return;
     }
 
