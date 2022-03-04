@@ -112,6 +112,7 @@ const Passwordbox = () => {
       </Grid>
 
       <Button
+        type="submit"
         colorScheme="facebook"
         leftIcon={<FaPassport />}
         onClick={updatePassword}
