@@ -88,7 +88,7 @@ const AuthHandler = () => {
   // Change password for a logged in user.
   handler.patch(
     '/update-password',
-    authRateLimit,
+    rateLimit(2, 'auth-password-update'),
     asyncHandler(hasSession),
     bodyParser,
     validate(AuthValidation.updatePassword),
