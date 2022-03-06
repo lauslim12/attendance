@@ -14,6 +14,7 @@
     "reminder": "ts-node-dev cli/reminder",
     "collision-test": "ts-node-dev cli/collision-test",
     "otp-speed": "ts-node-dev cli/otp-speed",
+    "match-totps": "ts-node-dev cli/match-totps",
     "dev": "ts-node-dev .",
     "start": "NODE_ENV=production node dist/index.js",
     "circular-check": "dpdm --tree --circular --warning ./**/*.ts",
