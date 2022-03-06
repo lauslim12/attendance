@@ -57,7 +57,7 @@ const UserValidation = {
   // PATCH /api/v1/users/:id
   updateUser: {
     body: joi.object().keys({
-      username: joi.string().normalize().trim().required().max(25),
+      username: joi.string().normalize().trim().max(25),
       email: joi.string().trim().lowercase().email().max(50),
       phoneNumber: joi
         .string()
