@@ -162,6 +162,7 @@ const CreateUserModal = ({ isOpen, onClose }: Props) => {
 
           <ModalFooter>
             <Button
+              type="submit"
               leftIcon={<FaPencilAlt />}
               colorScheme="green"
               mr={3}

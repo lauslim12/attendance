@@ -135,6 +135,7 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
 
         <Stack direction={['column', 'row']} spacing={4}>
           <Button
+            type="submit"
             colorScheme="facebook"
             leftIcon={<FaPencilRuler />}
             onClick={editProfile}
