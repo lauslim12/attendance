@@ -5,19 +5,19 @@
  * @param password - A password.
  * @returns Basic authorization string.
  */
-const createBasicAuth = (username: string, password: string) => {
+export const createBasicAuth = (username: string, password: string) => {
   const encoded = Buffer.from(`${username}:${password}`).toString('base64');
 
   return `Basic ${encoded}`;
 };
 
 /**
- * Parses a Basic Authorization string based on RFC 7617 specs.
+ * Parses a Basic Authorization string based on RFC 7617 specifications.
  *
  * @param auth - Authorization string, encoded in Base-64.
  * @returns Parsed, plaintext username and password to be processed further.
  */
-const parseBasicAuth = (auth: string) => {
+export const parseBasicAuth = (auth: string) => {
   const [, strippedHeader] = auth.split('Basic ');
   if (!strippedHeader)
     throw new TypeError('parseBasicAuth: Invalid Basic authentication scheme!');
@@ -28,5 +28,3 @@ const parseBasicAuth = (auth: string) => {
 
   return { username, password };
 };
-
-export { createBasicAuth, parseBasicAuth };

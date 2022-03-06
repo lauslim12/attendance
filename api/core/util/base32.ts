@@ -19,11 +19,7 @@ export const b32ToBuf = (str: string) => {
   let index = 0;
 
   for (let i = 0; i < str.length; i++) {
-    const char = str[i];
-    if (char === undefined)
-      throw new TypeError('b32ToBuf: Unexpected array parsing error.');
-
-    const idx = alphabet.indexOf(char);
+    const idx = alphabet.indexOf(str[i]);
     if (idx === -1)
       throw new TypeError(`b32ToBuf: Invalid character found: ${str[i]}.`);
 
@@ -56,11 +52,7 @@ export const b32FromBuf = (buf: ArrayBuffer) => {
   let str = '';
 
   for (let i = 0; i < arr.length; i++) {
-    const num = arr[i];
-    if (num === undefined)
-      throw new TypeError('b32FromBuf: Unexpected array member.');
-
-    value = (value << 8) | num;
+    value = (value << 8) | arr[i];
     bits += 8;
 
     while (bits >= 5) {
