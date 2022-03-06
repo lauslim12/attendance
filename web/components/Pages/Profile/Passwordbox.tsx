@@ -73,54 +73,56 @@ const Passwordbox = () => {
         You may edit your authentication data by changing below values.
       </Text>
 
-      <Grid as="form" w="full" gap={5} onSubmit={updatePassword}>
-        <TextInput
-          label="Current password"
-          placeholder="••••••••••"
-          value={currentPassword}
-          setValue={setCurrentPassword}
-          helper="Your current password"
-          type={showPassword ? 'text' : 'password'}
-        />
+      <VStack as="form" onSubmit={updatePassword} w="full" spacing={6}>
+        <Grid w="full" gap={5}>
+          <TextInput
+            label="Current password"
+            placeholder="••••••••••"
+            value={currentPassword}
+            setValue={setCurrentPassword}
+            helper="Your current password"
+            type={showPassword ? 'text' : 'password'}
+          />
 
-        <TextInput
-          label="New password"
-          placeholder="••••••••••"
-          value={newPassword}
-          setValue={setNewPassword}
-          helper="Your new password. Minimum is 8 characters"
-          type={showPassword ? 'text' : 'password'}
-        />
+          <TextInput
+            label="New password"
+            placeholder="••••••••••"
+            value={newPassword}
+            setValue={setNewPassword}
+            helper="Your new password. Minimum is 8 characters"
+            type={showPassword ? 'text' : 'password'}
+          />
 
-        <TextInput
-          label="Confirm new password"
-          placeholder="••••••••••"
-          value={confirmPassword}
-          setValue={setConfirmPassword}
-          helper="Confirm your new password"
-          type={showPassword ? 'text' : 'password'}
-        />
+          <TextInput
+            label="Confirm new password"
+            placeholder="••••••••••"
+            value={confirmPassword}
+            setValue={setConfirmPassword}
+            helper="Confirm your new password"
+            type={showPassword ? 'text' : 'password'}
+          />
 
-        <Checkbox
-          colorScheme="blue"
-          alignSelf="start"
-          onChange={(e) => setShowPassword(e.target.checked)}
-          isChecked={showPassword}
+          <Checkbox
+            colorScheme="blue"
+            alignSelf="start"
+            onChange={(e) => setShowPassword(e.target.checked)}
+            isChecked={showPassword}
+          >
+            <Text fontSize="sm">Show password</Text>
+          </Checkbox>
+        </Grid>
+
+        <Button
+          type="submit"
+          colorScheme="facebook"
+          leftIcon={<FaPassport />}
+          onClick={updatePassword}
+          isLoading={isLoading}
+          isDisabled={isLoading}
         >
-          <Text fontSize="sm">Show password</Text>
-        </Checkbox>
-      </Grid>
-
-      <Button
-        type="submit"
-        colorScheme="facebook"
-        leftIcon={<FaPassport />}
-        onClick={updatePassword}
-        isLoading={isLoading}
-        isDisabled={isLoading}
-      >
-        Update Password
-      </Button>
+          Update Password
+        </Button>
+      </VStack>
     </VStack>
   );
 };

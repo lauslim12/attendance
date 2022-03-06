@@ -98,63 +98,63 @@ const Infobox = ({ status, user }: { status: Status; user: User }) => {
           You may edit your profile by changing below values.
         </Text>
 
-        <Grid
-          as="form"
-          w="full"
-          templateColumns={{ lg: 'repeat(2, 1fr)' }}
-          gap={[5, 10]}
-          onSubmit={editProfile}
-        >
-          <TextInput
-            label="Full name"
-            placeholder="Your full name"
-            value={fullName}
-            setValue={setFullName}
-            helper="Your full name for this website"
-            type="text"
-          />
-
-          <TextInput
-            label="Email"
-            placeholder="Your email"
-            value={email}
-            setValue={setEmail}
-            helper="Your email to receive OTPs"
-            type="email"
-          />
-
-          <TextInput
-            label="Phone Number"
-            placeholder="Your phone number"
-            value={phoneNumber}
-            setValue={setPhoneNumber}
-            helper="Your phone number to receive OTPs (coming soon)"
-            type="tel"
-          />
-        </Grid>
-
-        <Stack direction={['column', 'row']} spacing={4}>
-          <Button
-            type="submit"
-            colorScheme="facebook"
-            leftIcon={<FaPencilRuler />}
-            onClick={editProfile}
-            isLoading={isLoading}
-            isDisabled={isLoading}
+        <VStack as="form" onSubmit={editProfile} w="full" spacing={6}>
+          <Grid
+            w="full"
+            templateColumns={{ lg: 'repeat(2, 1fr)' }}
+            gap={[5, 10]}
           >
-            Edit My Profile
-          </Button>
+            <TextInput
+              label="Full name"
+              placeholder="Your full name"
+              value={fullName}
+              setValue={setFullName}
+              helper="Your full name for this website"
+              type="text"
+            />
 
-          <Button
-            colorScheme="red"
-            leftIcon={<FaEraser />}
-            onClick={() => setIsOpen(true)}
-            isLoading={isLoading}
-            isDisabled={isLoading}
-          >
-            Delete My Profile
-          </Button>
-        </Stack>
+            <TextInput
+              label="Email"
+              placeholder="Your email"
+              value={email}
+              setValue={setEmail}
+              helper="Your email to receive OTPs"
+              type="email"
+            />
+
+            <TextInput
+              label="Phone Number"
+              placeholder="Your phone number"
+              value={phoneNumber}
+              setValue={setPhoneNumber}
+              helper="Your phone number to receive OTPs (coming soon)"
+              type="tel"
+            />
+          </Grid>
+
+          <Stack direction={['column', 'row']} spacing={4}>
+            <Button
+              type="submit"
+              colorScheme="facebook"
+              leftIcon={<FaPencilRuler />}
+              onClick={editProfile}
+              isLoading={isLoading}
+              isDisabled={isLoading}
+            >
+              Edit My Profile
+            </Button>
+
+            <Button
+              colorScheme="red"
+              leftIcon={<FaEraser />}
+              onClick={() => setIsOpen(true)}
+              isLoading={isLoading}
+              isDisabled={isLoading}
+            >
+              Delete My Profile
+            </Button>
+          </Stack>
+        </VStack>
       </VStack>
     </>
   );
