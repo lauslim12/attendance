@@ -1,22 +1,36 @@
-.PHONY: clean-api
+# Makefile to run helper scripts.
+.PHONY: clean clean-api clean-web install-all build build-api build-web build-web-production build-production rebuild-app-production
+
+# Clean scripts.
+clean: clean-web clean-api
+
 clean-api:
-	cd api && rm -rf node_modules && rm -rf dist && rm -rf logs
+	cd api && rm -rf node_modules && rm -rf dist && rm -rf logs && rm -rf .dccache
 
-.PHONY: clean-web
 clean-web:
-	cd web && rm -rf node_modules && rm -rf .next
+	cd web && rm -rf node_modules && rm -rf .next && rm -rf .dccache
 
-.PHONY: clean
-clean:
-	cd api && rm -rf node_modules && rm -rf dist && rm -rf logs
-	cd web && rm -rf node_modules && rm -rf .next
+# Install scripts.
+install-all:
+	cd web && yarn --frozen-lockfile
+	cd api && yarn --frozen-lockfile
 
-.PHONY: build
-build:
-	cd api && yarn --frozen-lockfile && yarn build && cp .env dist && cp -r modules/email/views dist/modules/email
-	cd web && yarn --frozen-lockfile && yarn build
+# Build scripts.
+build: build-api build-web
 
-.PHONY: build-production
-build-production:
-	cd api && yarn --frozen-lockfile && yarn build && cp .env dist && cp -r modules/email/views dist/modules/email
-	cd web && yarn --frozen-lockfile && NGINX=true yarn build
+build-api: install-all
+	cd api && yarn build && cp .env dist && cp -r modules/email/views dist/modules/email
+
+build-web: install-all
+	cd web && yarn build
+
+build-web-production: install-all
+	cd web && NGINX=true yarn build
+
+# Production use scripts for Droplets/VPSes.
+build-production: build-api build-web-production
+
+refresh-app-production:
+	sudo systemctl restart attendance-api
+	sudo systemctl restart attendance-web
+	sudo systemctl restart nginx

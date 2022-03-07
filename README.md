@@ -245,14 +245,18 @@ This whole app is supposed to live inside a Linux server, supervised by `systemd
 
 ### Production: Updates
 
-- If you want to update the production version, it is necessary to refresh the services and the webserver:
+- If you want to update the production version, it is necessary to refresh the `systemd` services and the webserver:
 
 ```bash
 make build-production
+
+# shortcut: make refresh-app-production
 sudo systemctl restart attendance-api
 sudo systemctl restart attendance-web
 sudo systemctl restart nginx
 ```
+
+- Don't forget to grab the latest code from the repository.
 
 ### Production: Emails
 
@@ -261,12 +265,14 @@ sudo systemctl restart nginx
 
 ## Makefile
 
-Several helper scripts have already been set up in case you want to build and/or clean.
+Several helper scripts have already been set up to help in development:
 
 - To clean all of the projects, use `make clean`.
-- To clean `api` of artifacts, use `make clean-api`. To clean `web` of artifacts, use `make clean-web`.
-- To build all projects, use `make build`.
+- To install all dependencies, use `make install-all`.
+- To build all projects without any intention of putting them behind a reverse proxy, use `make build`.
 - To build all projects to prepare them to be placed behind a reverse proxy, use `make build-production`.
+
+For further script customizations, please refer to `Makefile`.
 
 ## Benchmarks
 
@@ -280,7 +286,7 @@ Several evaluations/calculations are done in order to keep track of security are
 
 ## Credits
 
-- [Icons8.com](https://icons8.com/) for the API Favicon.
+- [Icons8.com](https://icons8.com/) for the API favorite icon (favicon).
 - [Wesson Wang](https://unsplash.com/@wesson) for the SEO image.
 
 ## License
