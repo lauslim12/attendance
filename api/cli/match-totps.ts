@@ -13,7 +13,7 @@ function main() {
   // Initialize default values.
   const period = 30;
   const digits = 6;
-  const secret = 'match-totps-test';
+  const sec = 'match-totps-test';
   const label = 'match-totps-test';
   const issuer = 'test';
   const algorithm = 'SHA1';
@@ -21,14 +21,14 @@ function main() {
   const window = 2;
 
   // Run generation test.
-  const withLibrary = generateDefaultTOTP(issuer, secret).token;
+  const withLibrary = generateDefaultTOTP(issuer, sec).token;
   const withoutLibrary = generateOwnOTP(counter, {
     issuer,
     label,
     algorithm,
     digits,
     period,
-    secret,
+    secret: sec,
   }).token;
 
   if (withLibrary === withoutLibrary) {
@@ -38,14 +38,14 @@ function main() {
   }
 
   // Test for verification as well.
-  const withLibraryVerification = validateDefaultTOTP(withLibrary, secret);
+  const withLibraryVerification = validateDefaultTOTP(withLibrary, sec);
   const withoutLibraryVerification = verifyOwnTOTP(withoutLibrary, window, {
     issuer,
     label,
     algorithm,
     digits,
     period,
-    secret,
+    secret: sec,
   });
 
   if (withLibraryVerification === withoutLibraryVerification) {
