@@ -53,23 +53,25 @@ const Present = ({ status }: { status: Status }) => {
             Check in
           </Button>
 
-          <Button
-            colorScheme="purple"
-            leftIcon={<FaRegGrinBeam />}
-            variant="outline"
-            isFullWidth
-            onClick={() => {
-              if (attendanceStatus?.hasCheckedOut) {
-                FailedToast(toast, 'You have checked out for today!');
-                return;
-              }
+          {attendanceStatus?.hasCheckedIn && (
+            <Button
+              colorScheme="purple"
+              leftIcon={<FaRegGrinBeam />}
+              variant="outline"
+              isFullWidth
+              onClick={() => {
+                if (attendanceStatus?.hasCheckedOut) {
+                  FailedToast(toast, 'You have checked out for today!');
+                  return;
+                }
 
-              setIsModalTypeIn(false);
-              setIsModalOpen(true);
-            }}
-          >
-            Check out
-          </Button>
+                setIsModalTypeIn(false);
+                setIsModalOpen(true);
+              }}
+            >
+              Check out
+            </Button>
+          )}
         </VStack>
       ) : (
         <VStack>
