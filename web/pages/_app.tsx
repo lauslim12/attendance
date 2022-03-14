@@ -56,7 +56,7 @@ const App = ({ Component, pageProps }: AppProps) => {
       resetCSS
       theme={extendTheme({
         styles: {
-          global: (props: any) => ({
+          global: (props) => ({
             '::selection': {
               backgroundColor: '#945bf170',
               color: '#fff',
@@ -66,17 +66,39 @@ const App = ({ Component, pageProps }: AppProps) => {
             body: {
               bg: mode('#f3f3f3', 'gray.800')(props),
             },
+
+            // NProgress.
+            '#nprogress': {
+              pointerEvents: 'none',
+            },
+            '#nprogress .bar': {
+              bgGradient: 'linear(to-r, whiteAlpha.400, blue.200)',
+              h: '2px',
+              left: 0,
+              pos: 'fixed',
+              top: 0,
+              w: 'full',
+              zIndex: 2000,
+            },
+            '.nprogress-custom-parent': {
+              overflow: 'hidden',
+              position: 'absolute',
+            },
           }),
         },
+
+        // Override default fonts.
         fonts: {
           body: `Inter, ${fallbackFonts}`,
           heading: `Nunito, ${fallbackFonts}`,
         },
+
+        // Set default to light mode and use system color.
         config: {
           initialColorMode: 'light',
           useSystemColorMode: true,
         },
-      })}
+      } as ThemeOverride)}
     >
       <AuthRoute authRoutes={protectedRoutes}>
         <AdminRoute adminRoutes={adminRoutes}>
