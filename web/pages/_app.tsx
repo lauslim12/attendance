@@ -5,16 +5,19 @@ import '@fontsource/nunito/700.css';
 import '@fontsource/nunito/800.css';
 import 'focus-visible/dist/focus-visible';
 
+import type { ThemeOverride } from '@chakra-ui/react';
 import { ChakraProvider, extendTheme } from '@chakra-ui/react';
 import { mode } from '@chakra-ui/theme-tools';
 import type { AppProps } from 'next/app';
+import Router from 'next/router';
+import NProgress from 'nprogress';
 
 import AuthRoute from '../components/AuthRoute';
 import AdminRoute from '../components/Pages/Admin/AdminRoute';
 import routes from '../utils/routes';
 
 /**
- * Fonts to use in-case Google Fonts failed to load.
+ * Fallback fonts, just in case.
  */
 const fallbackFonts =
   '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol"';
@@ -33,6 +36,13 @@ const protectedRoutes = [
  * All protected routes that require admin authorization.
  */
 const adminRoutes = [routes.admin, routes.attendances, routes.users];
+
+/**
+ * Default listeners for router events.
+ */
+Router.events.on('routeChangeStart', () => NProgress.start());
+Router.events.on('routeChangeComplete', () => NProgress.done());
+Router.events.on('routeChangeError', () => NProgress.done());
 
 /**
  * App is used to handle all of the requests toward my server.
