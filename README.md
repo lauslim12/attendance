@@ -28,7 +28,6 @@ Request -> Handler/Router -> Middleware (if applicable) -> Validations (if appli
 
 Below is the list of main features that this system have:
 
-- Users can check the health of the API.
 - Users can log in and register.
 - Users can get their own authentication status.
 - Users can forget and reset their own passwords.
@@ -43,6 +42,7 @@ Below is the list of main features that this system have:
 - (**A B**) Admins can see all sessions and can invalidate them manually.
 - (**A B C**) Admins can perform CRUD operations on the `User` entity.
 - When set up, this system can remind people to log out at a certain time.
+- System can send out notifications regarding security, such as password resets, sending invalid TOTP repeatedly, etcetera.
 - The whole application is responsive and naturally supports HTTPS.
 - OpenGraph tags are already set up for SEO purposes.
 
@@ -282,7 +282,7 @@ Several evaluations/calculations are done in order to keep track of security are
 - You may run `yarn otp-speed` to get the average processing time of the algorithms. Your logs have to be populated before doing this operation. Instructions are available in `api/cli/otp-speed.ts`.
 - You may use [OWASP ZAP Baseline](https://www.zaproxy.org/docs/docker/baseline-scan/) in order to perform automated penetration tests on the application.
 - If you have Snyk CLI installed, you can run `snyk test --all-projects` to find vulnerable dependencies, and/or `snyk code test` to perform static code analysis.
-- If you need to update dependencies, you can use `yarn upgrade-interactive --latest` to do so. Please make sure there are no breaking changes that might break the application.
+- If you need to update dependencies, you can use `yarn outdated` and `yarn upgrade-interactive --latest` to do so. Please make sure there are no breaking changes that might break the application.
 
 ## Credits
 

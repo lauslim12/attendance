@@ -7,10 +7,12 @@ const CacheService = {
   /**
    * Blacklists an OTP using Redis.
    *
+   * @param userID - User ID.
    * @param otp - One time password.
    * @returns Asynchronous number from Redis.
    */
-  blacklistOTP: async (otp: string) => CacheRepository.blacklistOTP(otp),
+  blacklistOTP: async (userID: string, otp: string) =>
+    CacheRepository.blacklistOTP(userID, otp),
 
   /**
    * Deletes a single session from the cache.
@@ -33,11 +35,12 @@ const CacheService = {
   /**
    * Gets an OTP from the Redis cache in order to know whether it is blacklisted or not.
    *
+   * @param userID - UserID of the current user.
    * @param otp - One time password.
    * @returns The OTP, or null.
    */
-  getBlacklistedOTP: async (otp: string) =>
-    CacheRepository.getBlacklistedOTP(otp),
+  getBlacklistedOTP: async (userID: string, otp: string) =>
+    CacheRepository.getBlacklistedOTP(userID, otp),
 
   /**
    * Gets the total number of times the user tries to reset their password.

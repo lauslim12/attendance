@@ -1,5 +1,5 @@
 # Makefile to run helper scripts.
-.PHONY: clean clean-api clean-web install-all build build-api build-web build-web-production build-production rebuild-app-production
+.PHONY: clean clean-api clean-web install-all build build-api build-web build-web-production build-production refresh-app-production
 
 # Clean scripts.
 clean: clean-web clean-api
