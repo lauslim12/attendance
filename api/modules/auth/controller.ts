@@ -754,7 +754,7 @@ const AuthController = {
     }
 
     // Ensures that OTP has never been used before.
-    const usedOTP = await CacheService.getBlacklistedOTP(password);
+    const usedOTP = await CacheService.getBlacklistedOTP(user.userID, password);
     if (usedOTP) {
       await CacheService.setOTPAttempts(user.userID);
       next(
@@ -775,7 +775,7 @@ const AuthController = {
     }
 
     // Make sure to blacklist the TOTP (according to the specs).
-    await CacheService.blacklistOTP(password);
+    await CacheService.blacklistOTP(user.userID, password);
 
     // Generate JWS as the authorization ticket.
     const jti = await nanoid();
