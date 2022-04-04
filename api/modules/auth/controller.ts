@@ -17,6 +17,26 @@ import Email from '../email';
 import UserService from '../user/service';
 
 /**
+ * Utility function to set `Authenticate` header with the proper `Realm`. Why
+ * we do not use `WWW-Authenticate` like in RFC 7617? It is to prevent the
+ * front-end from summoning the not-really-friendly authentication popup.
+ *
+ * @param msg - Error message to be passed to the user.
+ * @param code - HTTP status code for the user.
+ * @param res - Express.js's response object.
+ * @param next - Express.js's next function.
+ */
+const invalidBasicAuth = (
+  msg: string,
+  code: number,
+  res: Response,
+  next: NextFunction
+) => {
+  res.set('Authenticate', 'Basic realm="OTP-MFA", charset="UTF-8"');
+  next(new AppError(msg, code));
+};
+
+/**
  * Sends the user's authentication status to the client in the form of JSON response.
  * The 'type' of the response is authentication, as this one does not really
  * fit with the 'users' type. This intentionally returns both the authentication status
@@ -715,21 +735,21 @@ const AuthController = {
   verifyOTP: async (req: Request, res: Response, next: NextFunction) => {
     // Validate header.
     if (!req.headers.authorization) {
-      next(new AppError('Missing authorization header!', 400));
+      invalidBasicAuth('Missing authorization in request!', 401, res, next);
       return;
     }
 
     // Check whether authentication scheme is correct.
     const { username, password } = parseBasicAuth(req.headers.authorization);
     if (!username || !password) {
-      next(new AppError('Invalid authentication scheme!', 400));
+      invalidBasicAuth('Invalid authentication scheme!', 401, res, next);
       return;
     }
 
     // Check whether username exists.
     const user = await UserService.getUserComplete({ userID: username });
     if (!user) {
-      next(new AppError('User with that identifier is not found.', 404));
+      invalidBasicAuth('User with that ID is not found.', 404, res, next);
       return;
     }
 
@@ -743,13 +763,12 @@ const AuthController = {
         await new Email(user.email, user.fullName).sendNotification();
       }
 
-      next(
-        new AppError(
-          'You have exceeded the number of times allowed for a secured session. Please try again in the next day.',
-          429
-        )
+      invalidBasicAuth(
+        'You have exceeded the number of times allowed for a secured session. Please try again in the next day.',
+        429,
+        res,
+        next
       );
-
       return;
     }
 
@@ -757,11 +776,11 @@ const AuthController = {
     const usedOTP = await CacheService.getBlacklistedOTP(user.userID, password);
     if (usedOTP) {
       await CacheService.setOTPAttempts(user.userID);
-      next(
-        new AppError(
-          'This OTP has expired. Please request it again in 30 seconds!',
-          410
-        )
+      invalidBasicAuth(
+        'This OTP has expired. Please request it again in 30 seconds!',
+        410,
+        res,
+        next
       );
       return;
     }
@@ -770,7 +789,12 @@ const AuthController = {
     const validTOTP = validateDefaultTOTP(password, user.totpSecret);
     if (!validTOTP) {
       await CacheService.setOTPAttempts(user.userID);
-      next(new AppError('Invalid authentication, wrong OTP code.', 401));
+      invalidBasicAuth(
+        'Invalid authentication, wrong OTP code.',
+        401,
+        res,
+        next
+      );
       return;
     }
 
