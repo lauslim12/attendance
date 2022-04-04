@@ -11,7 +11,7 @@ import {
   VStack,
 } from '@chakra-ui/react';
 import NextLink from 'next/link';
-import QRCode from 'qrcode.react';
+import { QRCodeCanvas } from 'qrcode.react';
 import type { MutableRefObject } from 'react';
 import { memo } from 'react';
 import { FaArrowRight, FaCode } from 'react-icons/fa';
@@ -46,14 +46,14 @@ const QRDialog = ({
 }: Props) => {
   // Figure out how to do this without `querySelector` later.
   const downloadQR = () => {
-    const canvas: any = document.getElementById('qr-code-canvas');
+    const canvas: any = document.querySelector('canvas');
     const pngURL = canvas
       .toDataURL('image/png')
       .replace('image/png', 'image/octet-stream');
 
     const downloadLink = document.createElement('a');
     downloadLink.href = pngURL;
-    downloadLink.download = `${Math.random().toString()}.png`;
+    downloadLink.download = `${name}-attendance-qrcode.png`;
     document.body.appendChild(downloadLink);
     downloadLink.click();
     document.body.removeChild(downloadLink);
@@ -104,7 +104,7 @@ const QRDialog = ({
                 </Text>
 
                 <VStack w="full">
-                  <QRCode id="qr-code-canvas" value={code} size={150} />
+                  <QRCodeCanvas value={code} size={150} />
                 </VStack>
 
                 {/* <Text>
