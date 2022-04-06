@@ -1,5 +1,7 @@
 # Attendance
 
+I have passed my Bachelor's Thesis at 06 April 2022, 13:00 - 14:35 GMT+7 🎉
+
 Secure API with OTP and Basic Authorization. Implemented as a full-stack application in a unique use-case: attendance system.
 
 You may also call this project as 'Attendance as a Service' (AAAS).
