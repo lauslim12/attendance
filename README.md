@@ -1,16 +1,25 @@
 # Attendance
 
-I have passed my Bachelor's Thesis at 06 April 2022, 13:00 - 14:35 GMT+7 🎉
-
-Secure API with OTP and Basic Authorization. Implemented as a full-stack application in a unique use-case: attendance system.
+Secure API with OTP and Basic Authentication. Implemented as a full-stack application in a unique use-case: attendance system.
 
 You may also call this project as 'Attendance as a Service' (AAAS).
 
 [![DigitalOcean Referral Badge](https://web-platforms.sfo2.digitaloceanspaces.com/WWW/Badge%203.svg)](https://www.digitalocean.com/?refcode=1383571bd620&utm_campaign=Referral_Invite&utm_medium=Referral_Program&utm_source=badge)
 
+## Thesis
+
+- This is the source code for my Bachelor's Thesis.
+- I have passed my Bachelor's Thesis Defense at 06 April 2022, 13:00 - 14:35 GMT+7 🎉
+- The topic of my Bachelor's Thesis is about **Software Creation and Management** and **Software and Application Security**.
+- The research will focus on **creating a highly-secure API / web service that conforms to various OWASP metrics, with a balance between security and usability**.
+- Implemented as an attendance system to 'masquerade' or 'disguise' the internal implementation details.
+- Because of the straightforward use-case, people would be able to use this application without 'knowing the implementation details'.
+- The report / through documentation of this application will be available at a later date, written in Bahasa Indonesia.
+- The research paper about this thesis will be available at a later date.
+
 ## About
 
-This research will focus on creating a highly-secure API that conforms to OWASP Security Best Practices. This research is divided into two subprojects:
+As written above, this research will focus on creating a highly-secure API that conforms to OWASP Security Best Practices. This research is divided into two subprojects:
 
 - `api` as a Node.js (Express) API. API is a JSON API which also acts as the authorization, authentication, and resource server.
 - `server` to provide sample configuration files for `systemd` and reverse proxy.
@@ -63,7 +72,7 @@ As this research focuses on creating a secure API, below are the considerations 
 - Sessions are signed cookies with `SHA-1`, implemented with a high-entropy session secret (`genuuid`), and served with secure attributes (`secure`, `sameSite`, `httpOnly`). It is regenerated and refreshed in several instances for security. Sessions can be manually managed by the corresponding user.
 - Passwords are hashed with `Argon2` algorithm. This means that passwords are not stored in plaintext and in an event the database is stolen, hackers would not be able to look at the plaintext passwords without the knowledge of the real passwords.
 - The secret to generate the OTP is implemented with `nanoid` (it has high entropy and it is a cryptographically secure generator, taking its entropy from the system's hardware noise), and it is different for every other users in the system. Look at `cli/collision-test.ts` for tests.
-- Conforms to RFC 6238 and RFC 7617 (Time-Based One-Time Passwords and Basic Authorization).
+- Conforms to RFC 6238 and RFC 7617 (Time-Based One-Time Passwords and Basic Authentication).
 - OTP is time-based and it is generated with RFC 6238 algorithm with `SHA-1` hash function and a high-entropy secret (above). OTP is verified with the `userID` via RFC 7617 algorithm. OTPs are for one-time use only (in a certain timeframe).
 - User identification generator is based on `uuidv4` algorithm for low-collision user IDs.
 - Secure API protection middlewares (`helmet`, `hpp`, JSON-only API with a secure parser, slow downs, rate limiters, XST prevention, XSS prevention, and more).
