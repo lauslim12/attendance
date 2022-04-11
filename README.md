@@ -10,6 +10,8 @@ You may also call this project as 'Attendance as a Service' (AAAS).
 
 - This is the source code for my Bachelor's Thesis.
 - I have passed my Bachelor's Thesis Defense at **06 April 2022, 13:00 - 14:35 GMT+7** 🎉
+- I have finished my revisions at **08 April 2022, 15:30 GMT+7** ✨
+- My final report is approved at **11 April 2022, 07:00 GMT+7** 🥳
 - The topic of my Bachelor's Thesis is about **Software Creation and Management** and **Software and Application Security**.
 - The research will focus on **creating a highly-secure API / web service that conforms to various OWASP metrics, with a balance between security and usability**.
 - Implemented as an attendance system to 'masquerade' or 'disguise' the internal implementation details.
