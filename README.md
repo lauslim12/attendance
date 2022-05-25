@@ -226,6 +226,19 @@ yarn dev
 
 - Keep in mind that your API has to be in an active state, or else it will not work. Web is automatically set to proxy requests to `localhost:8080` if `NGINX` environment variable is not set (it is set if you are running `make build-production`, which will be explained in the next part of the documentation).
 
+## GitHub Codespaces
+
+In order to provide a seamless and streamlined development experience, this repository supports GitHub Codespaces in order to quickly spin up a development environment with a dedicated `.devcontainer` and `docker-compose.yml`. After you opened this repository in GitHub Codespaces, the initial install script will automatically run (`make bootstrap-codespaces`). However, this is not yet done and you need to perform the following commands in order to run this application properly.
+
+- Open up terminal, `cd api`, then run `yarn genkeys` to generate public and private key pairs. Copy and paste them inside `.env` in their respective variables.
+- Run `yarn migrate` to ensure that the database is seeded properly.
+- Fill up remaining environment variables (Mailtrap and the like).
+- In the current terminal, run `yarn dev`.
+- Open up another terminal. Assuming you are in the `api` folder, run `cd ../web` and then `yarn dev`.
+- Open up your localhost in the forwarded port!
+
+Note: Sometimes, `502 Bad Gateway` might appear when attempting to connect to the forwarded port. This is a known issue and I have no idea on how to fix it aside from stopping the port and turning it on again, changing the port visibility from `private` to `public` (and vice versa), and changing the protocol from `https` and `http` (and vice versa).
+
 ## Production
 
 This whole app is supposed to live inside a Linux server, supervised by `systemd` and running behind Nginx reverse proxy. Make sure you are using a 64-bit OS, and please read the instructions properly (and the sample configuration files if you are using them) to prevent any miscommunications. By reading this, you are expected to have a basic knowledge of Linux system administration. This guide assumes that you are using Debian-based OS.
@@ -280,6 +293,7 @@ sudo systemctl restart nginx
 
 Several helper scripts have already been set up to help in development:
 
+- To bootstrap project in GitHub Codespaces, use `make boostrap-codespaces`.
 - To clean all of the projects, use `make clean`.
 - To install all dependencies, use `make install-all`.
 - To build all projects without any intention of putting them behind a reverse proxy, use `make build`.
