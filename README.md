@@ -128,6 +128,8 @@ Application and Services:
 - [Mailtrap](https://mailtrap.io/) to test emails in development environment
 - Authenticators, such as Google Authenticator, Microsoft Authenticator, etc.
 
+Stack and application/services may or may not be updated as time progresses (from Node 16 to 18, or from React 17 to 18 for example).
+
 ## Requirements (Production)
 
 For production, aside from above, you may additionally need the following technologies:
@@ -137,7 +139,7 @@ For production, aside from above, you may additionally need the following techno
 - MariaDB, Redis, Nginx
 - Mailservers (you may use Gmail with App Passwords)
 
-Docker is only used for development. Production will use an ordinary Linux server.
+Docker is only used for development. Production will use an ordinary Linux server. Refer to above for the recommended versions.
 
 ## Development
 
