@@ -21,7 +21,7 @@ You may also call this project as 'Attendance as a Service' (AAAS).
 
 ## About
 
-As written above, this research will focus on creating a highly-secure API that conforms to OWASP Security Best Practices. This research is divided into two subprojects:
+As written above, this research will focus on creating a highly-secure API that conforms to OWASP Security Best Practices. This research is divided into several subprojects:
 
 - `api` as a Node.js (Express) API. API is a JSON API which also acts as the authorization, authentication, and resource server.
 - `server` to provide sample configuration files for `systemd` and reverse proxy.
@@ -107,30 +107,39 @@ This application conforms to the following security standards:
 
 To note, some error messages are made explicit ('code has been sent to your email if it exists in our database' vs 'code has been sent to your email') to the user because of usability concerns. A user would get annoyed if the system only provides an obscure error message that nobody can guess what is going on. It's always a trade off, and for this application, I'm leaning a bit towards the 'usability' part in terms of error messages.
 
-## Documentation
+## API Documentation
 
-API documentation is available at Postman, and it is under construction for now. The whole codebase in this repository is completely documented with TypeScript and JSDoc.
+API documentation is available at Postman, and it is under construction for now. The whole codebase in this repository is completely typed and documented with TypeScript and JSDoc.
 
-## Requirements
+## Requirements (Development)
 
 For development, you need the following technologies installed on your machine:
+
+Stack:
 
 - [Docker](https://www.docker.com/)
 - [Node.js 16+](https://nodejs.org/)
 - [Yarn 1.22+](https://yarnpkg.com/)
+- Unix-based systems or MacOS. 64-bit OS is recommended.
+
+Application and Services:
+
 - [Postman Desktop Agent](https://www.postman.com/downloads/) to test things locally
 - [Mailtrap](https://mailtrap.io/) to test emails in development environment
-- Unix-based systems or MacOS
 - Authenticators, such as Google Authenticator, Microsoft Authenticator, etc.
 
-For production, you need the following technologies:
+Stack and application/services may or may not be updated as time progresses (from Node 16 to 18, or from React 17 to 18 for example).
+
+## Requirements (Production)
+
+For production, aside from above, you may additionally need the following technologies:
 
 - Debian OS is recommended (latest)
 - Node.js and Yarn (NVM is recommended)
 - MariaDB, Redis, Nginx
 - Mailservers (you may use Gmail with App Passwords)
 
-Docker is only used for development. Production will use an ordinary Linux server.
+Docker is only used for development. Production will use an ordinary Linux server. Refer to above for the recommended versions.
 
 ## Development
 
@@ -236,8 +245,11 @@ In order to provide a seamless and streamlined development experience, this repo
 - In the current terminal, run `yarn dev`.
 - Open up another terminal. Assuming you are in the `api` folder, run `cd ../web` and then `yarn dev`.
 - Open up your localhost in the forwarded port!
+- Feel free to run `make build` to test the production version.
 
-Note: Sometimes, `502 Bad Gateway` might appear when attempting to connect to the forwarded port. This is a known issue and I have no idea on how to fix it aside from stopping the port and turning it on again, changing the port visibility from `private` to `public` (and vice versa), and changing the protocol from `https` and `http` (and vice versa).
+**Note**: Sometimes, `502 Bad Gateway`, `503 Service Unavailable`, or `504 Gateway Timeout` might appear when attempting to connect to the forwarded port. This is a known issue and I have no idea on how to fix it aside from stopping the port and turning it on again, changing the port visibility from `private` to `public` (and vice versa), and changing the protocol from `https` and `http` (and vice versa).
+
+**Note 2**: Autosave (default is turned on) is turned off in the Codespaces template. This is my preference.
 
 ## Production
 
