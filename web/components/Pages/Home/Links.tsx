@@ -19,18 +19,13 @@ const Links = () => (
     pt={2}
   >
     <NextLink href={routes.register} passHref>
-      <Button
-        as="a"
-        colorScheme="orange"
-        leftIcon={<FaAddressCard />}
-        isFullWidth
-      >
+      <Button as="a" colorScheme="orange" leftIcon={<FaAddressCard />} w="full">
         Sign up
       </Button>
     </NextLink>
 
     <NextLink href={routes.login} passHref>
-      <Button as="a" colorScheme="blue" leftIcon={<FaSignInAlt />} isFullWidth>
+      <Button as="a" colorScheme="blue" leftIcon={<FaSignInAlt />} w="full">
         Log in
       </Button>
     </NextLink>

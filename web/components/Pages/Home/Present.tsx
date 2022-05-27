@@ -39,7 +39,7 @@ const Present = ({ status }: { status: Status }) => {
             colorScheme="green"
             leftIcon={<FaRegGrinAlt />}
             variant="outline"
-            isFullWidth
+            w="full"
             onClick={() => {
               if (attendanceStatus?.hasCheckedIn) {
                 FailedToast(toast, 'You have checked in for today!');
@@ -58,7 +58,7 @@ const Present = ({ status }: { status: Status }) => {
               colorScheme="purple"
               leftIcon={<FaRegGrinBeam />}
               variant="outline"
-              isFullWidth
+              w="full"
               onClick={() => {
                 if (attendanceStatus?.hasCheckedOut) {
                   FailedToast(toast, 'You have checked out for today!');

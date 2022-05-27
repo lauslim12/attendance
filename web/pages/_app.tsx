@@ -95,8 +95,9 @@ const App = ({ Component, pageProps }: AppProps) => {
 
         // Set default to light mode and use system color.
         config: {
-          initialColorMode: 'light',
+          initialColorMode: 'system',
           useSystemColorMode: true,
+          disableTransitionOnChange: false,
         },
       } as ThemeOverride)}
     >
