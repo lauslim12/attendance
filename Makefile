@@ -12,7 +12,7 @@ clean-api:
 	cd api && rm -rf node_modules && rm -rf dist && rm -rf logs && rm -rf .dccache
 
 clean-web:
-	cd web && rm -rf node_modules && rm -rf .next && rm -rf .dccache
+	cd web && rm -rf node_modules && rm -rf .next && rm -rf .dccache && rm -rf tsconfig.tsbuildinfo
 
 # Install scripts.
 install-all:
