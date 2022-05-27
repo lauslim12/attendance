@@ -2,9 +2,7 @@
 .PHONY: bootstrap-codespaces clean clean-api clean-web install-all build build-api build-web build-web-production build-production refresh-app-production
 
 # Bootstrap application for GitHub Codespaces.
-bootstrap-codespaces:
-	cd web && yarn --frozen-lockfile
-	cd api && yarn --frozen-lockfile
+bootstrap-codespaces: install-all
 	cp api/.env.example api/.env
 
 # Clean scripts.
