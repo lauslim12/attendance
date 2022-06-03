@@ -240,8 +240,8 @@ yarn dev
 In order to provide a seamless and streamlined development experience, this repository supports GitHub Codespaces in order to quickly spin up a development environment with a dedicated `.devcontainer` and `docker-compose.yml`. After you opened this repository in GitHub Codespaces, the initial install script will automatically run (`make bootstrap-codespaces`). However, this is not yet done and you need to perform the following commands in order to run this application properly.
 
 - Open up terminal, `cd api`, then run `yarn genkeys` to generate public and private key pairs. Copy and paste them inside `.env` in their respective variables.
-- Run `yarn migrate` to ensure that the database is seeded properly.
 - Fill up remaining environment variables (Mailtrap and the like).
+- Run `yarn migrate` to ensure that the database is seeded properly.
 - In the current terminal, run `yarn dev`.
 - Open up another terminal. Assuming you are in the `api` folder, run `cd ../web` and then `yarn dev`.
 - Open up your localhost in the forwarded port!

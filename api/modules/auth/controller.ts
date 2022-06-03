@@ -245,16 +245,18 @@ const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     const { username, password } = req.body;
 
-    // Safe compare usernames. Usernames are case-insensitive.
-    const user = await UserService.getUserComplete({ username });
-    if (!user) {
-      next(new AppError('Invalid username and/or password!', 401));
-      return;
-    }
+    // Find credentials. All are case-insensitive and ready to be used.
+    // The arguments to the function are filled with `username`, it is assumed
+    // that `username` can be the literal username, email, or even phone number with dashes. As
+    // credentials are unique, it will fetch the correct user without fail if the credential exists.
+    const user = await UserService.getUserByCredentials(
+      username,
+      username,
+      username
+    );
 
-    // Safe compare passwords.
-    const passwordMatch = await verifyPassword(user.password, password);
-    if (!passwordMatch) {
+    // At the same time, we also safe-compare passwords to prevent timing attacks.
+    if (!user || !(await verifyPassword(user.password, password))) {
       next(new AppError('Invalid username and/or password!', 401));
       return;
     }

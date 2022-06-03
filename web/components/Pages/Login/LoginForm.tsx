@@ -64,11 +64,11 @@ const LoginForm = () => {
       onSubmit={login}
     >
       <TextInput
-        label="Username"
-        placeholder="Username"
+        label="Username/E-mail/Phone"
+        placeholder="Username, email, or phone number"
         value={username}
         setValue={setUsername}
-        helper="The username that you used to register"
+        helper="The username, email, or phone (with dashes) which you used to register"
         type="text"
       />
 
