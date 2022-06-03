@@ -50,6 +50,26 @@ const UserService = {
     prisma.user.findUnique({ where, select }),
 
   /**
+   * Fetches a single user based on their username, email, and phone number. This is inspired
+   * by Twitter, Facebook, and Google's ways of logging someone in. As username, email, and
+   * phone numbers are all unique, it can be assumed that `findFirst` will always return a single
+   * and the correct data, due to the earlier constraints.
+   *
+   * @param username - A user's username.
+   * @param email - A user's email.
+   * @param phoneNumber - A user's phone number.
+   * @returns A single user data, filtered with no sensitive values.
+   */
+  getUserByCredentials: async (
+    username: string,
+    email: string,
+    phoneNumber: string
+  ) =>
+    prisma.user.findFirst({
+      where: { OR: [{ username }, { email }, { phoneNumber }] },
+    }),
+
+  /**
    * Creates a single user data, and generates their own QR code URI for Google Authenticator.
    *
    * @param data - All of a user's required data.
